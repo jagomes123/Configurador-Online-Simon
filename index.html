@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://api.anthropic.com;">
-<meta charset="UTF-8">
+<!-- saved from url=(0075)file:///Users/joaogomes-simon/Downloads/simon-configurador-proposta_77.html -->
+<html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simon Brasil — Configurador + Proposta</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./index_files/css2" rel="stylesheet">
+<script src="./index_files/xlsx.full.min.js"></script>
+<script src="./index_files/mammoth.browser.min.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -260,6 +260,36 @@ html,body{height:100%;font-family:var(--font-sans);font-size:14px;color:var(--te
 .proj-action-btn.danger:hover{background:var(--error,#DC2626);color:#fff}
 .wiz-close{width:32px;height:32px;border-radius:50%;border:none;background:var(--bg-secondary);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;color:var(--text-secondary);flex-shrink:0}
 .wiz-close:hover{background:var(--border-light);color:var(--text-primary)}
+
+/* ── Import Color Wizard ─────────────────────────────────────────────────── */
+.cwiz-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:1100;display:flex;align-items:center;justify-content:center;padding:20px}
+.cwiz-modal{background:var(--bg-primary);border-radius:var(--radius-xl);box-shadow:0 24px 64px rgba(0,0,0,0.3);width:100%;max-width:680px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.cwiz-header{padding:18px 24px 14px;border-bottom:1px solid var(--border-light);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.cwiz-header h2{font-size:17px;font-weight:700;color:var(--simon-navy);margin:0 0 3px}
+.cwiz-header p{font-size:12px;color:var(--text-tertiary);margin:0}
+.cwiz-body{flex:1;overflow-y:auto;padding:20px 24px}
+.cwiz-footer{padding:14px 24px;border-top:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg-secondary)}
+.cwiz-section{margin-bottom:20px}
+.cwiz-section-label{font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.cwiz-env-card{background:var(--bg-secondary);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:14px;margin-bottom:10px}
+.cwiz-env-name{font-size:13px;font-weight:600;color:var(--simon-navy);margin-bottom:10px}
+.color-swatch-row{display:flex;flex-wrap:wrap;gap:8px}
+.cwiz-series-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--simon-blue);color:#fff;font-weight:600}
+.diff-toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);cursor:pointer;margin:8px 0}
+.diff-toggle input{cursor:pointer}
+.s-pill{display:inline-block;padding:4px 12px;border-radius:20px;border:1.5px solid var(--border-medium);font-size:12px;font-weight:500;cursor:pointer;background:var(--bg-primary);color:var(--text-primary);transition:all 0.15s}
+.s-pill.sel{background:var(--simon-blue);color:#fff;border-color:var(--simon-blue)}
+.s-pill:hover:not(.sel){border-color:var(--simon-blue);color:var(--simon-blue)}
+.series-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.tipo-card{background:var(--bg-secondary);border:2px solid var(--border-light);border-radius:var(--radius-lg);padding:20px 16px;cursor:pointer;transition:all 0.15s;position:relative}
+.tipo-card:hover{border-color:var(--simon-blue)}
+.tipo-card.selected{border-color:var(--simon-blue);background:var(--accent-light)}
+.tipo-card-check{font-size:16px;color:var(--simon-blue);font-weight:700}
+/* Import flow */
+.series-pills{display:flex;flex-wrap:wrap;gap:8px}
+.series-pill{display:inline-block;padding:4px 12px;border-radius:20px;border:1.5px solid var(--border-medium);font-size:12px;font-weight:500;cursor:pointer;background:var(--bg-primary);color:var(--text-primary);transition:all 0.15s}
+.series-pill.sel{background:var(--simon-blue);color:#fff;border-color:var(--simon-blue)}
+.series-pill:hover:not(.sel){border-color:var(--simon-blue);color:var(--simon-blue)}
 </style>
 <script>
 window.onerror=function(msg,src,line,col,err){
@@ -277,7 +307,7 @@ window.addEventListener('unhandledrejection',function(e){
   <div class="topbar">
 
     <!-- LEFT: Simon Brasil logo -->
-    <div class="logo-simon" onclick="window.open('https://www.simonelectric.com/br','_blank')" style="cursor:pointer" title="Simon Brasil">
+    <div class="logo-simon" onclick="window.open(&#39;https://www.simonelectric.com/br&#39;,&#39;_blank&#39;)" style="cursor:pointer" title="Simon Brasil">
       <svg width="110" height="34" viewBox="0 0 110 34" fill="none" xmlns="http://www.w3.org/2000/svg">
         <text x="0" y="26" font-family="IBM Plex Sans,Arial,sans-serif" font-weight="800" font-size="26" fill="#FFFFFF" letter-spacing="-0.5">SIMON</text>
       </svg>
@@ -305,10 +335,10 @@ window.addEventListener('unhandledrejection',function(e){
       <button class="btn" id="btn-fechar" onclick="closeProject()" title="Fechar projeto e voltar ao início" style="display:none;gap:5px;border-color:rgba(255,255,255,0.3)">
         <span style="font-size:14px">✕</span> Fechar
       </button>
-      <button class="btn" id="btn-novo" onclick="confirmAndNew()" title="Criar novo projeto">
+      <button class="btn" id="btn-novo" onclick="confirmAndNew()" title="Criar novo projeto" style="display: none;">
         <span style="font-size:14px">＋</span> Novo
       </button>
-      <button class="btn" id="btn-bom" onclick="switchView('bom')" style="display:none">📋 Lista de Materiais</button>
+      <button class="btn" id="btn-bom" onclick="switchView(&#39;bom&#39;)" style="display:none">📋 Lista de Materiais</button>
       
       <button class="btn btn-primary" id="btn-excel" onclick="exportExcel()" style="display:none">⬇ Excel</button>
     </div>
@@ -329,15 +359,43 @@ window.addEventListener('unhandledrejection',function(e){
       <div class="sb-item" onclick="openProjectsManager()" style="gap:6px">
         <span>📁</span> Abrir Projeto
       </div>
-      <div class="sb-item" onclick="openModal('project')">⚙ Configurações do Projeto</div>
+      <div class="sb-item" onclick="openModal(&#39;project&#39;)">⚙ Configurações do Projeto</div>
       <div class="sb-item" onclick="confirmAndImport()" style="color:#7C3AED;border:1px dashed rgba(124,58,237,0.3);margin:2px 6px;border-radius:8px;justify-content:center;gap:6px">
         <span>📂</span> Importar Projeto / Lista
       </div>
       <div id="env-list"></div>
-      <div class="sb-add" id="sb-add-env" onclick="openModal('env')" style="display:none">＋ Novo ambiente</div>
+      <div class="sb-add" id="sb-add-env" onclick="openModal(&#39;env&#39;)" style="display:none">＋ Novo ambiente</div>
       <div style="height:20px"></div>
     </div>
-    <div class="content" id="content"></div>
+    <div class="content" id="content"><div class="welcome">
+  <svg width="140" height="44" viewBox="0 0 140 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:4px">
+    <text x="0" y="34" font-family="IBM Plex Sans,Arial,sans-serif" font-weight="800" font-size="34" fill="#002855" letter-spacing="-1">SIMON</text>
+  </svg>
+  <h2 style="color:#002855">Configure seus pontos elétricos</h2>
+  <p style="max-width:440px;line-height:1.7">Importe um projeto elétrico ou lista de materiais — a IA identifica automaticamente os produtos Simon Brasil e monta o configurador para você.</p>
+
+  <button class="btn btn-primary" onclick="openImport()" style="margin-top:20px;padding:13px 28px;font-size:14px;font-weight:600;gap:10px;border-radius:10px">
+    <span style="font-size:20px">📂</span> Importar Projeto / Lista de Materiais
+  </button>
+
+  <button class="btn" onclick="confirmAndOpen()" style="margin-top:10px;padding:10px 24px;font-size:13px;gap:8px;border-radius:10px;border-color:var(--border-medium)">
+    <span style="font-size:16px">📁</span> Abrir Projeto Existente
+  </button>
+
+  <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:480px">
+    <span style="font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);border:1px solid var(--border-light)">📐 DWG / CAD</span>
+    <span style="font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);border:1px solid var(--border-light)">📄 PDF / Word</span>
+    <span style="font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);border:1px solid var(--border-light)">📊 Excel</span>
+    <span style="font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);border:1px solid var(--border-light)">📷 Foto / WhatsApp</span>
+    <span style="font-size:11px;padding:3px 10px;border-radius:20px;background:var(--bg-secondary);color:var(--text-secondary);border:1px solid var(--border-light)">✏ Texto livre</span>
+  </div>
+
+  <div style="margin-top:20px;height:1px;background:var(--border-light);width:200px"></div>
+
+  <button class="btn" onclick="confirmAndNew()" style="margin-top:16px;color:var(--text-secondary);font-size:12px;border-color:transparent">
+    ou criar projeto vazio manualmente →
+  </button>
+</div></div>
   </div>
 </div>
 <div id="modal-root"></div>
@@ -3382,5 +3440,5 @@ function confirmAndNew(){
 </script>
 
 
-</body>
-</html>
+
+</body></html>
