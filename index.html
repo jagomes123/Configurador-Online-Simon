@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0088)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_28.html -->
+<!-- saved from url=(0088)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_32.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
@@ -732,10 +732,10 @@ window.addEventListener('unhandledrejection',function(e){
 
     <!-- CENTER: project selector + action buttons -->
     <div class="topbar-center">
-      <button class="nav-btn proj-name-btn" id="proj-name-btn" onclick="ST.project?renameProjectInline(event):openProjectsManager()" title="Renomear projeto" style="max-width:280px">
+      <button class="nav-btn proj-name-btn" id="proj-name-btn" onclick="ST.project?renameProjectInline(event):confirmAndNew()" title="Renomear projeto" style="max-width:280px">
         <span id="proj-icon" style="font-size:13px">📁</span>
         <span id="proj-name-text" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px">Criar projeto</span>
-        <span id="proj-edit-icon" style="font-size:11px;opacity:0.55;margin-left:4px;flex-shrink:0;display:none">✏</span>
+        <span id="proj-edit-icon" style="font-size: 11px; opacity: 0.55; margin-left: 4px; flex-shrink: 0; display: none;">✏</span>
         <span id="proj-mgr-icon" style="font-size: 10px; opacity: 0.6; margin-left: 2px; flex-shrink: 0; display: inline;">▾</span>
       </button>
 
@@ -743,12 +743,12 @@ window.addEventListener('unhandledrejection',function(e){
 
       <button class="nav-btn" id="btn-import" onclick="confirmAndImport()" title="Importar projeto/lista de materiais">Importar <span class="nav-chevron">▾</span></button>
       <button class="nav-btn" id="btn-abrir" onclick="confirmAndOpen()" title="Abrir projeto existente">Abrir <span class="nav-chevron">▾</span></button>
-      <button class="nav-btn nav-btn-primary" id="btn-salvar" onclick="saveProject_quick()" title="Salvar projeto" style="display:none">Salvar</button>
-      <button class="nav-btn" id="btn-fechar" onclick="closeProject()" title="Fechar projeto" style="display:none;opacity:0.55">Fechar ✕</button>
-      <button class="nav-btn" id="btn-novo" onclick="confirmAndNew()" title="Criar novo projeto" style="display:none">Novo <span class="nav-chevron">＋</span></button>
-      <button class="nav-btn" id="btn-bom" onclick="switchView(&#39;bom&#39;)" style="display:none">Lista de Materiais <span class="nav-chevron">▾</span></button>
+      <button class="nav-btn nav-btn-primary" id="btn-salvar" onclick="saveProject_quick()" title="Salvar projeto" style="display: none;">Salvar</button>
+      <button class="nav-btn" id="btn-fechar" onclick="closeProject()" title="Fechar projeto" style="opacity: 0.55; display: none;">Fechar ✕</button>
+      <button class="nav-btn" id="btn-novo" onclick="confirmAndNew()" title="Criar novo projeto" style="display: none;">Novo <span class="nav-chevron">＋</span></button>
+      <button class="nav-btn" id="btn-bom" onclick="switchView(&#39;bom&#39;)" style="display: none;">Lista de Materiais <span class="nav-chevron">▾</span></button>
       
-      <button class="nav-btn nav-btn-primary" id="btn-excel" onclick="exportExcel()" style="display:none">Excel ↓</button>
+      <button class="nav-btn nav-btn-primary" id="btn-excel" onclick="exportExcel()" style="display: none;">Excel ↓</button>
     </div>
 
     <!-- RIGHT: Partner / Distributor logo -->
@@ -772,7 +772,7 @@ window.addEventListener('unhandledrejection',function(e){
         <span>📂</span> Importar Projeto / Lista
       </div>
       <div id="env-list"></div>
-      <div class="sb-add" id="sb-add-env" onclick="openModal(&#39;env&#39;)" style="display:none">＋ Novo ambiente</div>
+      <div class="sb-add" id="sb-add-env" onclick="openModal(&#39;env&#39;)" style="display: none;">＋ Novo ambiente</div>
       <div style="height:20px"></div>
     </div>
     <div class="content" id="content"><div class="welcome"><div class="welcome-hero">
@@ -810,7 +810,7 @@ const CAT_CLR = {
   "Interruptor":"#2563EB","Pulsador":"#7C3AED","Tomada":"#EA580C","USB":"#059669",
   "Multimídia":"#DB2777","Dados":"#0891B2","Dimmer":"#D97706","Automação":"#0284C7",
   "Sensor":"#4F46E5","Sinal":"#65A30D","Especial":"#DC2626","Tampa Cega":"#9CA3AF",
-  "Complemento":"#6B7280","iO Smart":"#7C3AED","iO Master":"#4338CA"
+  "Complemento":"#6B7280","iO Smart":"#7C3AED","iO Master":"#4338CA","Acessórios":"#0891B2"
 };
 const SM = {
   S19:{label:"Simon 19",tier:"Econômica",integrated:true,pc:[{id:"30",name:"Branco",hex:"#F5F5F5"}],mc:[{id:"30",name:"Branco",hex:"#F5F5F5"}]},
@@ -1180,9 +1180,7 @@ MODS.S26 = [
   {ref:"2611931-038",desc:"Conjunto 1 Interruptor Simples 10A 250V - Grafite",pos:1,cat:"Conjunto"}
 ];
 MODS.S26IO_extra = [
-  {ref:"10002890-039",desc:"Interruptor Para Trilho DIN 16A iO",pos:1,cat:"iO Smart",isIO:true},
-  {ref:"21002893-039",desc:"Modulo De Controle De Tomadas iO",pos:1,cat:"iO Smart",isIO:true},
-  {ref:"21030108-039",desc:"Hub iO - Branco",pos:1,cat:"iO Smart",isIO:true},
+  {ref:"21002893-039",desc:"Modulo De Controle De Tomadas iO",pos:0,cat:"iO Smart",isIO:true,noPlateSlot:true},
   {ref:"26100121-030",desc:"Master Dimmer iO Duplo - Branco",pos:2,cat:"iO Master",isIO:true},
   {ref:"26100121-038",desc:"Master Dimmer iO Duplo - Grafite",pos:2,cat:"iO Master",isIO:true},
   {ref:"26100133-030",desc:"Master Persianas iO Duplo - Branco",pos:2,cat:"iO Master",isIO:true},
@@ -1206,6 +1204,39 @@ MODS.S26IO_extra = [
   {ref:"26140035-030",desc:"Master 4 Experiencias iO Duplo - Branco",pos:2,cat:"iO Master",isIO:true},
   {ref:"26140035-038",desc:"Master 4 Experiencias iO Duplo - Grafite",pos:2,cat:"iO Master",isIO:true}
 ];
+
+// Acessórios externos (não montados em placas) - disponíveis por ambiente
+// Acessórios globais aparecem em qualquer série; os específicos de série (ex: S26IO) se somam
+const ACCESSORIES = {
+  // Acessórios universais (sensores, carregadores, cabos) — disponíveis em qualquer série
+  _global: [
+    {ref:"10030-30",desc:"Sensor de Presença Sobrepor Articulado c/ Fotocélula 180° Bivolt - Branco",cat:"Acessórios"},
+    {ref:"10031-37",desc:"Sensor de Presença Externo Sobrepor Articulado c/ Fotocélula 180° Bivolt - Preto",cat:"Acessórios"},
+    {ref:"10032-30",desc:"Sensor de Presença Sobrepor/Embutir de Teto c/ Fotocélula 360° Bivolt - Branco",cat:"Acessórios"},
+    {ref:"CL510303",desc:"Carregador Quick Charge USB-C 3.0 - 20W - Branco",cat:"Acessórios"},
+    {ref:"CL510305",desc:"Carregador Smart Charge c/ 2 Portas USB-A - 24W - Branco",cat:"Acessórios"},
+    {ref:"CL520301",desc:"Adaptador Fixação Smart Charge USB-C p/ 3 Portas USB-A 3.1 - 15,5W - 1,5m - Preto",cat:"Acessórios"},
+    {ref:"MU100101",desc:"Cabo Lightning para USB-A 2.0 - 2,4A - 1m - Branco",cat:"Acessórios"},
+    {ref:"MU112201",desc:"Cabo Micro USB para USB-A 2.0 - 1,5A - 1m - Preto",cat:"Acessórios"},
+    {ref:"MU133201",desc:"Cabo USB-C para USB-A 3.1 Gen1 - 2,0A - 1m - Preto",cat:"Acessórios"},
+    {ref:"MU143201",desc:"Cabo USB-C para USB-C 3.1 Gen2 - 5,0A - 1m - Preto",cat:"Acessórios"},
+    {ref:"MU222215",desc:"Cabo HDMI 2.0 - 4K 60FPS - 1,5m - Preto",cat:"Acessórios"}
+  ],
+  // Acessórios exclusivos da série S26/S26IO
+  S26: [
+    {ref:"10002890-039",desc:"Interruptor Para Trilho DIN 16A iO",cat:"iO Smart",isIO:true},
+    {ref:"21030108-039",desc:"Hub iO - Branco",cat:"iO Smart",isIO:true}
+  ],
+  S26IO: [
+    {ref:"10002890-039",desc:"Interruptor Para Trilho DIN 16A iO",cat:"iO Smart",isIO:true},
+    {ref:"21030108-039",desc:"Hub iO - Branco",cat:"iO Smart",isIO:true}
+  ]
+};
+function getAccessories(series){
+  const global = ACCESSORIES._global || [];
+  const seriesSpecific = ACCESSORIES[series] || [];
+  return [...seriesSpecific, ...global];
+}
 MODS.S82 = [
   {ref:"8200051-060",desc:"Módulo De Saída De Cabos Branco",pos:1,cat:"Complemento"},
   {ref:"8200051-068",desc:"Módulo De Saída De Cabos Grafite",pos:1,cat:"Complemento"},
@@ -1347,7 +1378,7 @@ function getBlind(series, mc, detectedSuffix){
 // RULES ENGINE (same as previous)
 // ================================================================
 function computeAssembly(selMods, series, plateColor, modColor, minFormat, supportColor) {
-  const totalPos = selMods.reduce((s,m) => s+(m.mod.pos||1)*m.qty, 0);
+  const totalPos = selMods.reduce((s,m) => s+(m.mod.pos==null?1:m.mod.pos)*m.qty, 0);
   if(totalPos===0) return null;
   const warnings=[];
   const hasIO = selMods.some(m=>m.mod.isIO);
@@ -1592,7 +1623,19 @@ function renderSidebar(){
         const active=ST.activeEnvId===env.id&&ST.activePointId===pt.id;
         h+=`<div class="sb-item point ${active?'active':''}" onclick="selectPoint('${env.id}','${pt.id}')"><span>📍 ${pt.name}</span><span class="pt-del" onclick="event.stopPropagation();rmPoint('${env.id}','${pt.id}')">×</span></div>`;
       });
-      h+=`<div class="sb-add" onclick="openModal('point','${env.id}')">＋ Novo ponto</div></div>`;
+      h+=`<div class="sb-add" onclick="openModal('point','${env.id}')">＋ Novo ponto</div>`;
+      // Acessórios externos do ambiente (DIN, Hub iO, etc)
+      const envSeries = env.seriesOv || ST.project?.series || 'S30';
+      const hasAcc = getAccessories(envSeries).length > 0;
+      if(hasAcc || (env.accessories && env.accessories.length)){
+        (env.accessories||[]).forEach((ac,i)=>{
+          h+=`<div class="sb-item point" style="font-size:11px" title="${ac.desc}"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔌 ${ac.desc}${ac.qty>1?' ×'+ac.qty:''}</span><span class="pt-del" onclick="event.stopPropagation();rmAccessory('${env.id}',${i})">×</span></div>`;
+        });
+        if(hasAcc){
+          h+=`<div class="sb-add" onclick="openAccessoryModal('${env.id}')" style="color:var(--simon-orange,#FF6B35)">＋ Acessório</div>`;
+        }
+      }
+      h+=`</div>`;
     }
   });
   const _sbScroll=el.scrollTop;
@@ -1664,7 +1707,7 @@ function renderModList(allMods,search,cat){
   const filtered=allMods.filter(m=>{const mc2=cat==='all'||m.cat===cat;const ms=!search||m.desc.toLowerCase().includes(search.toLowerCase())||m.ref.toLowerCase().includes(search.toLowerCase());return mc2&&ms;});
   if(!filtered.length){el.innerHTML=`<div class="empty">Nenhum módulo encontrado</div>`;return;}
   const show=filtered.slice(0,40);
-  el.innerHTML=show.map(m=>`<div class="mod-row" onclick="addMod('${m.ref}')"><div style="display:flex;align-items:center;gap:10px;min-width:0"><div class="mod-dot" style="background:${CAT_CLR[m.cat]||'#888'};flex-shrink:0"></div><div style="min-width:0;overflow:hidden"><div class="mod-ref">${m.ref}${m.isIO?'<span class="io-tag">iO</span>':''}</div><div class="mod-desc">${m.desc}</div></div></div><span class="mod-pos-badge">${m.pos}pos</span></div>`).join('')+(filtered.length>40?`<div class="empty">${filtered.length-40} mais… refine a busca</div>`:'');
+  el.innerHTML=show.map(m=>`<div class="mod-row" onclick="addMod('${m.ref}')"><div style="display:flex;align-items:center;gap:10px;min-width:0"><div class="mod-dot" style="background:${CAT_CLR[m.cat]||'#888'};flex-shrink:0"></div><div style="min-width:0;overflow:hidden"><div class="mod-ref">${m.ref}${m.isIO?'<span class="io-tag">iO</span>':''}</div><div class="mod-desc">${m.desc}</div></div></div><span class="mod-pos-badge"${m.noPlateSlot||m.pos===0?' style="background:#FFF3E0;color:#E65100" title="Não ocupa espaço em placa"':''}>${m.noPlateSlot||m.pos===0?'externo':m.pos+'pos'}</span></div>`).join('')+(filtered.length>40?`<div class="empty">${filtered.length-40} mais… refine a busca</div>`:'');
 }
 
 function renderAsmBox(a){
@@ -1926,6 +1969,14 @@ function collectBOM(){
         if(a.blind&&a.blind.qty>0){const k=a.blind.ref;if(!items[k])items[k]={ref:k,desc:a.blind.desc,cat:'Tampa Cega',series,qty:0};items[k].qty+=a.blind.qty;}
       }
     });
+    // Acessórios externos do ambiente (DIN, Hub, etc) - não usam placa/suporte
+    if(env.accessories && env.accessories.length){
+      env.accessories.forEach(ac=>{
+        const k=ac.ref;
+        if(!items[k])items[k]={ref:k,desc:ac.desc,cat:ac.cat||'Acessórios',series,qty:0};
+        items[k].qty+=(ac.qty||1);
+      });
+    }
   });
   return items;
 }
@@ -1954,6 +2005,14 @@ function collectBOMByEnv(){
           if(a.blind&&a.blind.qty>0){const k=a.blind.ref;if(!items[k])items[k]={ref:k,desc:a.blind.desc,cat:'Tampa Cega',series,qty:0};items[k].qty+=a.blind.qty;}
         }
       });
+      // Acessórios externos do ambiente (DIN, Hub, etc)
+      if(env.accessories && env.accessories.length){
+        env.accessories.forEach(ac=>{
+          const k=ac.ref;
+          if(!items[k])items[k]={ref:k,desc:ac.desc,cat:ac.cat||'Acessórios',series,qty:0};
+          items[k].qty+=(ac.qty||1);
+        });
+      }
     }
     if(Object.keys(items).length) byEnv[env.name]=applyMultiplesToBOM(items);
   });
@@ -2184,6 +2243,70 @@ function exportExcel(){
 function addMod(ref){const pt=getActivePoint();if(!pt)return;const series=getEnvSeries(ST.activeEnvId);const mod=getMods(series).find(m=>m.ref===ref);if(!mod)return;const ex=pt.selectedModules.find(m=>m.mod.ref===ref);if(ex)ex.qty++;else pt.selectedModules.push({mod,qty:1});save();render();}
 function chgQty(idx,delta){const pt=getActivePoint();if(!pt)return;pt.selectedModules[idx].qty+=delta;if(pt.selectedModules[idx].qty<=0)pt.selectedModules.splice(idx,1);save();render();}
 function rmPoint(envId,ptId){const env=ST.environments.find(e=>e.id===envId);if(!env)return;env.points=env.points.filter(p=>p.id!==ptId);if(ST.activePointId===ptId)ST.activePointId=null;save();render();}
+
+// Acessórios externos do ambiente (dispositivos que não vão em placa)
+function rmAccessory(envId, idx){
+  const env = ST.environments.find(e => e.id === envId);
+  if(!env || !env.accessories) return;
+  env.accessories.splice(idx, 1);
+  save(); render();
+}
+function openAccessoryModal(envId){
+  const env = ST.environments.find(e => e.id === envId);
+  if(!env) return;
+  const series = env.seriesOv || ST.project?.series || 'S30';
+  const list = getAccessories(series);
+  if(!list.length){ alert('Nenhum acessório disponível para esta série.'); return; }
+  const mr = document.getElementById('modal-root');
+  // Agrupa por categoria para visualização organizada
+  const groups = {};
+  list.forEach((ac,i)=>{ const c=ac.cat||'Acessórios'; if(!groups[c])groups[c]=[]; groups[c].push({ac,i}); });
+  const rowHtml = (ac,i) => `
+    <div class="mod-row" onclick="addAccessoryToEnv('${envId}',${i})" style="cursor:pointer">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <div class="mod-dot" style="background:${CAT_CLR[ac.cat]||'#0891B2'};flex-shrink:0"></div>
+        <div style="min-width:0;overflow:hidden">
+          <div class="mod-ref">${ac.ref}${ac.isIO?'<span class="io-tag">iO</span>':''}</div>
+          <div class="mod-desc">${ac.desc}</div>
+        </div>
+      </div>
+      <span class="mod-pos-badge" style="background:#FFF3E0;color:#E65100">externo</span>
+    </div>`;
+  let body = '';
+  // Ordem: iO Smart primeiro (série-específicos), depois Acessórios (globais)
+  const order = ['iO Smart','Acessórios'];
+  order.concat(Object.keys(groups).filter(k=>!order.includes(k))).forEach(cat=>{
+    if(!groups[cat]) return;
+    body += `<div style="font-size:11px;font-weight:700;color:${CAT_CLR[cat]||'#555'};text-transform:uppercase;letter-spacing:0.05em;margin:12px 0 6px;padding-left:4px">${cat}</div>`;
+    body += groups[cat].map(({ac,i})=>rowHtml(ac,i)).join('');
+  });
+  mr.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal" style="max-width:540px">
+        <h3>🔌 Adicionar acessório ao ambiente</h3>
+        <p style="font-size:12px;color:var(--text-secondary);margin:-10px 0 10px">
+          Acessórios externos não ocupam espaço em placas nem requerem tampa cega. São itens independentes do ambiente.
+        </p>
+        <div class="mod-list" style="max-height:420px;overflow-y:auto">${body}</div>
+        <div class="modal-actions">
+          <button class="btn" onclick="closeModal()">Fechar</button>
+        </div>
+      </div>
+    </div>`;
+}
+function addAccessoryToEnv(envId, idx){
+  const env = ST.environments.find(e => e.id === envId);
+  if(!env) return;
+  const series = env.seriesOv || ST.project?.series || 'S30';
+  const list = getAccessories(series);
+  const ac = list[idx];
+  if(!ac) return;
+  if(!env.accessories) env.accessories = [];
+  const existing = env.accessories.find(a => a.ref === ac.ref);
+  if(existing){ existing.qty = (existing.qty||1) + 1; }
+  else { env.accessories.push({ref:ac.ref, desc:ac.desc, cat:ac.cat, isIO:ac.isIO, qty:1}); }
+  save(); closeModal(); render();
+}
 function selectPoint(envId,ptId){ST.activeEnvId=envId;ST.activePointId=ptId;ST.view='config';ST.filterCat='all';ST.searchText='';render();}
 function selectEnv(envId){ST.activeEnvId=envId;ST.activePointId=null;render();}
 function switchView(v){
