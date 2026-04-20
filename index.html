@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0088)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_32.html -->
+<!-- saved from url=(0088)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_36.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
@@ -735,7 +735,7 @@ window.addEventListener('unhandledrejection',function(e){
       <button class="nav-btn proj-name-btn" id="proj-name-btn" onclick="ST.project?renameProjectInline(event):confirmAndNew()" title="Renomear projeto" style="max-width:280px">
         <span id="proj-icon" style="font-size:13px">📁</span>
         <span id="proj-name-text" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px">Criar projeto</span>
-        <span id="proj-edit-icon" style="font-size: 11px; opacity: 0.55; margin-left: 4px; flex-shrink: 0; display: none;">✏</span>
+        <span id="proj-edit-icon" style="font-size:11px;opacity:0.55;margin-left:4px;flex-shrink:0;display:none">✏</span>
         <span id="proj-mgr-icon" style="font-size: 10px; opacity: 0.6; margin-left: 2px; flex-shrink: 0; display: inline;">▾</span>
       </button>
 
@@ -743,12 +743,12 @@ window.addEventListener('unhandledrejection',function(e){
 
       <button class="nav-btn" id="btn-import" onclick="confirmAndImport()" title="Importar projeto/lista de materiais">Importar <span class="nav-chevron">▾</span></button>
       <button class="nav-btn" id="btn-abrir" onclick="confirmAndOpen()" title="Abrir projeto existente">Abrir <span class="nav-chevron">▾</span></button>
-      <button class="nav-btn nav-btn-primary" id="btn-salvar" onclick="saveProject_quick()" title="Salvar projeto" style="display: none;">Salvar</button>
-      <button class="nav-btn" id="btn-fechar" onclick="closeProject()" title="Fechar projeto" style="opacity: 0.55; display: none;">Fechar ✕</button>
-      <button class="nav-btn" id="btn-novo" onclick="confirmAndNew()" title="Criar novo projeto" style="display: none;">Novo <span class="nav-chevron">＋</span></button>
-      <button class="nav-btn" id="btn-bom" onclick="switchView(&#39;bom&#39;)" style="display: none;">Lista de Materiais <span class="nav-chevron">▾</span></button>
+      <button class="nav-btn nav-btn-primary" id="btn-salvar" onclick="saveProject_quick()" title="Salvar projeto" style="display:none">Salvar</button>
+      <button class="nav-btn" id="btn-fechar" onclick="closeProject()" title="Fechar projeto" style="display:none;opacity:0.55">Fechar ✕</button>
+      <button class="nav-btn" id="btn-novo" onclick="confirmAndNew()" title="Criar novo projeto" style="display:none">Novo <span class="nav-chevron">＋</span></button>
+      <button class="nav-btn" id="btn-bom" onclick="switchView(&#39;bom&#39;)" style="display:none">Lista de Materiais <span class="nav-chevron">▾</span></button>
       
-      <button class="nav-btn nav-btn-primary" id="btn-excel" onclick="exportExcel()" style="display: none;">Excel ↓</button>
+      <button class="nav-btn nav-btn-primary" id="btn-excel" onclick="exportExcel()" style="display:none">Excel ↓</button>
     </div>
 
     <!-- RIGHT: Partner / Distributor logo -->
@@ -772,7 +772,7 @@ window.addEventListener('unhandledrejection',function(e){
         <span>📂</span> Importar Projeto / Lista
       </div>
       <div id="env-list"></div>
-      <div class="sb-add" id="sb-add-env" onclick="openModal(&#39;env&#39;)" style="display: none;">＋ Novo ambiente</div>
+      <div class="sb-add" id="sb-add-env" onclick="openModal(&#39;env&#39;)" style="display:none">＋ Novo ambiente</div>
       <div style="height:20px"></div>
     </div>
     <div class="content" id="content"><div class="welcome"><div class="welcome-hero">
@@ -1442,8 +1442,29 @@ function computeAssembly(selMods, series, plateColor, modColor, minFormat, suppo
     plate={ref,desc:`Placa ${sz}p ${format} ${pcName}`};}
   else if(series==='S26'||series==='S26IO'){const isBranco=pc==='030';const sfx=isBranco?'030':'038';const sfx4=isBranco?'050':'058';const sz=format==='4x2'?(blindCount===2?1:blindCount===1?2:3):(blindCount===4?2:blindCount===2?4:6);if(format==='4x2'){const refs={1:`2611611-${sfx}`,2:`2611612-${sfx}`,3:`2611613-${sfx}`};plate={ref:refs[sz],desc:`Placa ${format} ${sz} módulo(s) ${pcName}`};}else{const refs={2:`2610611-${sfx4}`,4:`2610622-${sfx4}`,6:`2610613-${sfx4}`};plate={ref:refs[sz],desc:`Placa ${format} ${sz} módulo(s) ${pcName}`};}}
   else if(series==='S82'){const ac=s.acab[pc];if(!ac){plate={ref:`8200613-${pc}`,desc:`Placa 3M ${pc}`};}else if(format==='4x4'){if(!ac.p6)warnings.push(`⚠ Acabamento "${ac.name}" não disponível em 4x4.`);plate={ref:ac.p6||'8200614-030',desc:`Placa 6M ${ac.name} (${ac.gama})`};}else{plate={ref:ac.p3,desc:`Placa 3M ${ac.name} (${ac.gama})`};}if(format==='4x2'&&totalPos<3)warnings.push(`ℹ S82: placa mínima é 3 postos. ${blindCount} tecla(s) cega(s) incluída(s).`);}
-  const blind = blindCount>0?{qty:blindCount,...getBlind(series,modColor,detectColorFromMods(selMods,series))}:null;
-  return {support,plate,blind,blindCount,format,totalPos,maxPos,warnings};
+
+  // S26IO: detectar iO Duplo (pos:2, isIO, "Duplo" na descrição) → usar tampa cega 1/2 módulo para completar os espaços livres.
+  // Cada par de meia-tampa substitui 1 tampa cega inteira.
+  // Quando há apenas 1 iO Duplo sozinho em 4x2 (sobra 1 pos), usamos 1 par de meias tampas (1 SKU 2611800-xxx, que já vem com 2 unidades por pacote).
+  // Regra: aplicar 1 par de meias tampas PARA CADA iO Duplo presente, desde que haja espaço em branco suficiente (1 pos livre por iO Duplo).
+  let halfBlindPairs = 0;
+  let regularBlindCount = blindCount;
+  if((series==='S26'||series==='S26IO') && blindCount>0){
+    const ioDuploCount = selMods
+      .filter(m => m.mod.isIO && m.mod.pos===2 && /duplo/i.test(m.mod.desc||''))
+      .reduce((s,m)=>s+m.qty, 0);
+    halfBlindPairs = Math.min(ioDuploCount, blindCount);
+    regularBlindCount = blindCount - halfBlindPairs;
+  }
+
+  const blind = regularBlindCount>0?{qty:regularBlindCount,...getBlind(series,modColor,detectColorFromMods(selMods,series))}:null;
+  let halfBlind = null;
+  if(halfBlindPairs>0 && (series==='S26'||series==='S26IO')){
+    const isBranco = pc==='030';
+    const sfx = isBranco?'030':'038';
+    halfBlind = {qty:halfBlindPairs, ref:`2611800-${sfx}`, desc:`Módulo Tampa Cega - 1/2 Módulo - C/ 2 Unidades - ${isBranco?'Branco':'Grafite'}`};
+  }
+  return {support,plate,blind,blindCount:regularBlindCount,halfBlind,halfBlindPairs,format,totalPos,maxPos,warnings};
 }
 
 // ================================================================
@@ -1477,6 +1498,99 @@ function save(){
       dbSave(db);
     }
   }
+  // Verificar se precisa adicionar Hub iO automaticamente (>20 pontos iO no projeto)
+  checkAutoHubIO();
+}
+
+// ─── Contagem de pontos iO e adição automática de Hub iO ──────────────────
+function countIOPoints(){
+  let count = 0;
+  ST.environments.forEach(env=>{
+    // Módulos iO dentro dos pontos (cada unidade = 1 ponto iO)
+    env.points?.forEach(pt=>{
+      pt.selectedModules?.forEach(sm=>{
+        if(sm.mod?.isIO) count += sm.qty;
+      });
+    });
+    // Acessórios iO do ambiente (DIN, Hub, Módulo Controle, etc)
+    env.accessories?.forEach(ac=>{
+      if(ac.isIO) count += (ac.qty||1);
+    });
+  });
+  return count;
+}
+function hasHubInProject(){
+  return ST.environments.some(env =>
+    (env.accessories||[]).some(ac => ac.ref==='21030108-039')
+  );
+}
+function checkAutoHubIO(){
+  if(!ST.project) return;
+  if(ST.project._hubAutoAdded) return; // já adicionado antes, não repete
+  if(hasHubInProject()) return;        // projeto já tem Hub manualmente, não precisa
+  const n = countIOPoints();
+  if(n <= 20) return;
+  // Prompt ao usuário
+  setTimeout(()=>{
+    if(ST.project._hubAutoAdded || hasHubInProject()) return;
+    openAutoHubDialog(n);
+  }, 100);
+}
+function openAutoHubDialog(nPoints){
+  const mr = document.getElementById('modal-root');
+  if(!mr) return;
+  mr.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal" style="max-width:480px">
+        <h3>🔌 Hub iO adicionado automaticamente</h3>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.55;margin:-4px 0 16px">
+          Detectamos <strong>${nPoints} pontos iO</strong> neste projeto (limite por Hub: 20).
+          Um <strong>Hub iO</strong> foi incluído automaticamente num ambiente chamado
+          <strong>"Automação iO"</strong> para suportar a comunicação dos dispositivos.
+        </p>
+        <div style="background:var(--accent-light,#E8F1F9);border:1px solid rgba(0,87,168,0.18);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--simon-blue);margin-bottom:16px">
+          <strong>21030108-039</strong> — Hub iO (Branco)
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" onclick="confirmAutoHubIO()">OK, entendi</button>
+        </div>
+      </div>
+    </div>`;
+}
+function confirmAutoHubIO(){
+  if(!ST.project) { closeModal(); return; }
+  // Cria ambiente "Automação iO" se não existe
+  let envAuto = ST.environments.find(e=>e.name==='Automação iO');
+  if(!envAuto){
+    envAuto = {id:uid(),name:'Automação iO',seriesOv:'S26IO',
+      pcOv:ST.project.pc||null,mcOv:ST.project.mc||null,
+      scOv:ST.project.sc||null,points:[],accessories:[]};
+    ST.environments.push(envAuto);
+  }
+  if(!envAuto.accessories) envAuto.accessories=[];
+  // Adiciona Hub iO se ainda não tem
+  const hubExists = envAuto.accessories.some(a=>a.ref==='21030108-039');
+  if(!hubExists){
+    envAuto.accessories.push({
+      ref:'21030108-039',
+      desc:'Hub iO - Branco',
+      cat:'iO Smart',
+      isIO:true,
+      qty:1
+    });
+  }
+  ST.project._hubAutoAdded = true;
+  closeModal();
+  // Salva sem re-disparar o checkAutoHubIO (já marcamos flag)
+  try{localStorage.setItem(SESSION_KEY,JSON.stringify({ST,_id}))}catch(e){}
+  if(ST.project._dbId){
+    const db=dbLoad();
+    const snap=makeSnapshot();
+    const idx=db.projects.findIndex(p=>p.id===snap.id);
+    if(idx>=0) db.projects[idx]=snap; else db.projects.unshift(snap);
+    dbSave(db);
+  }
+  render();
 }
 
 function makeSnapshot(){
@@ -1716,6 +1830,7 @@ function renderAsmBox(a){
   if(a.support) h+=asmRow('SUPORTE',a.support.ref,a.support.desc,'1×');
   if(a.plate) h+=asmRow(a.support?'PLACA':'PLACA+SUP',a.plate.ref,a.plate.desc,'1×');
   if(a.blind&&a.blind.qty>0) h+=asmRow('CEGO',a.blind.ref,a.blind.desc,a.blind.qty+'×');
+  if(a.halfBlind&&a.halfBlind.qty>0) h+=asmRow('CEGO ½',a.halfBlind.ref,a.halfBlind.desc,a.halfBlind.qty+'×');
   h+='</div>';
   if(a.warnings.length) h+=`<div class="warn">${a.warnings.join('<br>')}</div>`;
   return h;
@@ -1849,8 +1964,18 @@ function renderPreview(asm,selMods,series,plateColor,modColor){
   // Build cells (centered: blinds split symmetrically)
   const cells=[];
   const _tb=asm.blindCount||0,_ld=Math.floor(_tb/2),_tr=_tb-_ld;
+  const _hbp=asm.halfBlindPairs||0;
+  // Layout S26IO especial para iO Duplo: o par de meias tampas (2 unidades) é desenhado como
+  // 2 retângulos empilhados dentro de uma única posição da placa (isHalfBlind cell).
+  // A posição da meia-tampa é alocada no final (após os módulos) para dar visual limpo:
+  //   [iO Duplo (2pos)] + [meia↑/meia↓ numa pos]  em placa 4x2 de 3pos
+  // First: half of the regular blinds above (on top)
   for(let i=0;i<_ld;i++)cells.push({cat:'Tampa Cega',isBlind:true,span:1,first:true});
+  // Then: modules themselves
   selMods.forEach(sm2=>{for(let qi=0;qi<sm2.qty;qi++){for(let p=0;p<sm2.mod.pos;p++)cells.push({cat:sm2.mod.cat,isIO:sm2.mod.isIO,span:sm2.mod.pos,pos:p,first:p===0,desc:sm2.mod.desc||''});}});
+  // Then: half-blind pairs (each pair = 1 cell with 2 half-blinds stacked inside)
+  for(let i=0;i<_hbp;i++)cells.push({cat:'Tampa Cega',isBlind:true,isHalfBlind:true,span:1,first:true});
+  // Finally: remaining regular blinds below
   for(let i=0;i<_tr;i++)cells.push({cat:'Tampa Cega',isBlind:true,span:1,first:true});
 
   // Physical proportions: 4x2 = portrait 1:2, 4x4 = square with 2 side-by-side cavities
@@ -1909,7 +2034,15 @@ function renderPreview(asm,selMods,series,plateColor,modColor){
       const span=Math.min(cell.span||1,ROWS-row);
       const sx=cavX,sy=py+FRAME+row*(slotH+GAP),sw=slotW,sh=slotH*span+GAP*(span-1);
       if(cell.isBlind){
-        svg+=`<rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="4" fill="${lm?'rgba(0,0,0,0.025)':'rgba(255,255,255,0.025)'}" stroke="${bord}" stroke-width="0.35"/>`;
+        if(cell.isHalfBlind){
+          // Desenha 2 meias tampas empilhadas dentro de 1 célula (divisão horizontal no meio)
+          const halfH = (sh - GAP*0.6)/2;
+          const fillClr = lm?'rgba(0,0,0,0.04)':'rgba(255,255,255,0.04)';
+          svg+=`<rect x="${sx}" y="${sy}" width="${sw}" height="${halfH}" rx="3" fill="${fillClr}" stroke="${bord}" stroke-width="0.35" stroke-dasharray="2.2 1.8"/>`;
+          svg+=`<rect x="${sx}" y="${sy+halfH+GAP*0.6}" width="${sw}" height="${halfH}" rx="3" fill="${fillClr}" stroke="${bord}" stroke-width="0.35" stroke-dasharray="2.2 1.8"/>`;
+        } else {
+          svg+=`<rect x="${sx}" y="${sy}" width="${sw}" height="${sh}" rx="4" fill="${lm?'rgba(0,0,0,0.025)':'rgba(255,255,255,0.025)'}" stroke="${bord}" stroke-width="0.35"/>`;
+        }
       }else{
         const mg=gid+'m'+cellIdx;
         svg+=`<defs><linearGradient id="${mg}" x1="0" y1="0" x2="0" y2="1">
@@ -1967,6 +2100,7 @@ function collectBOM(){
         if(a.support)add(a.support.ref,a.support.desc,'Suporte');
         if(a.plate)add(a.plate.ref,a.plate.desc,'Placa');
         if(a.blind&&a.blind.qty>0){const k=a.blind.ref;if(!items[k])items[k]={ref:k,desc:a.blind.desc,cat:'Tampa Cega',series,qty:0};items[k].qty+=a.blind.qty;}
+        if(a.halfBlind&&a.halfBlind.qty>0){const k=a.halfBlind.ref;if(!items[k])items[k]={ref:k,desc:a.halfBlind.desc,cat:'Tampa Cega',series,qty:0};items[k].qty+=a.halfBlind.qty;}
       }
     });
     // Acessórios externos do ambiente (DIN, Hub, etc) - não usam placa/suporte
@@ -2003,6 +2137,7 @@ function collectBOMByEnv(){
           if(a.support)add(a.support.ref,a.support.desc,'Suporte');
           if(a.plate)add(a.plate.ref,a.plate.desc,'Placa');
           if(a.blind&&a.blind.qty>0){const k=a.blind.ref;if(!items[k])items[k]={ref:k,desc:a.blind.desc,cat:'Tampa Cega',series,qty:0};items[k].qty+=a.blind.qty;}
+          if(a.halfBlind&&a.halfBlind.qty>0){const k=a.halfBlind.ref;if(!items[k])items[k]={ref:k,desc:a.halfBlind.desc,cat:'Tampa Cega',series,qty:0};items[k].qty+=a.halfBlind.qty;}
         }
       });
       // Acessórios externos do ambiente (DIN, Hub, etc)
@@ -2588,48 +2723,134 @@ const CLAUDE_SYSTEM_LIST = `Você é um assistente especializado em materiais el
 Analise a lista de materiais e extraia TODOS os itens com suas quantidades, respeitando os ambientes.
 
 Para cada item retorne um objeto JSON com:
-- ambiente: nome do cômodo/ambiente EXATAMENTE como aparece no documento (ex: "Suite 01", "Banheiro quarto 01", "Cozinha")
+- ambiente: nome do cômodo/ambiente EXATAMENTE como aparece no documento (ex: "Suite 01", "Banheiro quarto 01", "Cozinha"); se não houver ambiente, use "Geral"
 - ref: código Simon Brasil se identificado (ex: "30101-30"), ou null
-- desc: descrição do item exatamente como está na lista, incluindo o número de posições para placas
+- desc: descrição do item (pode ser reescrita para itens decompostos — ver regras abaixo)
 - qty: quantidade (número inteiro — se não indicado explicitamente, assumir 1)
 - item_type: classifique cada item:
-    "module"  → interruptores (simples, paralelo, intermediário, bipolar), tomadas 10A/20A, USB, RJ45, dimmer, pulsador, cigarra
+    "module"  → interruptores (simples, paralelo, intermediário, bipolar), tomadas 10A/20A, USB, RJ45, dimmer, pulsador, cigarra, iO Duplo, Triplo iO
     "support" → suporte 4x2, suporte 4x4
     "plate"   → placa 4x2 (com 1, 2 ou 3 posições), placa 4x4 (com 6 posições), acabamento
     "blind"   → módulo cego, tampa cega
-- ponto_id: sempre null neste modo
+- ponto_id: string única identificando o ponto físico na parede — OBRIGATÓRIO quando múltiplos módulos vão no MESMO ponto (ex: combinação "tecla + tomada" fica num mesmo ponto_id; cada linha-item do documento que descreve um ponto completo gera seu próprio ponto_id)
 - serie_hint: null (a série é definida pelo utilizador)
 
-REGRAS CRÍTICAS:
-- NÃO agrupe — cada linha da lista = um item separado
-- Preserve as quantidades EXATAMENTE como estão na lista
-- Para placas com posições: inclua na desc o número (ex: "Placa 4x2 com 2 posições", "Placa 4x4 com 6 posições")
-- Para placa cega (sem posições especificadas): use item_type "blank_plate"
-- Módulos cegos são item_type "blind", não "module"
-- "01 placa 4x2 para 3 posições" → qty:1, desc:"Placa 4x2 com 3 posições", item_type:"plate"
-- "06 módulos cegos" → qty:6, item_type:"blind"
+REGRAS GERAIS:
+- NÃO agrupe itens separados da lista em uma linha só — cada linha do documento é tratada independentemente
+- Preserve quantidades EXATAMENTE como estão na lista
+- NÃO tente adivinhar ou aplicar cor (branco/preto) pela descrição — IGNORE menções de cor. A cor vem da tela de import do usuário.
+- Para placa cega (sem posições): item_type "blank_plate"
+- Módulos cegos: item_type "blind"
 
-CONVERSÕES DE COMBINAÇÕES (representar como qty total, item_type:"module"):
-- "interruptor duplo normal" / "2 teclas simples" → qty:2, desc:"Interruptor simples 10A"
-- "interruptor triplo normal" / "3 teclas simples" → qty:3, desc:"Interruptor simples 10A"
-- "interruptor triplo 3-way" / "3 paralelos no mesmo ponto" → qty:3, desc:"Interruptor paralelo 10A"
-- "interruptor duplo paralelo" / "2-way duplo" → qty:2, desc:"Interruptor paralelo 10A"
-- "tomada dupla 10A" → qty:2, desc:"Tomada 2P+T 10A"
-- "tomada tripla 10A" → qty:3, desc:"Tomada 2P+T 10A"
-- "tomada dupla 20A" → qty:2, desc:"Tomada 2P+T 20A"
-- NÃO divida interruptores iO Duplo/Triplo (são produtos únicos de 2/3 posições)
+════════════════════════════════════════════════════════════════════════════
+REGRAS DE DECOMPOSIÇÃO — Simon 26 iO TOUCH/Wi-Fi (CRÍTICO!)
+════════════════════════════════════════════════════════════════════════════
+Itens descritos como "TOUCH INTELIGENTE Wi-Fi" são da linha Simon 26 iO Connect.
+Eles NÃO são um único SKU — devem ser DECOMPOSTOS conforme regras abaixo.
+
+FATOS IMPORTANTES sobre os módulos iO:
+- Interruptor iO Duplo (ref base 26102201): ocupa 2 posições físicas na placa, mas
+  tem APENAS 1 CIRCUITO (controla 1 carga).
+- Triplo Interruptor iO (ref base 26103201): ocupa 3 posições físicas, tem
+  3 CIRCUITOS (pode controlar 1, 2 ou 3 cargas independentemente).
+- Módulo Controle Tomadas iO (ref 21002893-039): não ocupa posição física na placa
+  (externo/adicional); controla UMA tomada comum transformando-a em "inteligente".
+
+Gere um ponto_id único para CADA linha-item da lista original. Itens decompostos
+a partir da mesma linha compartilham o MESMO ponto_id.
+
+─── INTERRUPTORES TOUCH (apenas, sem tomada) ────────────────────────────────
+"INTERRUPTOR 1 TECLA TOUCH ... 4X2"
+  → 1× {desc:"Interruptor iO Duplo", ref:null, item_type:"module"}
+  (Usa 1 circuito. Ocupa 2 pos na placa 4x2 de 3 pos → sobra 1 pos livre)
+
+"INTERRUPTOR 2 TECLAS TOUCH ... 4X2"
+  → 1× {desc:"Triplo Interruptor iO", ref:null, item_type:"module"}
+  (Usa 2 dos 3 circuitos do Triplo iO. Ocupa 3 pos → enche placa 4x2 de 3 pos)
+  (ATENÇÃO: NÃO use 2× Interruptor iO Duplo aqui, porque cada iO Duplo só tem 1 circuito)
+
+"INTERRUPTOR 3 TECLAS TOUCH ... 4X2"
+  → 1× {desc:"Triplo Interruptor iO", ref:null, item_type:"module"}
+  (Usa os 3 circuitos. Ocupa 3 pos)
+
+"INTERRUPTOR 4 TECLAS TOUCH ... 4X4"
+  → 1× {desc:"Interruptor iO Duplo", ref:null, item_type:"module"}
+  → 1× {desc:"Triplo Interruptor iO", ref:null, item_type:"module"}
+  (Total: 1+3=4 circuitos, 2+3=5 posições na placa 4x4 de 6 pos, sobra 1)
+
+"INTERRUPTOR 6 TECLAS TOUCH ... 4X4"
+  → 2× {desc:"Triplo Interruptor iO", ref:null, item_type:"module"}
+  (Total: 3+3=6 circuitos, 6 pos, enche placa 4x4)
+
+"INTERRUPTOR MÓDULO INTELIGENTE WI-FI PARA 1 PONTO"
+  → 1× {desc:"Interruptor iO Duplo", ref:null, item_type:"module"}   (1 circuito)
+
+"INTERRUPTOR MÓDULO INTELIGENTE WI-FI PARA 2 PONTOS"
+  → 1× {desc:"Triplo Interruptor iO", ref:null, item_type:"module"}  (2 dos 3 circuitos)
+
+─── TOMADAS Wi-Fi (sozinhas) ────────────────────────────────────────────────
+"1 TOMADA 2P+T 10A INTELIGENTE WI-FI ... 4X2"
+  → 1× {desc:"Tomada 2P+T 10A", ref:null, item_type:"module"}
+  → 1× {desc:"Módulo Controle Tomadas iO", ref:"21002893-039", item_type:"module"}
+  (IMPORTANTE: o Módulo Controle Tomadas iO não ocupa posição na placa — é externo)
+  (A Simon 26iO NÃO tem tomada inteligente própria; usa tomada S26 comum + módulo iO)
+
+"2 TOMADAS 2P+T 10A INTELIGENTES WI-FI ... 4X2"
+  → 2× {desc:"Tomada 2P+T 10A", ref:null, item_type:"module"}
+  → 1× {desc:"Módulo Controle Tomadas iO", ref:"21002893-039", item_type:"module"}
+
+─── COMBINADOS: TECLA(S) TOUCH + TOMADA(S) Wi-Fi ────────────────────────────
+Aplique as regras acima para cada parte, TUDO no mesmo ponto_id:
+
+"INTERRUPTOR 1 TECLA TOUCH E 1 TOMADA 2P+T 10A ... 4X2"
+  → 1× Interruptor iO Duplo (1 circ, 2 pos)
+  → 1× Tomada 2P+T 10A (1 pos)
+  → 1× Módulo Controle Tomadas iO (ref:"21002893-039", 0 pos)
+  Total placa: 3 pos (enche placa 4x2)
+
+"INTERRUPTOR 2 TECLAS TOUCH E 1 TOMADA 2P+T 10A ... 4X2"
+  → 1× Triplo Interruptor iO (2 dos 3 circuitos, 3 pos)
+  → 1× Tomada 2P+T 10A (1 pos)
+  → 1× Módulo Controle Tomadas iO (0 pos)
+  Total placa: 4 pos → ESTOURA placa 4x2 (3 pos). Retorne decomposto mesmo;
+  o configurador detectará o estouro e avisará o usuário.
+
+"INTERRUPTOR 4 TECLAS TOUCH E 2 TOMADAS 2P+T 10A ... 4X4"
+  → 1× Interruptor iO Duplo (1 circuito, 2 pos)
+  → 1× Triplo Interruptor iO (3 circuitos, 3 pos)
+  → 2× Tomada 2P+T 10A (2 pos)
+  → 1× Módulo Controle Tomadas iO (0 pos)
+  Total placa: 7 pos → ESTOURA placa 4x4 (6 pos). Retorne decomposto mesmo.
+  (O usuário pode dividir em 2 pontos depois manualmente.)
+
+════════════════════════════════════════════════════════════════════════════
+CONVERSÕES DE COMBINAÇÕES NORMAIS (linha Simon 26/30/35/82 — sem Wi-Fi)
+════════════════════════════════════════════════════════════════════════════
+Decompor e agrupar no mesmo ponto_id:
+- "interruptor duplo normal" / "2 teclas simples" → 2× Interruptor simples 10A (mesmo ponto_id)
+- "interruptor triplo normal" / "3 teclas simples" → 3× Interruptor simples 10A (mesmo ponto_id)
+- "interruptor triplo 3-way" / "3 paralelos no mesmo ponto" → 3× Interruptor paralelo 10A (mesmo ponto_id)
+- "interruptor duplo paralelo" / "2-way duplo" → 2× Interruptor paralelo 10A (mesmo ponto_id)
+- "tomada dupla 10A" → 2× Tomada 2P+T 10A (mesmo ponto_id)
+- "tomada tripla 10A" → 3× Tomada 2P+T 10A (mesmo ponto_id)
+- "tomada dupla 20A" → 2× Tomada 2P+T 20A (mesmo ponto_id)
+- NÃO divida interruptores iO Duplo/Triplo (já são produtos únicos de 2/3 posições)
 
 RETORNE APENAS array JSON válido, sem markdown, sem explicação.
 
-Exemplo baseado em formato real:
+Exemplo 1 — lista tipo S26iO Touch:
+Entrada: "INTERRUPTOR 1 TECLA TOUCH E 1 TOMADA 2P+T 10A INTELIGENTE WI-FI BRANCA 4X2"
+Saída:
+[
+  {"ambiente":"Geral","desc":"Interruptor iO Duplo","qty":1,"item_type":"module","ref":null,"ponto_id":"io-touch-1","serie_hint":null},
+  {"ambiente":"Geral","desc":"Tomada 2P+T 10A","qty":1,"item_type":"module","ref":null,"ponto_id":"io-touch-1","serie_hint":null},
+  {"ambiente":"Geral","desc":"Módulo Controle Tomadas iO","qty":1,"item_type":"module","ref":"21002893-039","ponto_id":"io-touch-1","serie_hint":null}
+]
+
+Exemplo 2 — lista tradicional com placas/suportes:
 [
   {"ambiente":"Suite 01","desc":"Placa 4x2 com 3 posições","qty":1,"item_type":"plate","ref":null,"ponto_id":null,"serie_hint":null},
-  {"ambiente":"Suite 01","desc":"Módulo interruptor paralelo","qty":6,"item_type":"module","ref":null,"ponto_id":null,"serie_hint":null},
-  {"ambiente":"Suite 01","desc":"Módulo interruptor intermediário","qty":3,"item_type":"module","ref":null,"ponto_id":null,"serie_hint":null},
-  {"ambiente":"Suite 01","desc":"Suporte 4x4","qty":3,"item_type":"support","ref":null,"ponto_id":null,"serie_hint":null},
-  {"ambiente":"Suite 01","desc":"Módulo cego","qty":6,"item_type":"blind","ref":null,"ponto_id":null,"serie_hint":null},
-  {"ambiente":"Suite 01","desc":"Placa 4x4 com 6 posições","qty":3,"item_type":"plate","ref":null,"ponto_id":null,"serie_hint":null},
-  {"ambiente":"Suite 01","desc":"Módulo tomada 2P+T 10A","qty":8,"item_type":"module","ref":null,"ponto_id":null,"serie_hint":null},
+  {"ambiente":"Suite 01","desc":"Interruptor paralelo 10A","qty":6,"item_type":"module","ref":null,"ponto_id":null,"serie_hint":null},
   {"ambiente":"Suite 01","desc":"Suporte 4x2","qty":8,"item_type":"support","ref":null,"ponto_id":null,"serie_hint":null}
 ]`;;
 
@@ -2651,7 +2872,7 @@ Para cada item retorne um objeto JSON com:
     Use uma string descritiva para agrupar módulos que ficam NO MESMO ponto físico na parede.
     Ex: "sala-tv-interr-tomada" para um interruptor e tomada na mesma parede/local.
     Null quando há suportes/placas explicitados — nesse caso a distribuição é automática.
-- serie_hint: série (S19/S20/S30/S35/S26/S82), ou null
+- serie_hint: série (S19/S20/S30/S35/S26/S26IO/S82), ou null
 
 SITUAÇÃO 1 — Lista de material com suportes e placas explicitados:
 Extraia cada item com seu item_type correto. NÃO agrupe — retorne cada linha da lista separada.
@@ -2689,6 +2910,38 @@ CONVERSÕES OBRIGATÓRIAS — agrupe SEMPRE no mesmo ponto_id:
 
 
 SIMBOLOGIA ESPECIAL DE PROJETOS (reconheça estas descrições e converta):
+
+════════════════════════════════════════════════════════════════════════════
+SIMON 26 iO TOUCH/Wi-Fi — DECOMPOSIÇÃO OBRIGATÓRIA
+════════════════════════════════════════════════════════════════════════════
+Itens "TOUCH INTELIGENTE Wi-Fi" NÃO são SKU único. Decomponha no MESMO ponto_id.
+
+FATOS IMPORTANTES:
+- Interruptor iO Duplo (26102201): 2 posições físicas, mas APENAS 1 CIRCUITO.
+- Triplo Interruptor iO (26103201): 3 posições físicas, 3 CIRCUITOS independentes
+  (pode usar 1, 2 ou 3 cargas).
+- Módulo Controle Tomadas iO (21002893-039): não ocupa posição na placa (externo).
+
+REGRAS:
+"INTERRUPTOR 1 TECLA TOUCH" → 1× Interruptor iO Duplo [2 pos, 1 circ, sobra 1 pos]
+"INTERRUPTOR 2 TECLAS TOUCH" → 1× Triplo Interruptor iO [3 pos, usa 2 dos 3 circ]
+"INTERRUPTOR 3 TECLAS TOUCH" → 1× Triplo Interruptor iO [3 pos, 3 circ]
+"INTERRUPTOR 4 TECLAS TOUCH" (4X4) → 1× iO Duplo + 1× Triplo iO [5 pos, 4 circ]
+"INTERRUPTOR 6 TECLAS TOUCH" (4X4) → 2× Triplo Interruptor iO [6 pos, 6 circ]
+"INTERRUPTOR MÓDULO WI-FI PARA 1 PONTO" → 1× Interruptor iO Duplo (1 circ)
+"INTERRUPTOR MÓDULO WI-FI PARA 2 PONTOS" → 1× Triplo Interruptor iO (2 circ)
+
+"N TOMADAS 2P+T 10A INTELIGENTES WI-FI" → N× Tomada 2P+T 10A comum (S26) + 1× Módulo Controle Tomadas iO (ref:"21002893-039", externo)
+(A Simon 26iO NÃO tem tomada inteligente própria.)
+
+COMBINADOS (tecla + tomada): tudo no MESMO ponto_id. Se total de posições exceder
+a placa disponível, retorne os itens decompostos mesmo — o configurador sinalizará.
+
+IGNORE cor na descrição (branco/preto/branca/preta) — a cor vem da tela de import.
+
+════════════════════════════════════════════════════════════════════════════
+SIMBOLOGIA TRADICIONAL DE PROJETOS ELÉTRICOS
+════════════════════════════════════════════════════════════════════════════
 Tomadas bifásicas 220V:
 - "TOMADA BAIXA BIFÁSICA" / "TOMADA MÉDIA BIFÁSICA" / "TOMADA ALTA BIFÁSICA" (220V, h=qualquer) → desc:"Tomada 2P+T 20A", item_type:"module"
 - "TOMADA BIFÁSICA" (qualquer variante) → desc:"Tomada 2P+T 20A", item_type:"module"
@@ -3546,6 +3799,22 @@ function resolveDirectRef(item, series, pc, mc){
   if(item.ref){const m=allMods.find(m=>m.ref===item.ref);if(m)return{ref:m.ref,desc:m.desc,cat:m.cat};}
   if(item.item_type==='module'||item.item_type==='blind'){
     const pool=item.item_type==='blind'?allMods.filter(m=>m.cat==='Tampa Cega'):allMods.filter(m=>m.cat!=='Conjunto');
+
+    // Regras especiais para S26IO — descrições iO Touch/Wi-Fi
+    if(series==='S26IO' && item.item_type==='module'){
+      const dLc = (item.desc||'').toLowerCase();
+      const byPrefix = (pfx)=>pool.find(m=>m.ref.startsWith(pfx+'-'+mc))||pool.find(m=>m.ref.startsWith(pfx+'-'));
+      if(/triplo\s+interruptor\s+io|3\s*teclas?\s+touch/i.test(dLc)){
+        const m=byPrefix('26103201'); if(m) return {ref:m.ref,desc:m.desc,cat:m.cat};
+      }
+      if(/interruptor\s+io\s+duplo|io\s+duplo|[12]\s*teclas?\s+touch|modulo\s+(inteligente\s+)?wi[- ]?fi\s+.*ponto/i.test(dLc)){
+        const m=byPrefix('26102201'); if(m) return {ref:m.ref,desc:m.desc,cat:m.cat};
+      }
+      if(/controle(\s+de)?\s+tomadas?\s+io|m[oó]dulo\s+controle\s+tomadas/i.test(dLc)){
+        const m=pool.find(m=>m.ref==='21002893-039'); if(m) return {ref:m.ref,desc:m.desc,cat:m.cat};
+      }
+    }
+
     const matched=bestModMatch(item.desc,pool);
     if(matched){
       if(mc&&matched.ref){const base=matched.ref.replace(/-[^-]+$/,'');const v=allMods.find(m=>m.ref===base+'-'+mc);if(v)return{ref:v.ref,desc:v.desc,cat:v.cat};}
@@ -3636,6 +3905,41 @@ function finalizeImport(){
     // 2. Description match — exclude Conjunto category entirely from auto-assignment
     if(!item.desc) return null;
     const modsNoConj = mods.filter(m=>m.cat!=='Conjunto');
+
+    // 2a. Special handling for iO Touch/Wi-Fi keywords — try direct SKU match first
+    // (mc suffix is normalized later by the color swap at step 3)
+    const dLc = item.desc.toLowerCase();
+    const isS26IOProject = (series === 'S26IO');
+    const sufGuess = IMP.importMc || (isS26IOProject ? '030' : null);
+
+    function findByRefPrefix(prefix){
+      // Prefer variant with user-selected color (importMc), else first available
+      const suf = IMP.importMc;
+      if(suf){
+        const withColor = modsNoConj.find(m => m.ref === prefix + '-' + suf);
+        if(withColor) return withColor;
+      }
+      return modsNoConj.find(m => m.ref.startsWith(prefix + '-'));
+    }
+
+    if(isS26IOProject){
+      // "Triplo Interruptor iO" / "3 teclas touch"
+      if(/triplo\s+interruptor\s+io|3\s*teclas?\s+touch/i.test(item.desc)){
+        const m = findByRefPrefix('26103201');
+        if(m) return m;
+      }
+      // "Interruptor iO Duplo" / "1 tecla touch" / "2 teclas touch" / "módulo wi-fi ... ponto"
+      if(/interruptor\s+io\s+duplo|io\s+duplo|[12]\s*teclas?\s+touch|modulo\s+(inteligente\s+)?wi[- ]?fi\s+.*ponto/i.test(item.desc)){
+        const m = findByRefPrefix('26102201');
+        if(m) return m;
+      }
+      // "Módulo Controle Tomadas iO" → always ref 21002893-039 (single color/variant)
+      if(/controle(\s+de)?\s+tomadas?\s+io|m[oó]dulo\s+controle\s+tomadas/i.test(item.desc)){
+        const m = modsNoConj.find(m => m.ref === '21002893-039');
+        if(m) return m;
+      }
+    }
+
     const matched = bestModMatch(item.desc, modsNoConj);
     if(!matched) return null;
     // 3. Try to swap to the env color variant (importMc)
