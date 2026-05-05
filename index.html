@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0090)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_40_1.html -->
+<!-- saved from url=(0088)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_43.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
@@ -270,6 +270,15 @@ html,body{height:100%;font-family:var(--font-sans);font-size:14px;color:var(--te
   color:var(--accent);font-weight:600;
 }
 .info-bar strong{color:var(--text-primary)}
+.env-breadcrumb{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 20px;
+  background:linear-gradient(180deg, var(--accent-light), rgba(232,241,249,0.5));
+  border-bottom:1px solid rgba(0,87,168,0.18);
+  flex-shrink:0;
+  font-size:13px;font-weight:600;color:var(--simon-navy);
+}
+.env-breadcrumb strong{color:var(--simon-blue);font-size:14px}
 
 /* ── Point Config ─────────────────────────────────────────────────────────── */
 .point-config{flex:1;display:flex;overflow:hidden}
@@ -548,8 +557,37 @@ html,body{height:100%;font-family:var(--font-sans);font-size:14px;color:var(--te
 }
 .c-swatch-inner{width:28px;height:28px;border-radius:50%}
 .c-swatch-label{font-size:10px;color:var(--text-secondary);text-align:center;margin-top:4px;max-width:44px;word-break:break-word;line-height:1.3}
-.cswatch{width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
-.cswatch.sel{box-shadow:0 0 0 2px var(--bg-primary),0 0 0 4px var(--simon-blue)}
+/* Color swatch chip (used in Color Wizard) — container vertical com círculo + nome embaixo */
+.cswatch{
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  width:62px;min-height:62px;padding:6px 4px 4px;
+  border-radius:8px;cursor:pointer;
+  background:transparent;border:1px solid transparent;
+  transition:all 0.15s;
+  box-sizing:border-box;
+}
+.cswatch:hover{background:var(--bg-secondary);border-color:var(--border-light)}
+.cswatch.sel{background:var(--accent-light);border-color:var(--simon-blue)}
+.cswatch-circle{
+  width:32px;height:32px;border-radius:50%;
+  flex-shrink:0;margin-bottom:5px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+.cswatch.sel .cswatch-circle{
+  box-shadow:0 0 0 2px var(--bg-primary), 0 0 0 4px var(--simon-blue),
+             inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+.cswatch-label{
+  font-size:10px;line-height:1.2;text-align:center;
+  color:var(--text-secondary);font-weight:500;
+  word-break:break-word;hyphens:auto;max-width:60px;
+}
+.cswatch.sel .cswatch-label{color:var(--simon-blue);font-weight:600}
+.gama-label-sm{
+  font-size:10px;font-weight:700;color:var(--text-tertiary);
+  text-transform:uppercase;letter-spacing:0.06em;
+  margin:8px 0 4px;padding-left:2px;
+}
 .gama-label{font-size:11px;font-weight:600;color:var(--text-secondary);margin:10px 0 6px;text-transform:uppercase;letter-spacing:0.5px}
 
 /* ── Import Modal ─────────────────────────────────────────────────────────── */
@@ -675,7 +713,7 @@ html,body{height:100%;font-family:var(--font-sans);font-size:14px;color:var(--te
 .cwiz-section-label{font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px}
 .cwiz-env-card{background:var(--bg-secondary);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:14px;margin-bottom:10px}
 .cwiz-env-name{font-size:13px;font-weight:600;color:var(--simon-navy);margin-bottom:10px}
-.color-swatch-row{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.color-swatch-row{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:flex-start;padding:2px 0}
 .cwiz-series-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--simon-navy);color:#fff;font-weight:600}
 .diff-toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);cursor:pointer;margin:8px 0}
 .diff-toggle input{cursor:pointer;accent-color:var(--simon-blue)}
@@ -2005,7 +2043,10 @@ function renderPointConfig(pt){
   const envId=ST.activeEnvId,series=getEnvSeries(envId),pc=getEnvPC(envId),mc=getEnvMC(envId),sc=getEnvSc(envId),s=SM[series],allMods=getMods(series);
   const asm=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,sc):null;
   const cats=[...new Set(allMods.map(m=>m.cat))].sort((a,b)=>a==='Conjunto'?1:b==='Conjunto'?-1:0);
+  const envObj = ST.environments.find(e=>e.id===envId);
+  const envName = envObj?.name || '';
   let h=`<div class="tab-bar"><div class="tab active">Configuração</div><div class="tab" onclick="switchView('bom')">Lista de Materiais</div></div>
+  <div class="env-breadcrumb">🏠 <strong>${envName}</strong></div>
   <div class="info-bar"><span>📍 <strong>${pt.name}</strong></span><span>Série: <span class="info-badge">${s.label}</span></span>${asm&&!asm.error?'<span>Formato: <span class="info-badge">'+asm.format+'</span></span><span>'+asm.totalPos+'/'+asm.maxPos+' posições</span>':''}${pt.location?'<span style="color:var(--text-tertiary)">'+pt.location+'</span>':''}<div style="margin-left:auto;display:flex;gap:0;flex-shrink:0;border-radius:8px;overflow:hidden;border:1px solid var(--border-medium)"><button class="btn" onclick="togglePointColorPanel('${pt.id}')" style="font-size:11px;padding:4px 10px;border-radius:0;border:none;border-right:1px solid var(--border-light)" title="Cores deste ponto">🎨 Ponto</button><button class="btn" onclick="openEnvColorEdit('${envId}')" style="font-size:11px;padding:4px 10px;border-radius:0;border:none;border-right:1px solid var(--border-light)" title="Cores de todo o ambiente">🏠 Ambiente</button><button class="btn" onclick="openColorWizard()" style="font-size:11px;padding:4px 10px;border-radius:0;border:none" title="Cores de todo o projeto">🏗 Projeto</button></div></div>
   <div class="point-config"><div class="config-panel">
   <span class="section-label">Adicionar Módulos</span>
@@ -3001,8 +3042,31 @@ async function prepareContentForAPI(file, fileType){
 const CLAUDE_SYSTEM_LIST = `Você é um assistente especializado em materiais elétricos da linha Simon Brasil.
 Analise a lista de materiais e extraia TODOS os itens com suas quantidades, respeitando os ambientes.
 
+⚠️ INSTRUÇÕES MAIS IMPORTANTES (LEIA PRIMEIRO):
+
+1. EXTRAIA TODOS OS AMBIENTES — não pule nenhum. Documentos típicos têm 5–15 ambientes
+   (Hall, Copa, Cozinha, Lavanderia, Sala, Corredor, Quartos, Banheiros, Suíte, Escritório, etc).
+   Se um ambiente aparece no documento, ELE PRECISA aparecer na sua resposta. Faça uma varredura
+   sequencial do início ao FIM do texto. Não trunque nem economize.
+
+2. CADA "CONJUNTO" É UM PONTO FÍSICO SEPARADO — não agrupe pontos diferentes do mesmo ambiente.
+   Exemplo: se a Cozinha tem "01 conjunto 4x2 para 03 módulos: 2 tomadas + 1 cego" repetido 5 vezes,
+   isso são 5 PONTOS DIFERENTES (5 ponto_id distintos), não 1 ponto com qty=5.
+   Use ponto_id para AGRUPAR módulos do MESMO conjunto/placa, e ponto_id DIFERENTE para cada nova
+   linha que começa com "01 conjunto" ou "01 placa" no documento.
+
+3. ITENS RISCADOS/TACHADOS — se você detectar marcações de cancelamento (texto riscado,
+   "[cancelado]", "[removido]", traços horizontais sobre o texto), IGNORE esse item.
+
+4. ANOTAÇÕES MANUSCRITAS / EM VERMELHO — anotações como "esse é da TV?", "qual é esse?",
+   "tomada 20a", "geladeira", "filtro", "lava roupa" são DICAS contextuais sobre o ponto
+   (uso real ou correção). Use a anotação para refinar o nome do ponto quando útil
+   (ex: ponto.location = "geladeira"), mas NÃO crie itens novos a partir delas.
+
+═══════════════════════════════════════════════════════════════════════════
+
 Para cada item retorne um objeto JSON com:
-- ambiente: nome do cômodo/ambiente EXATAMENTE como aparece no documento (ex: "Suite 01", "Banheiro quarto 01", "Cozinha"); se não houver ambiente, use "Geral"
+- ambiente: nome do cômodo/ambiente EXATAMENTE como aparece no documento (ex: "Suite Master", "Banheiro Bruno", "Cozinha"); se não houver ambiente, use "Geral"
 - ref: código Simon Brasil se identificado (ex: "30101-30"), ou null
 - desc: descrição do item (pode ser reescrita para itens decompostos — ver regras abaixo)
 - qty: quantidade (número inteiro — se não indicado explicitamente, assumir 1)
@@ -3011,7 +3075,11 @@ Para cada item retorne um objeto JSON com:
     "support" → suporte 4x2, suporte 4x4
     "plate"   → placa 4x2 (com 1, 2 ou 3 posições), placa 4x4 (com 6 posições), acabamento
     "blind"   → módulo cego, tampa cega
-- ponto_id: string única identificando o ponto físico na parede — OBRIGATÓRIO quando múltiplos módulos vão no MESMO ponto (ex: combinação "tecla + tomada" fica num mesmo ponto_id; cada linha-item do documento que descreve um ponto completo gera seu próprio ponto_id)
+- ponto_id: string única identificando o ponto físico na parede.
+    REGRA CRÍTICA: cada "01 conjunto 4x2..." ou "01 conjunto 4x4..." do documento gera UM ponto_id ÚNICO.
+    Todos os módulos listados DENTRO desse conjunto (no mesmo bullet "○") compartilham o MESMO ponto_id.
+    Se o mesmo padrão aparece N vezes (ex: 5 conjuntos idênticos na mesma cozinha), gere N ponto_id distintos.
+    Sugestão de nomenclatura: "{ambiente}-pt{numero}" (ex: "cozinha-pt1", "cozinha-pt2", "cozinha-pt3").
 - serie_hint: null (a série é definida pelo utilizador)
 
 REGRAS GERAIS:
@@ -3297,7 +3365,7 @@ async function callClaudeAPI(content, extraText, systemPrompt){
         method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':apiKey,
           'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,system:systemPrompt||CLAUDE_SYSTEM,messages})
+        body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:48000,system:systemPrompt||CLAUDE_SYSTEM,messages})
       });
     }catch(netErr){
       if(attempt < MAX_RETRIES){
@@ -3343,8 +3411,19 @@ async function callClaudeAPI(content, extraText, systemPrompt){
     if(fence) jsonStr=fence[1].trim();
     const arrStart=jsonStr.indexOf('[');
     if(arrStart>0) jsonStr=jsonStr.slice(arrStart);
+    // Detect truncation: stop_reason from the API
+    const stopReason = data.stop_reason || '';
+    const apiTruncated = (stopReason === 'max_tokens');
     try{
-      return JSON.parse(jsonStr);
+      const parsed = JSON.parse(jsonStr);
+      // Even if parsed OK, the API may have hit max_tokens — flag for caller
+      if(apiTruncated){
+        IMP._lastResponseTruncated = true;
+        console.warn('API hit max_tokens; response may be incomplete. Items parsed:', parsed.length);
+      } else {
+        IMP._lastResponseTruncated = false;
+      }
+      return parsed;
     }catch(parseErr){
       try{
         const lastComplete=jsonStr.lastIndexOf('}');
@@ -3355,6 +3434,7 @@ async function callClaudeAPI(content, extraText, systemPrompt){
           if(opens>closes) repaired+=']';
           const result=JSON.parse(repaired);
           console.warn('JSON truncated — repaired, recovered',result.length,'items');
+          IMP._lastResponseTruncated = true;
           return result;
         }
       }catch(repairErr){}
@@ -3901,6 +3981,63 @@ async function runAnalysis(){
       const _fmsg=IMP.isListMode?'Extraia todos os itens desta lista de materiais ('+getFileTypeLabel(IMP.fileType)+'):':'Analise este documento ('+getFileTypeLabel(IMP.fileType)+') e extraia todos os materiais Simon Brasil.';
       items=await callClaudeAPI(content,_fmsg,_sys);
     }
+
+    // Fallback automático: se a resposta foi truncada, fazer chunks por ambientes faltantes
+    if(IMP._lastResponseTruncated && items.length > 0){
+      const seen = new Set(items.map(it => (it.ambiente||'Geral').trim().toLowerCase()));
+      const ambList = Array.from(seen);
+      console.warn('Truncated response detected. Fetching missing ambients...');
+      // Atualizar UI
+      const steps = document.querySelectorAll('.ai-step');
+      if(steps.length){
+        const lastStep = steps[steps.length-1];
+        if(lastStep) lastStep.innerHTML = '⏳ Documento grande detectado — buscando ambientes restantes…';
+      }
+      // Faz nova chamada pedindo APENAS os ambientes que não foram retornados
+      const missingMsg = `Você já me retornou os ambientes: ${ambList.join(', ')}.\n\nAgora retorne SOMENTE os ambientes RESTANTES do documento (que NÃO estão na lista acima). Aplique TODAS as regras anteriores. Se não houver mais ambientes além dos listados, retorne array vazio [].\n\nDocumento original:\n\n`;
+      try{
+        let extraItems = [];
+        if(IMP.method === 'text'){
+          extraItems = await callClaudeAPI(null, missingMsg + IMP.rawText, _sys);
+        } else if(IMP.file){
+          const content2 = await prepareContentForAPI(IMP.file, IMP.fileType);
+          extraItems = await callClaudeAPI(content2, missingMsg + 'Veja o documento anexado.', _sys);
+        }
+        if(Array.isArray(extraItems) && extraItems.length > 0){
+          // Filtrar duplicatas (caso a IA retorne ambientes que já vieram)
+          const filtered = extraItems.filter(it => {
+            const amb = (it.ambiente||'Geral').trim().toLowerCase();
+            return !seen.has(amb);
+          });
+          console.warn(`Recovered ${filtered.length} additional items from ${new Set(filtered.map(i=>i.ambiente)).size} new ambients.`);
+          items = items.concat(filtered);
+          // Se ainda truncou, faz mais uma rodada (até 2 chunks adicionais)
+          if(IMP._lastResponseTruncated && filtered.length > 0){
+            const seen2 = new Set(items.map(it => (it.ambiente||'Geral').trim().toLowerCase()));
+            const ambList2 = Array.from(seen2);
+            const missingMsg2 = `Você já me retornou os ambientes: ${ambList2.join(', ')}.\n\nRetorne SOMENTE os ambientes que ainda FALTAM. Se não houver mais, retorne [].\n\nDocumento:\n\n`;
+            try{
+              let extra2 = [];
+              if(IMP.method === 'text'){
+                extra2 = await callClaudeAPI(null, missingMsg2 + IMP.rawText, _sys);
+              } else if(IMP.file){
+                const content3 = await prepareContentForAPI(IMP.file, IMP.fileType);
+                extra2 = await callClaudeAPI(content3, missingMsg2 + 'Veja o documento anexado.', _sys);
+              }
+              if(Array.isArray(extra2) && extra2.length > 0){
+                const filtered2 = extra2.filter(it => !seen2.has((it.ambiente||'Geral').trim().toLowerCase()));
+                items = items.concat(filtered2);
+                console.warn(`Recovered additional ${filtered2.length} items in 2nd chunk.`);
+              }
+            }catch(e2){ console.warn('2nd chunk fallback failed:', e2); }
+          }
+        }
+      }catch(chunkErr){
+        console.warn('Chunk fallback failed:', chunkErr);
+        // Não bloqueia — segue com os itens que tem
+      }
+    }
+
     setLoadingStep(3);await sleep(400);
     // Apply client-side normalization (extracts per_plate grouping)
     const normalized = normalizeImportItems(items);
@@ -4523,6 +4660,20 @@ function finalizeImport(){
         }
       }
 
+      // Helper: nome curto e legível para ponto baseado em descrições
+      function makePointName(items, idx, total){
+        // Usa primeiras 2-3 palavras de cada descrição, separa por "+"
+        const parts = items.map(x=>{
+          const d = (x.item?.desc || x.desc || '').replace(/\s+/g,' ').trim();
+          return d.split(' ').slice(0,3).join(' ');
+        }).filter(Boolean);
+        let name = parts.join(' + ');
+        // Truncar a 30 chars com elipse
+        if(name.length > 30) name = name.substring(0,27) + '…';
+        if(total > 1) name = name + ' (' + (idx+1) + '/' + total + ')';
+        return name || 'Ponto';
+      }
+
       // Create points for each plate in registry
       // Each plate group creates EXACTLY plate.qty points
       // Every point in the group has ALL assigned modules
@@ -4544,9 +4695,7 @@ function finalizeImport(){
             const mod=resolveMod(item);
             if(mod) selMods.push({mod,qty:perPt});
           }
-          const nameBase=plate.mods.map(x=>(x.item.desc||'').split(' ').slice(0,2).join(' ')).join('+');
-          const label=nPts>1?`${nameBase.substring(0,28)} ${i+1}/${nPts}`:nameBase.substring(0,50);
-          env.points.push({id:uid(),name:label,location:envName,
+          env.points.push({id:uid(),name:makePointName(plate.mods,i,nPts),location:envName,
             selectedModules:selMods,_minFormat:minFmt});
         }
       }
@@ -4561,8 +4710,10 @@ function finalizeImport(){
         const tot=Math.ceil(qty/maxP);
         while(rem>0){
           const take=Math.min(rem,maxP);
-          const lbl=tot>1?`${(item.desc||'').substring(0,28)} ${idx}/${tot}`:(item.desc||'Ponto').substring(0,50);
-          env.points.push({id:uid(),name:lbl,location:envName,
+          let lbl=(item.desc||'').replace(/\s+/g,' ').trim().split(' ').slice(0,3).join(' ');
+          if(lbl.length>30) lbl=lbl.substring(0,27)+'…';
+          if(tot>1) lbl=lbl+' ('+idx+'/'+tot+')';
+          env.points.push({id:uid(),name:lbl||'Ponto',location:envName,
             selectedModules:mod?[{mod,qty:take}]:[]});
           rem-=take;idx++;
         }
@@ -4615,9 +4766,15 @@ function finalizeImport(){
         // Choose plate format based on total positions needed
         const fmt=totalPos>3?'4x4':'4x2';
         const minFmt=fmt==='4x4'?'4x4':null;
-        const nameBase=groupItems.map(it=>it.desc||'').join('+').substring(0,35);
-        const label=total>1?`${nameBase} (${gIdx+1}/${total})`:nameBase.substring(0,50);
-        env.points.push({id:uid(),name:label,location:envName,
+        // Nome curto: primeiras 3 palavras de cada desc, separadas por " + "
+        const parts=groupItems.map(it=>{
+          const d=(it.desc||'').replace(/\s+/g,' ').trim();
+          return d.split(' ').slice(0,3).join(' ');
+        }).filter(Boolean);
+        let label=parts.join(' + ');
+        if(label.length>30) label=label.substring(0,27)+'…';
+        if(total>1) label=label+' ('+(gIdx+1)+'/'+total+')';
+        env.points.push({id:uid(),name:label||'Ponto',location:envName,
           selectedModules:selMods,_minFormat:minFmt});
       });
     }
