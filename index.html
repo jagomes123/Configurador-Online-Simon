@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<!-- saved from url=(0088)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_53.html -->
+<!-- saved from url=(0090)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_63_1.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
+  <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simon Brasil — Configurador + Proposta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20v%2022_files/css2" rel="stylesheet">
-<script src="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20v%2022_files/xlsx.full.min.js"></script>
+<!-- XLSX com suporte a estilos (xlsx-js-style) — bundle.js inclui jszip embutido -->
+<script src="./Simon Brasil — Configurador + Proposta v63_files/xlsx.bundle.js"></script>
 <script src="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20v%2022_files/mammoth.browser.min.js"></script>
 
 <style>
@@ -239,6 +240,42 @@ html,body{height:100%;font-family:var(--font-sans);font-size:14px;color:var(--te
   background:var(--accent-light);color:var(--accent);
   font-family:var(--font-mono);font-weight:600;flex-shrink:0;white-space:nowrap;margin-top:1px;
 }
+/* Edit-in-place do nome do ambiente (duplo clique) */
+.env-label{user-select:none}
+.env-label:hover{background:rgba(0,87,168,0.06);border-radius:4px}
+.env-rename-input{
+  flex:1;min-width:0;font-size:11px;font-weight:600;color:var(--simon-navy);
+  border:1px solid var(--simon-blue);border-radius:4px;padding:3px 6px;
+  font-family:var(--font-sans);background:#fff;outline:none;
+}
+/* Seleção múltipla de pontos (Shift/Ctrl/Cmd + click) */
+.sb-item.point.multi-sel{
+  background:rgba(255,107,53,0.10);
+  box-shadow:inset 3px 0 0 var(--simon-orange,#FF6B35);
+  color:var(--text-primary);
+}
+.sb-item.point.multi-sel.active{
+  background:linear-gradient(90deg, rgba(255,107,53,0.10), var(--accent-light));
+}
+/* Banner de ações em massa */
+.bulk-bar{
+  position:sticky;top:0;z-index:5;
+  margin:0 0 6px;padding:8px 12px;
+  background:linear-gradient(180deg, var(--simon-orange,#FF6B35), #E0571F);
+  color:#fff;border-radius:0;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  box-shadow:0 2px 6px rgba(255,107,53,0.25);
+}
+.bulk-bar-count{font-size:11px;font-weight:700;letter-spacing:0.02em;flex:1}
+.bulk-bar-actions{display:flex;gap:4px;flex-shrink:0}
+.bulk-bar-btn{
+  background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);
+  color:#fff;font-size:10px;font-weight:600;padding:4px 8px;border-radius:5px;
+  cursor:pointer;font-family:var(--font-sans);transition:background 0.12s;
+  white-space:nowrap;
+}
+.bulk-bar-btn:hover{background:rgba(255,255,255,0.28)}
+.bulk-bar-clear{padding:4px 7px;font-size:11px}
 
 /* ── Content Area ─────────────────────────────────────────────────────────── */
 .content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:#FFFFFF}
@@ -387,6 +424,47 @@ html,body{height:100%;font-family:var(--font-sans);font-size:14px;color:var(--te
 .asm-ref{font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary)}
 .asm-desc{font-size:12px;color:var(--text-primary);margin-top:2px;word-break:break-word;line-height:1.45;min-width:0}
 .asm-qty{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--simon-navy);min-width:28px;text-align:right;flex-shrink:0}
+
+/* ── Plate Size Selector ─────────────────────────────────────────────────── */
+.plate-size-selector{
+  background:var(--bg-secondary);border:1px solid var(--border-light);
+  border-radius:var(--radius-md);padding:14px 14px 12px;margin-top:12px;
+}
+.plate-size-label{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;
+  color:var(--text-secondary);margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.plate-size-pills{display:flex;flex-wrap:wrap;gap:6px}
+.plate-pill{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-width:84px;padding:8px 10px;border-radius:8px;
+  background:#fff;border:1.5px solid var(--border-medium);
+  cursor:pointer;font-family:var(--font-sans);transition:all 0.12s;
+  position:relative;
+}
+.plate-pill:hover:not(:disabled):not(.selected){border-color:var(--simon-blue);background:var(--accent-light)}
+.plate-pill.selected{
+  border-color:var(--simon-blue);background:var(--accent-light);
+  box-shadow:inset 0 0 0 1px var(--simon-blue);
+}
+.plate-pill.optimal:not(.selected){
+  border-color:#16A34A;background:#F0FDF4;
+}
+.plate-pill.optimal:not(.selected):hover{background:#DCFCE7}
+.plate-pill.invalid{
+  opacity:0.4;cursor:not-allowed;border-style:dashed;
+}
+.plate-pill-size{font-size:14px;font-weight:700;color:var(--simon-navy)}
+.plate-pill.selected .plate-pill-size{color:var(--simon-blue)}
+.plate-pill.optimal:not(.selected) .plate-pill-size{color:#15803D}
+.plate-pill-blinds{font-size:9px;color:#D97706;margin-top:2px;font-weight:600}
+.plate-pill-exact{font-size:9px;color:#15803D;margin-top:2px;font-weight:600}
+.plate-pill-badge{
+  position:absolute;top:-7px;right:4px;
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+  padding:1px 6px;border-radius:6px;
+  background:#16A34A;color:#fff;
+}
 
 /* ── Warnings ─────────────────────────────────────────────────────────────── */
 .warn{
@@ -1063,6 +1141,17 @@ const CAT_CLR = {
   "Sensor":"#4F46E5","Sinal":"#65A30D","Especial":"#DC2626","Tampa Cega":"#9CA3AF",
   "Complemento":"#6B7280","iO Smart":"#7C3AED","iO Master":"#4338CA","Acessórios":"#0891B2"
 };
+// Ordem de exibição na BOM e Excel: Suporte → Placa → Módulos → Tampa Cega → Acessórios → Conjunto
+const CAT_ORDER = {
+  "Suporte":1, "Placa":2,
+  "Interruptor":10, "Pulsador":11, "Dimmer":12, "USB":13, "Tomada":14,
+  "Multimídia":15, "Dados":16, "Sinal":17, "Sensor":18, "Automação":19,
+  "Complemento":20, "iO Smart":21, "iO Master":22, "Especial":23,
+  "Tampa Cega":90,
+  "Acessórios":95,
+  "Conjunto":99
+};
+function catRank(c){ return CAT_ORDER[c] != null ? CAT_ORDER[c] : 50; }
 const SM = {
   S19:{label:"Simon 19",tier:"Econômica",integrated:true,pc:[{id:"30",name:"Branco",hex:"#F5F5F5"}],mc:[{id:"30",name:"Branco",hex:"#F5F5F5"}]},
   S20:{label:"Simon 20",tier:"Intermediária",integrated:true,pc:[{id:"30",name:"Branco",hex:"#F5F5F5"},{id:"37",name:"Negro Piano",hex:"#1A1A1A"}],mc:[{id:"30",name:"Branco",hex:"#F5F5F5"},{id:"37",name:"Negro Piano",hex:"#1A1A1A"}]},
@@ -1628,7 +1717,7 @@ function getBlind(series, mc, detectedSuffix){
 // ================================================================
 // RULES ENGINE (same as previous)
 // ================================================================
-function computeAssembly(selMods, series, plateColor, modColor, minFormat, supportColor) {
+function computeAssembly(selMods, series, plateColor, modColor, minFormat, supportColor, preferPlateSize) {
   const totalPos = selMods.reduce((s,m) => s+(m.mod.pos==null?1:m.mod.pos)*m.qty, 0);
   if(totalPos===0) return null;
   const warnings=[];
@@ -1636,7 +1725,12 @@ function computeAssembly(selMods, series, plateColor, modColor, minFormat, suppo
   const hasMech = selMods.some(m=>!m.mod.isIO);
   if(hasIO&&hasMech&&(series==='S26'||series==='S26IO')) warnings.push('⚠ Mistura de módulos iO e mecânicos no mesmo ponto.');
   // minFormat: '4x4' forces 4x4 even if modules fit in 4x2 (client specified 4x4 plate)
-  const format = (minFormat==='4x4' || totalPos>3) ? '4x4' : '4x2';
+  // preferPlateSize: número de slots preferido (1,2,3,4,6) — se possível, usa essa placa em vez da menor automática
+  let format = (minFormat==='4x4' || totalPos>3) ? '4x4' : '4x2';
+  // Se o usuário forçou um tamanho que só existe em 4x4 (4 ou 6), força 4x4
+  if(preferPlateSize===4 || preferPlateSize===6) format = '4x4';
+  // Se forçou 1, 2 ou 3 e o totalPos cabe, usa 4x2
+  if((preferPlateSize===1 || preferPlateSize===2 || preferPlateSize===3) && totalPos<=3 && minFormat!=='4x4') format = '4x2';
   const maxPos = format==='4x2'?3:6;
   const blindCount = maxPos-totalPos;
   if(blindCount<0) return {error:true,warnings:['⚠ Total de posições ('+totalPos+') excede '+format+' ('+maxPos+'). Divida em dois pontos.'],totalPos};
@@ -1663,19 +1757,45 @@ function computeAssembly(selMods, series, plateColor, modColor, minFormat, suppo
     }
   }
   const pc = plateColor, pcName = s.pc?(s.pc.find(c=>c.id===pc)?.name||pc):pc;
-  if(series==='S19'){const m={'4x2':{1:'19911-30',2:'19922-30',3:'19913-30'},'4x4':{2:'19911-50',4:'19922-50',6:'19913-50'}};const sz=format==='4x2'?(blindCount===2?1:blindCount===1?2:3):(blindCount===4?2:blindCount===2?4:6);plate={ref:m[format][sz]||m[format][format==='4x2'?3:6],desc:`Placa ${sz}p + suporte ${format} Branco`};}
+  // Helper: escolhe o melhor tamanho de placa para totalPos, respeitando preferPlateSize do usuário.
+  // avail = mapa {1:'ref', 2:'ref', 3:'ref', ...} de placas disponíveis na cor.
+  // Lógica:
+  //   - Se preferPlateSize está setado e é VÁLIDO (avail[preferPlateSize] existe e >= totalPos): usa
+  //   - Caso contrário: pega a MENOR placa com slots >= totalPos (minimiza tampas cegas)
+  //   - Se nada cobre totalPos, usa a maior disponível
+  function pickBestPlateSize(avail, totalPos, format, preferPlateSize){
+    const sizes = Object.keys(avail).map(Number).sort((a,b)=>a-b);
+    if(!sizes.length) return null;
+    // Honra escolha do usuário se válida
+    if(preferPlateSize && avail[preferPlateSize] && preferPlateSize >= totalPos){
+      return preferPlateSize;
+    }
+    // Caso automático: menor placa que comporta totalPos
+    for(const sz of sizes){ if(sz >= totalPos) return sz; }
+    // Nada comporta — pega a maior
+    return sizes[sizes.length-1];
+  }
+
+  if(series==='S19'){
+    const m={'4x2':{1:'19911-30',2:'19922-30',3:'19913-30'},'4x4':{2:'19911-50',4:'19922-50',6:'19913-50'}};
+    const avail=m[format];
+    const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
+    plate={ref:avail[sz],desc:`Placa ${sz}p + suporte ${format} Branco`};
+  }
   else if(series==='S20'){
     const P={'4x2':{'30':{1:'20911-30',2:'20922-30',3:'20913-30'},'37':{1:'20911-37',2:'20922-37',3:'20913-37'}},'4x4':{'30':{2:'20911-50',4:'20922-50',6:'20913-50'},'37':{2:'20911-57',4:'20922-57',6:'20913-57'}}};
     const avail=P[format][pc]||P[format]['30'];
-    const sz=format==='4x2'?(blindCount===2&&avail[1]?1:blindCount<=1&&avail[2]?2:3):(blindCount===4?2:blindCount===2?4:6);
-    plate={ref:avail[sz]||avail[3]||avail[6]||Object.values(avail)[0],desc:`Placa ${sz}p + suporte ${format} ${pcName}`};}
+    const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
+    plate={ref:avail[sz]||Object.values(avail)[0],desc:`Placa ${sz}p + suporte ${format} ${pcName}`};
+  }
   else if(series==='S30'){
     // S30 LINE plates (300xxx) - integrated support: Branco(30), Grafite Fosco(38), Alumínio(34)
     const P={'4x2':{'30':{1:'300911-30',2:'300922-30',3:'300913-30'},'38':{1:'300911-38',2:'300922-38',3:'300913-38'},'34':{1:'300911-34',2:'300922-34',3:'300913-34'}},'4x4':{'30':{4:'300922-50',6:'300913-50'},'38':{4:'300922-58',6:'300913-58'},'34':{4:'300922-54',6:'300913-54'}}};
     const avail=P[format][pc]||P[format]['30'];
-    const sz=format==='4x2'?(blindCount===2&&avail[1]?1:blindCount<=1&&avail[2]?2:3):(blindCount===2&&avail[4]?4:6);
-    const ref=avail[sz]||avail[3]||avail[6]||Object.values(avail)[0];
-    plate={ref,desc:`Placa ${sz}p + suporte ${format} ${pcName}`};}
+    const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
+    const ref=avail[sz]||Object.values(avail)[0];
+    plate={ref,desc:`Placa ${sz}p + suporte ${format} ${pcName}`};
+  }
   else if(series==='S35'){
     // S35 plates: Branco(30), Branco Fosco(31), Champagne(33), Alumínio(34), Preto(39), Carvalho(41), Tabaco(42), Rosê Gold(43), Preto Fosco(44), Aço Corten(45)
     const P={'4x2':{
@@ -1702,25 +1822,60 @@ function computeAssembly(selMods, series, plateColor, modColor, minFormat, suppo
       '45':{6:'35613-65'}
     }};
     const avail=P[format][pc]||P[format]['30'];
-    const sz=format==='4x2'?(blindCount===2&&avail[1]?1:blindCount<=1&&avail[2]?2:3):(blindCount===2&&avail[4]?4:6);
-    const ref=avail[sz]||avail[3]||avail[6]||Object.values(avail)[0];
-    if(format==='4x2'&&!avail[2]&&blindCount===1)warnings.push(`ℹ Placa de 2 postos não disponível em ${pcName}. Usando placa de 3 postos.`);
-    plate={ref,desc:`Placa ${sz}p ${format} ${pcName}`};}
-  else if(series==='S26'||series==='S26IO'){const isBranco=pc==='030';const sfx=isBranco?'030':'038';const sfx4=isBranco?'050':'058';const sz=format==='4x2'?(blindCount===2?1:blindCount===1?2:3):(blindCount===4?2:blindCount===2?4:6);if(format==='4x2'){const refs={1:`2611611-${sfx}`,2:`2611612-${sfx}`,3:`2611613-${sfx}`};plate={ref:refs[sz],desc:`Placa ${format} ${sz} módulo(s) ${pcName}`};}else{const refs={2:`2610611-${sfx4}`,4:`2610622-${sfx4}`,6:`2610613-${sfx4}`};plate={ref:refs[sz],desc:`Placa ${format} ${sz} módulo(s) ${pcName}`};}}
+    const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
+    const ref=avail[sz]||Object.values(avail)[0];
+    if(format==='4x2'&&!avail[2]&&totalPos===2&&sz===3)warnings.push(`ℹ Placa de 2 postos não disponível em ${pcName}. Usando placa de 3 postos.`);
+    plate={ref,desc:`Placa ${sz}p ${format} ${pcName}`};
+  }
+  else if(series==='S26'||series==='S26IO'){
+    const isBranco=pc==='030';const sfx=isBranco?'030':'038';const sfx4=isBranco?'050':'058';
+    const avail = format==='4x2'
+      ? {1:`2611611-${sfx}`,2:`2611612-${sfx}`,3:`2611613-${sfx}`}
+      : {2:`2610611-${sfx4}`,4:`2610622-${sfx4}`,6:`2610613-${sfx4}`};
+    const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
+    plate={ref:avail[sz],desc:`Placa ${format} ${sz} módulo(s) ${pcName}`};
+  }
   else if(series==='S82'){const ac=s.acab[pc];if(!ac){plate={ref:`8200613-${pc}`,desc:`Placa 3M ${pc}`};}else if(format==='4x4'){if(!ac.p6)warnings.push(`⚠ Acabamento "${ac.name}" não disponível em 4x4.`);plate={ref:ac.p6||'8200614-030',desc:`Placa 6M ${ac.name} (${ac.gama})`};}else{plate={ref:ac.p3,desc:`Placa 3M ${ac.name} (${ac.gama})`};}if(format==='4x2'&&totalPos<3)warnings.push(`ℹ S82: placa mínima é 3 postos. ${blindCount} tecla(s) cega(s) incluída(s).`);}
+
+  // Recalcula blindCount com base no tamanho REAL da placa escolhida (pode ser maior que totalPos se preferPlateSize for definido)
+  // Extrai o tamanho da placa do desc (ou do ref). Para simplicidade, regex no ref.
+  let actualPlateSize = maxPos;
+  if(plate && plate.ref){
+    // Tentar extrair do desc primeiro (formato "Placa Np ..." ou "Placa NM ...")
+    const sizeMatch = (plate.desc||'').match(/Placa\s+(\d)[pPmM]/);
+    if(sizeMatch) actualPlateSize = parseInt(sizeMatch[1]);
+    else if(format==='4x2') actualPlateSize = 3;
+    else actualPlateSize = 6;
+  }
+  // Atualiza blindCount baseado na placa real (caso preferPlateSize tenha forçado uma placa maior)
+  const finalBlindCount = Math.max(0, actualPlateSize - totalPos);
+  // Aviso se a placa escolhida manualmente requer tampas cegas além do necessário
+  if(preferPlateSize && actualPlateSize > totalPos && preferPlateSize !== 3 && preferPlateSize !== 6){
+    // Só avisa se a escolha não foi a default automática
+    const optimalSize = (function(){
+      const tmp = {};
+      tmp[1]=1; tmp[2]=2; tmp[3]=3; tmp[4]=4; tmp[6]=6;
+      // Encontra a menor placa >= totalPos (considerando o que existe na série/cor)
+      // Aqui aproximamos com totalPos arredondado pra cima ao tamanho mais comum
+      if(totalPos<=1) return 1; if(totalPos<=2) return 2; if(totalPos<=3) return 3;
+      if(totalPos<=4) return 4; return 6;
+    })();
+    if(actualPlateSize > optimalSize){
+      warnings.push(`ℹ Placa ${actualPlateSize}p escolhida manualmente. ${finalBlindCount} tampa(s) cega(s) serão necessárias (placa ${optimalSize}p seria mais econômica).`);
+    }
+  }
 
   // S26IO: detectar iO Duplo (pos:2, isIO, "Duplo" na descrição) → usar tampa cega 1/2 módulo para completar os espaços livres.
   // Cada par de meia-tampa substitui 1 tampa cega inteira.
-  // Quando há apenas 1 iO Duplo sozinho em 4x2 (sobra 1 pos), usamos 1 par de meias tampas (1 SKU 2611800-xxx, que já vem com 2 unidades por pacote).
-  // Regra: aplicar 1 par de meias tampas PARA CADA iO Duplo presente, desde que haja espaço em branco suficiente (1 pos livre por iO Duplo).
+  // Usa finalBlindCount (tampas cegas baseadas no tamanho REAL da placa escolhida).
   let halfBlindPairs = 0;
-  let regularBlindCount = blindCount;
-  if((series==='S26'||series==='S26IO') && blindCount>0){
+  let regularBlindCount = finalBlindCount;
+  if((series==='S26'||series==='S26IO') && finalBlindCount>0){
     const ioDuploCount = selMods
       .filter(m => m.mod.isIO && m.mod.pos===2 && /duplo/i.test(m.mod.desc||''))
       .reduce((s,m)=>s+m.qty, 0);
-    halfBlindPairs = Math.min(ioDuploCount, blindCount);
-    regularBlindCount = blindCount - halfBlindPairs;
+    halfBlindPairs = Math.min(ioDuploCount, finalBlindCount);
+    regularBlindCount = finalBlindCount - halfBlindPairs;
   }
 
   const blind = regularBlindCount>0?{qty:regularBlindCount,...getBlind(series,modColor,detectColorFromMods(selMods,series))}:null;
@@ -1730,7 +1885,7 @@ function computeAssembly(selMods, series, plateColor, modColor, minFormat, suppo
     const sfx = isBranco?'030':'038';
     halfBlind = {qty:halfBlindPairs, ref:`2611800-${sfx}`, desc:`Módulo Tampa Cega - 1/2 Módulo - C/ 2 Unidades - ${isBranco?'Branco':'Grafite'}`};
   }
-  return {support,plate,blind,blindCount:regularBlindCount,halfBlind,halfBlindPairs,format,totalPos,maxPos,warnings};
+  return {support,plate,blind,blindCount:regularBlindCount,halfBlind,halfBlindPairs,format,totalPos,maxPos:actualPlateSize,warnings};
 }
 
 // ================================================================
@@ -1952,6 +2107,51 @@ function tryLoad(){
   render();
 }
 function getEnvSeries(envId){const env=ST.environments.find(e=>e.id===envId);const s=env?.seriesOv||ST.project?.series||'S30';return s==='S26IO'?'S26':s;}
+
+// Retorna lista de tamanhos de placa disponíveis para uma combinação série+cor+formato.
+// Retorno: array de números [1, 2, 3, ...] em ordem crescente.
+function getAvailablePlateSizes(series, format, pc){
+  // Replica os mapas P de cada série (espelha computeAssembly)
+  const MAPS = {
+    S19: {'4x2':{1:1,2:1,3:1}, '4x4':{2:1,4:1,6:1}},
+    S20: {
+      '4x2':{'30':{1:1,2:1,3:1},'37':{1:1,2:1,3:1}},
+      '4x4':{'30':{2:1,4:1,6:1},'37':{2:1,4:1,6:1}}
+    },
+    S30: {
+      '4x2':{'30':{1:1,2:1,3:1},'38':{1:1,2:1,3:1},'34':{1:1,2:1,3:1}},
+      '4x4':{'30':{4:1,6:1},'38':{4:1,6:1},'34':{4:1,6:1}}
+    },
+    S35: {
+      '4x2':{
+        '30':{1:1,2:1,3:1},'31':{1:1,2:1,3:1},
+        '33':{1:1,3:1},'34':{1:1,3:1},'39':{1:1,3:1},
+        '41':{1:1,3:1},'42':{1:1,3:1},'43':{1:1,3:1},
+        '44':{1:1,3:1},'45':{1:1,3:1}
+      },
+      '4x4':{
+        '30':{4:1,6:1},'31':{4:1,6:1},
+        '33':{6:1},'34':{6:1},'39':{6:1},
+        '41':{6:1},'42':{6:1},'43':{6:1},'44':{6:1},'45':{6:1}
+      }
+    },
+    S26:  {'4x2':{'030':{1:1,2:1,3:1},'038':{1:1,2:1,3:1}}, '4x4':{'030':{2:1,4:1,6:1},'038':{2:1,4:1,6:1}}},
+    S26IO:{'4x2':{'030':{1:1,2:1,3:1},'038':{1:1,2:1,3:1}}, '4x4':{'030':{2:1,4:1,6:1},'038':{2:1,4:1,6:1}}},
+    S82:  {'4x2':{any:{3:1}}, '4x4':{any:{6:1}}}
+  };
+  const seriesMap = MAPS[series];
+  if(!seriesMap) return [];
+  const fmtMap = seriesMap[format];
+  if(!fmtMap) return [];
+  // S19 tem estrutura simples (sem cor)
+  let avail;
+  if(series==='S19'){ avail = fmtMap; }
+  else if(series==='S82'){ avail = fmtMap.any || {}; }
+  else {
+    avail = fmtMap[pc] || fmtMap[Object.keys(fmtMap)[0]] || {};
+  }
+  return Object.keys(avail).map(Number).sort((a,b)=>a-b);
+}
 function getEnvPC(envId){const env=ST.environments.find(e=>e.id===envId);return env?.pcOv||ST.project?.pc||null;}
 function getEnvMC(envId){const env=ST.environments.find(e=>e.id===envId);return env?.mcOv||ST.project?.mc||null;}
 function getActivePoint(){if(!ST.activeEnvId||!ST.activePointId) return null;return ST.environments.find(e=>e.id===ST.activeEnvId)?.points.find(p=>p.id===ST.activePointId)||null;}
@@ -2003,15 +2203,29 @@ function render(){
   if(typeof hydrateImages==='function') hydrateImages();
 }
 
+// Estado de seleção múltipla de pontos (para mover para outro ambiente)
+if(!window._SEL) window._SEL = { points: new Set() }; // {envId-pointId}
+
 function renderSidebar(){
   const el=document.getElementById('env-list');
   if(!ST.project){el.innerHTML='';return;}
   let h='';
+  // Banner de ações em massa quando há pontos selecionados
+  if(_SEL.points.size > 0){
+    h += `<div class="bulk-bar">
+      <span class="bulk-bar-count">${_SEL.points.size} ponto(s) selecionado(s)</span>
+      <div class="bulk-bar-actions">
+        <button class="bulk-bar-btn" onclick="bulkMoveToEnv()" title="Mover para outro ambiente">→ Mover</button>
+        <button class="bulk-bar-btn" onclick="bulkCreateEnvFromSelection()" title="Criar novo ambiente com os selecionados">＋ Novo ambiente</button>
+        <button class="bulk-bar-btn bulk-bar-clear" onclick="clearBulkSelection()" title="Limpar seleção">✕</button>
+      </div>
+    </div>`;
+  }
   ST.environments.forEach(env=>{
     const series=getEnvSeries(env.id);
     h+=`<div class="env-block">
       <div class="env-row">
-        <span class="env-label" onclick="selectEnv('${env.id}')">${env.name}</span>
+        <span class="env-label" id="env-label-${env.id}" ondblclick="startRenameEnv('${env.id}')" onclick="selectEnv('${env.id}')" title="Duplo clique para renomear">${escapeHtml(env.name)}</span>
         <span class="env-badge">${series}</span>
         <span style="flex-shrink:0;cursor:pointer;font-size:14px;padding:1px 5px;border-radius:4px;color:var(--simon-blue);background:rgba(0,87,168,0.08);border:1px solid rgba(0,87,168,0.2)" onclick="event.stopPropagation();openEnvEdit('${env.id}')" title="Editar série e cores">⚙</span>
       </div>`;
@@ -2022,7 +2236,9 @@ function renderSidebar(){
     } else {
       env.points.forEach(pt=>{
         const active=ST.activeEnvId===env.id&&ST.activePointId===pt.id;
-        h+=`<div class="sb-item point ${active?'active':''}" onclick="selectPoint('${env.id}','${pt.id}')"><span>📍 ${pt.name}</span><span class="pt-del" onclick="event.stopPropagation();rmPoint('${env.id}','${pt.id}')">×</span></div>`;
+        const selKey = env.id+'-'+pt.id;
+        const isSel = _SEL.points.has(selKey);
+        h+=`<div class="sb-item point ${active?'active':''} ${isSel?'multi-sel':''}" data-env="${env.id}" data-pt="${pt.id}" onclick="onPointClick(event,'${env.id}','${pt.id}')"><span>📍 ${escapeHtml(pt.name)}</span><span class="pt-del" onclick="event.stopPropagation();rmPoint('${env.id}','${pt.id}')">×</span></div>`;
       });
       h+=`<div class="sb-add" onclick="openModal('point','${env.id}')">＋ Novo ponto</div>`;
       // Acessórios externos do ambiente (DIN, Hub iO, etc)
@@ -2042,6 +2258,158 @@ function renderSidebar(){
   const _sbScroll=el.scrollTop;
   el.innerHTML=h;
   el.scrollTop=_sbScroll;
+}
+
+// ─── Helpers de UI ────────────────────────────────────────────────────────
+function escapeHtml(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ─── Renomear ambiente inline ─────────────────────────────────────────────
+function startRenameEnv(envId){
+  const lbl = document.getElementById('env-label-'+envId);
+  const env = ST.environments.find(e=>e.id===envId);
+  if(!lbl || !env) return;
+  const oldName = env.name;
+  // Substituir o span por um input
+  lbl.outerHTML = `<input type="text" id="env-rename-${envId}" class="env-rename-input" value="${escapeHtml(oldName)}"
+    onblur="commitRenameEnv('${envId}')"
+    onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}else if(event.key==='Escape'){event.preventDefault();this.value='${escapeHtml(oldName).replace(/'/g,"\\'")}';this.blur();}"
+    onclick="event.stopPropagation()">`;
+  const inp = document.getElementById('env-rename-'+envId);
+  if(inp){ inp.focus(); inp.select(); }
+}
+function commitRenameEnv(envId){
+  const inp = document.getElementById('env-rename-'+envId);
+  const env = ST.environments.find(e=>e.id===envId);
+  if(!inp || !env) return;
+  const newName = inp.value.trim();
+  if(newName && newName !== env.name){
+    env.name = newName;
+    save();
+  }
+  render();
+}
+
+// ─── Seleção múltipla de pontos ───────────────────────────────────────────
+function onPointClick(event, envId, ptId){
+  const selKey = envId+'-'+ptId;
+  // Shift / Ctrl / Cmd + click → toggle na seleção múltipla
+  if(event.shiftKey || event.ctrlKey || event.metaKey){
+    event.preventDefault();
+    if(_SEL.points.has(selKey)) _SEL.points.delete(selKey);
+    else _SEL.points.add(selKey);
+    renderSidebar();
+    return;
+  }
+  // Click normal: limpa seleção múltipla e seleciona o ponto
+  if(_SEL.points.size > 0) _SEL.points.clear();
+  selectPoint(envId, ptId);
+}
+function clearBulkSelection(){
+  _SEL.points.clear();
+  renderSidebar();
+}
+function bulkMoveToEnv(){
+  if(_SEL.points.size === 0) return;
+  // Construir lista de ambientes para escolher destino
+  const envs = ST.environments.filter(e=>!e._isDirectList);
+  if(envs.length < 2){
+    alert('Crie ao menos 2 ambientes para poder mover pontos entre eles. Use "＋ Novo ambiente" no banner.');
+    return;
+  }
+  const mr = document.getElementById('modal-root');
+  if(!mr) return;
+  const opts = envs.map(e=>`<button class="btn" onclick="executeBulkMove('${e.id}')" style="display:block;width:100%;text-align:left;margin-bottom:6px;padding:10px 12px">🏠 ${escapeHtml(e.name)} <span style="color:var(--text-tertiary);font-size:11px">(${e.points.length} ponto${e.points.length===1?'':'s'})</span></button>`).join('');
+  mr.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal" style="max-width:420px">
+        <h3>Mover ${_SEL.points.size} ponto(s) para...</h3>
+        <p style="font-size:12px;color:var(--text-secondary);margin:-4px 0 14px">Escolha o ambiente de destino:</p>
+        <div style="max-height:340px;overflow-y:auto">${opts}</div>
+        <div class="modal-actions" style="margin-top:14px">
+          <button class="btn" onclick="closeModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>`;
+}
+function executeBulkMove(targetEnvId){
+  const targetEnv = ST.environments.find(e=>e.id===targetEnvId);
+  if(!targetEnv){ closeModal(); return; }
+  const pointsByEnv = {};
+  _SEL.points.forEach(key => {
+    const [envId, ptId] = key.split('-').slice(0,1).concat(key.split('-').slice(1).join('-')); // robust split
+    // simplificado: usar primeiro hífen
+    const i = key.indexOf('-');
+    const eId = key.substring(0,i);
+    const pId = key.substring(i+1);
+    if(!pointsByEnv[eId]) pointsByEnv[eId] = [];
+    pointsByEnv[eId].push(pId);
+  });
+  Object.entries(pointsByEnv).forEach(([eId, ptIds])=>{
+    if(eId === targetEnvId) return; // não mover pra ele mesmo
+    const srcEnv = ST.environments.find(e=>e.id===eId);
+    if(!srcEnv) return;
+    ptIds.forEach(ptId=>{
+      const idx = srcEnv.points.findIndex(p=>p.id===ptId);
+      if(idx >= 0){
+        const [pt] = srcEnv.points.splice(idx, 1);
+        targetEnv.points.push(pt);
+      }
+    });
+  });
+  _SEL.points.clear();
+  closeModal();
+  save();
+  render();
+  showToast(`✅ Pontos movidos para "${targetEnv.name}"`, 'success', 3000);
+}
+function bulkCreateEnvFromSelection(){
+  if(_SEL.points.size === 0) return;
+  const mr = document.getElementById('modal-root');
+  if(!mr) return;
+  mr.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this)closeModal()">
+      <div class="modal" style="max-width:420px">
+        <h3>＋ Novo ambiente com ${_SEL.points.size} ponto(s)</h3>
+        <p style="font-size:12px;color:var(--text-secondary);margin:-4px 0 14px">Os pontos selecionados serão movidos para o novo ambiente.</p>
+        <input type="text" id="bulk-new-env-name" placeholder="Nome do ambiente (ex: Sala, Cozinha, Quarto)"
+          style="width:100%;padding:10px 12px;border:1px solid var(--border-medium);border-radius:8px;font-size:14px;font-family:var(--font-sans)"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();executeBulkCreateEnv();}">
+        <div class="modal-actions" style="margin-top:14px">
+          <button class="btn" onclick="closeModal()">Cancelar</button>
+          <button class="btn btn-primary" onclick="executeBulkCreateEnv()">Criar ambiente</button>
+        </div>
+      </div>
+    </div>`;
+  setTimeout(()=>{ const inp = document.getElementById('bulk-new-env-name'); if(inp){ inp.focus(); } }, 50);
+}
+function executeBulkCreateEnv(){
+  const inp = document.getElementById('bulk-new-env-name');
+  if(!inp) return;
+  const name = inp.value.trim();
+  if(!name){ inp.focus(); return; }
+  // Cria novo ambiente herdando configurações do projeto
+  const newEnv = {
+    id: uid(),
+    name: uniqueEnvName(name),
+    seriesOv: null,
+    pcOv: ST.project?.pc || null,
+    mcOv: ST.project?.mc || null,
+    scOv: ST.project?.sc || null,
+    points: [],
+    accessories: []
+  };
+  ST.environments.push(newEnv);
+  // Move os pontos selecionados pra ele
+  executeBulkMove(newEnv.id);
+}
+function uniqueEnvName(base){
+  const existing = new Set(ST.environments.map(e=>e.name.toLowerCase()));
+  if(!existing.has(base.toLowerCase())) return base;
+  let n = 2;
+  while(existing.has((base+' '+n).toLowerCase())) n++;
+  return base+' '+n;
 }
 
 function renderContent(){
@@ -2073,7 +2441,7 @@ function renderContent(){
 function renderPointConfig(pt){
   const el=document.getElementById('content');
   const envId=ST.activeEnvId,series=getEnvSeries(envId),pc=getEnvPC(envId),mc=getEnvMC(envId),sc=getEnvSc(envId),s=SM[series],allMods=getMods(series);
-  const asm=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,sc):null;
+  const asm=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,sc,pt._plateSize||null):null;
   const cats=[...new Set(allMods.map(m=>m.cat))].sort((a,b)=>a==='Conjunto'?1:b==='Conjunto'?-1:0);
   const envObj = ST.environments.find(e=>e.id===envId);
   const envName = envObj?.name || '';
@@ -2108,6 +2476,43 @@ function renderPointConfig(pt){
     </div>`;
   }
   if(asm) h+=renderAsmBox(asm);
+  // Seletor manual de tamanho de placa (mostra apenas se há módulos e a série suporta múltiplos tamanhos)
+  if(pt.selectedModules.length>0 && asm && !asm.error){
+    const totalPos = asm.totalPos;
+    const fmt = asm.format;
+    const availSizes = getAvailablePlateSizes(series, fmt, pc);
+    if(availSizes.length>=2){
+      // Tamanho ótimo (menor que cabe totalPos)
+      const optimalSize = availSizes.find(sz => sz>=totalPos) || availSizes[availSizes.length-1];
+      const currentSize = pt._plateSize || optimalSize;
+      h += `<div class="plate-size-selector">
+        <div class="plate-size-label">📏 Tamanho da placa <span style="font-size:10px;color:var(--text-tertiary);font-weight:400">(${totalPos} ${totalPos===1?'posição usada':'posições usadas'})</span></div>
+        <div class="plate-size-pills">`;
+      availSizes.forEach(sz => {
+        const isOptimal = (sz === optimalSize);
+        const isSelected = (sz === currentSize);
+        const isInvalid = (sz < totalPos);
+        const blinds = Math.max(0, sz - totalPos);
+        const cls = ['plate-pill'];
+        if(isSelected) cls.push('selected');
+        if(isOptimal && !isSelected) cls.push('optimal');
+        if(isInvalid) cls.push('invalid');
+        const tooltip = isInvalid
+          ? `Não cabe (precisa de ${totalPos} posições)`
+          : (blinds>0 ? `${blinds} tampa(s) cega(s) necessária(s)` : `Placa exata, sem tampas cegas`);
+        h += `<button class="${cls.join(' ')}" onclick="setPlateSize('${pt.id}', ${sz})" title="${tooltip}" ${isInvalid?'disabled':''}>
+          <span class="plate-pill-size">${sz}M</span>
+          ${blinds>0 ? `<span class="plate-pill-blinds">+${blinds} cega${blinds===1?'':'s'}</span>` : '<span class="plate-pill-exact">✓ exata</span>'}
+          ${isOptimal && !isSelected ? '<span class="plate-pill-badge">recomendada</span>' : ''}
+        </button>`;
+      });
+      h += `</div>`;
+      if(pt._plateSize && pt._plateSize !== optimalSize){
+        h += `<button class="btn" onclick="setPlateSize('${pt.id}', null)" style="font-size:11px;margin-top:6px;padding:4px 10px;background:transparent;border:1px solid var(--border-medium);color:var(--text-secondary)">↺ Voltar para tamanho automático (${optimalSize}M)</button>`;
+      }
+      h += `</div>`;
+    }
+  }
   h+=`</div><div class="preview-panel" id="preview-panel"></div></div>`;
   // Preserve scroll positions across re-renders
   const _cfgEl=el.querySelector('.config-panel');
@@ -2413,7 +2818,7 @@ function collectBOM(){
         return; // não cai no resto
       }
       pt.selectedModules.forEach(sm2=>{const k=sm2.mod.ref;if(!items[k])items[k]={ref:k,desc:sm2.mod.desc,cat:sm2.mod.cat,series,qty:0};items[k].qty+=sm2.qty;});
-      const a=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,ST.project?.sc||null):null;
+      const a=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,ST.project?.sc||null,pt._plateSize||null):null;
       if(a&&!a.error){
         const add=(r,d,c)=>{if(!r)return;if(!items[r])items[r]={ref:r,desc:d,cat:c,series,qty:0};items[r].qty++;};
         if(a.support)add(a.support.ref,a.support.desc,'Suporte');
@@ -2462,7 +2867,7 @@ function collectBOMByEnv(){
           return;
         }
         pt.selectedModules.forEach(sm2=>{const k=sm2.mod.ref;if(!items[k])items[k]={ref:k,desc:sm2.mod.desc,cat:sm2.mod.cat,series,qty:0};items[k].qty+=sm2.qty;});
-        const a=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,ST.project?.sc||null):null;
+        const a=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,ST.project?.sc||null,pt._plateSize||null):null;
         if(a&&!a.error){
           const add=(r,d,c)=>{if(!r)return;if(!items[r])items[r]={ref:r,desc:d,cat:c,series,qty:0};items[r].qty++;};
           if(a.support)add(a.support.ref,a.support.desc,'Suporte');
@@ -2504,7 +2909,11 @@ function buildBOMTable(items, showTotal=true){
     <th style="text-align:right">R$ Total</th>
   </tr></thead><tbody>`;
   let row=1;
-  Object.entries(grouped).sort().forEach(([cat,its])=>{
+  Object.entries(grouped).sort((a,b)=>{
+    const ra = catRank(a[0]), rb = catRank(b[0]);
+    if(ra !== rb) return ra - rb;
+    return a[0].localeCompare(b[0]);
+  }).forEach(([cat,its])=>{
     h+=`<tr><td colspan="10" class="bom-group-row">${cat}</td></tr>`;
     its.sort((a,b)=>a.ref.localeCompare(b.ref)).forEach(it=>{
       const p=ST.prices[it.ref]||0;
@@ -2610,13 +3019,36 @@ function setBomView(v){ST.bomView=v;renderBOM();}
 function setPrice(ref,v){ST.prices[ref]=parseFloat(v)||0;save();}
 
 // ── Shared XLSX loader ─────────────────────────────────────────────────────
+// Usa xlsx-js-style (fork do SheetJS) que preserva estilos como cor de fundo, 
+// fonte bold, merge de células, etc. A versão community padrão do xlsx.full.min.js 
+// IGNORA esses estilos no writeFile. A bundle.js inclui jszip embutido (standalone).
 function _xlsxReady(cb){
   if(window.XLSX){cb();return;}
-  const s=document.createElement('script');
-  s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-  s.onload=cb;
-  s.onerror=()=>alert('Nao foi possivel carregar a biblioteca Excel. Verifique sua conexao.');
-  document.head.appendChild(s);
+  // URLs do xlsx-js-style (bundle inclui jszip — versão standalone)
+  const tryUrls = [
+    'https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js',
+    'https://unpkg.com/xlsx-js-style@1.2.0/dist/xlsx.bundle.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js' // fallback (sem estilos)
+  ];
+  let idx = 0;
+  function tryNext(){
+    if(idx >= tryUrls.length){
+      alert('Nao foi possivel carregar a biblioteca Excel. Verifique sua conexao.');
+      return;
+    }
+    const s = document.createElement('script');
+    s.src = tryUrls[idx++];
+    s.onload = ()=>{
+      console.log('[xlsx] Lib carregada:', s.src);
+      cb();
+    };
+    s.onerror = ()=>{
+      console.warn('[xlsx] Falhou:', s.src);
+      tryNext();
+    };
+    document.head.appendChild(s);
+  }
+  tryNext();
 }
 
 // ── Build a BOM worksheet from an items dict ────────────────────────────────
@@ -2631,7 +3063,12 @@ function _buildBomSheet(items, titleExtra){
     ['Codigo','Qtde Projeto','Qtde Proposta','Descricao','Categoria','Serie','Emb.','Caixas','Preco Unit. R$','Total R$'],
   ];
   const bomItems=applyMultiplesToBOM(items);
-  Object.values(bomItems).sort((a,b)=>a.cat.localeCompare(b.cat)||a.ref.localeCompare(b.ref)).forEach(it=>{
+  Object.values(bomItems).sort((a,b)=>{
+    const ra=catRank(a.cat), rb=catRank(b.cat);
+    if(ra!==rb) return ra-rb;
+    if(a.cat!==b.cat) return a.cat.localeCompare(b.cat);
+    return a.ref.localeCompare(b.ref);
+  }).forEach(it=>{
     const p=ST.prices[it.ref]||0;
     d.push([it.ref,it.qty_projeto,it.qty_proposta,it.desc,it.cat,it.series,it.emb,it.boxes,p>0?p:'',p>0?+(p*it.qty_proposta).toFixed(2):'']);
   });
@@ -2650,56 +3087,437 @@ function _buildBomSheet(items, titleExtra){
   return ws;
 }
 
-function exportExcel(){
-  _xlsxReady(()=>{
-    const isEnvView=ST.bomView==='env';
-    const hasMultiEnv=ST.environments.length>1;
-    const wb=XLSX.utils.book_new();
-    const projName=ST.project?.name||'Simon';
-
-    if(!isEnvView||!hasMultiEnv){
-      // ── Total: single sheet with all items ──────────────────────────────
-      const ws=_buildBomSheet(collectBOM(),'Total');
-      XLSX.utils.book_append_sheet(wb,ws,'Lista Total');
-    } else {
-      // ── Por Ambiente: one sheet per environment + a summary sheet ────────
-      const byEnv=collectBOMByEnv();
-      // Summary sheet first
-      const allItems=collectBOM();
-      const wsTotal=_buildBomSheet(allItems,'Resumo Total');
-      XLSX.utils.book_append_sheet(wb,wsTotal,'Resumo Total');
-      // One sheet per environment
-      Object.entries(byEnv).forEach(([envName,envItems])=>{
-        const sheetName=envName.substring(0,31).replace(/[\\/:*?\[\]]/g,'_');
-        const ws=_buildBomSheet(envItems,envName);
-        XLSX.utils.book_append_sheet(wb,ws,sheetName);
-      });
+// ─── 3 visões da BOM por Ambiente (todas em UMA aba cada) ──────────────────
+// Helper: aplica estilo de cabeçalho de ambiente em todas as células da linha mesclada
+function _styleEnvHeader(ws, cellAddr, lastCol){
+  // cellAddr ex: 'A5'; lastCol ex: 'H' (default 'J')
+  const row = cellAddr.replace(/[A-Z]/g,'');
+  const startCol = cellAddr.charCodeAt(0); // 'A'=65
+  const endCol = (lastCol || 'J').charCodeAt(0);
+  const style = {
+    font: {bold:true, sz:14, color:{rgb:'FFFFFF'}},
+    fill: {patternType:'solid', fgColor:{rgb:'0061A5'}, bgColor:{rgb:'0061A5'}},
+    alignment: {vertical:'center', horizontal:'left'}
+  };
+  for(let c=startCol; c<=endCol; c++){
+    const addr = String.fromCharCode(c) + row;
+    if(!ws[addr]){
+      // Cria célula vazia se não existir (importante para merges)
+      ws[addr] = {t:'s', v:''};
     }
+    ws[addr].s = style;
+  }
+}
+// Helper: aplica estilo de cabeçalho da tabela
+function _styleTableHeader(ws, row, cols){
+  cols.forEach(c => {
+    const addr = c + row;
+    if(!ws[addr]) return;
+    ws[addr].s = {
+      font: {bold:true, color:{rgb:'002855'}},
+      fill: {fgColor:{rgb:'E8F0F9'}},
+      alignment: {horizontal:'center'}
+    };
+  });
+}
 
-    // ── Detail sheet: per-point breakdown (always included) ──────────────
-    const d2=[
-      ['SIMON BRASIL — Detalhamento por Ponto', '', '', '', '', '', '', '', '', '', ''],
-      [(getPartnerName()||'Configurador Simon Brasil'), '', 'Projeto: '+(ST.project?.name||''), '', '', '', '', '', '', '', ''],
-      [],
-      ['Ambiente','Ponto','Localizacao','Serie','Codigo Modulo','Descricao Modulo','Qtde','Ref. Suporte','Ref. Placa','Ref. Tampa Cega','Qtde Tampas'],
-    ];
-    ST.environments.forEach(env=>{
-      const series=getEnvSeries(env.id),pc=getEnvPC(env.id),mc=getEnvMC(env.id);
-      if(env._isDirectList&&env._directItems){
-        env._directItems.forEach(di=>{d2.push([env.name,'—','',series,di.ref||'',di.desc,di.qty,'','','',0]);});
+// ── Visão 1: POR PONTO ─────────────────────────────────────────────────────
+// Cada ponto tem cabeçalho destacado (azul claro) + linhas dos SKUs que o compõem.
+// SKUs incluem: suporte, placa, módulos, tampas cegas (e meias-tampas iO).
+function _buildBomByEnv_PorPonto(){
+  const partnerName=getPartnerName();
+  const partnerLine=partnerName?'Parceiro: '+partnerName:'Configurador de Produtos Simon Brasil';
+  const d=[
+    ['SIMON BRASIL — Lista de Materiais por Ponto', '', '', '', '', '', ''],
+    [partnerLine, '', '', '', '', '', ''],
+    ['Projeto: '+(ST.project?.name||''), '', '', '', 'Data:', new Date().toLocaleDateString('pt-BR'), ''],
+    [],
+  ];
+  const envHeaders = [];   // linhas com nome de ambiente (azul forte)
+  const pointHeaders = []; // linhas com nome de ponto (azul claro)
+  const tableHeaders = []; // linhas com cabeçalho da tabela
+  const colsLetters = 'ABCDEFG'.split('');
+  ST.environments.forEach(env=>{
+    if(env._isDirectList) return;
+    if(env.points.length === 0 && (!env.accessories || env.accessories.length===0)) return;
+    // Linha em branco antes do ambiente + título do ambiente
+    d.push([]);
+    d.push(['🏠 ' + env.name, '', '', '', '', '', '']);
+    envHeaders.push(d.length); // 1-indexed
+
+    const series=getEnvSeries(env.id), pc=getEnvPC(env.id), mc=getEnvMC(env.id), sc=getEnvSc(env.id);
+
+    env.points.forEach(pt=>{
+      const ptName = pt.name || 'Ponto';
+      // Linha em branco antes do ponto + cabeçalho do ponto
+      d.push([]);
+      d.push(['📍 ' + ptName + (pt.location ? '  ('+pt.location+')' : ''), '', '', '', '', '', '']);
+      pointHeaders.push(d.length);
+      // Cabeçalho da tabela
+      d.push(['Codigo','Descricao','Categoria','Qtde','Serie','Tamanho Placa','Observacoes']);
+      tableHeaders.push(d.length);
+
+      // Resolver placa cega se ponto vazio com _minFormat
+      if(pt.selectedModules.length === 0 && pt._minFormat){
+        const blank = resolveBlankPlate(pt._minFormat==='4x4', 1, series, pc, mc, sc);
+        blank.forEach(bp=>{
+          d.push([bp.ref||'—', bp.desc, bp.cat, bp.qty||1, series, pt._minFormat, 'Conjunto cego']);
+        });
         return;
       }
-      env.points.forEach(pt=>{
-        const a=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,ST.project?.sc||null):null;
-        if(pt.selectedModules.length===0){d2.push([env.name,pt.name,pt.location||'',series,'—','(sem modulos)',0,'','','',0]);return;}
-        pt.selectedModules.forEach(sm2=>{d2.push([env.name,pt.name,pt.location||'',series,sm2.mod.ref,sm2.mod.desc,sm2.qty,a?.support?.ref||'(int.)',a?.plate?.ref||'',a?.blind?.ref||'',a?.blind?.qty||0]);});
+      const a = pt.selectedModules.length>0
+        ? computeAssembly(pt.selectedModules, series, pc, mc, pt._minFormat||null, sc, pt._plateSize||null)
+        : null;
+      // Suporte
+      if(a && a.support) d.push([a.support.ref, a.support.desc, 'Suporte', 1, series, a.format, '']);
+      // Placa
+      if(a && a.plate){
+        const plateSizeMatch = (a.plate.desc||'').match(/Placa\s+(\d)[pPmM]/);
+        const plateSize = plateSizeMatch ? plateSizeMatch[1]+'M' : a.format;
+        const obs = pt._plateSize ? 'Placa escolhida manualmente' : '';
+        d.push([a.plate.ref, a.plate.desc, 'Placa', 1, series, plateSize, obs]);
+      }
+      // Módulos
+      pt.selectedModules.forEach(sm => {
+        d.push([sm.mod.ref, sm.mod.desc, sm.mod.cat, sm.qty, series, '', sm.mod.isIO?'iO':'']);
+      });
+      // Tampas cegas
+      if(a && a.blind && a.blind.qty>0){
+        d.push([a.blind.ref, a.blind.desc, 'Tampa Cega', a.blind.qty, series, '', '']);
+      }
+      if(a && a.halfBlind && a.halfBlind.qty>0){
+        d.push([a.halfBlind.ref, a.halfBlind.desc, 'Tampa Cega', a.halfBlind.qty, series, '', 'Meia tampa']);
+      }
+      // Se ponto vazio sem _minFormat
+      if(pt.selectedModules.length === 0 && !pt._minFormat){
+        d.push(['—', '(sem módulos)', '', 0, series, '', '']);
+      }
+    });
+
+    // Acessórios do ambiente (não-ponto)
+    if(env.accessories && env.accessories.length>0){
+      d.push([]);
+      d.push(['🔌 Acessórios do ambiente', '', '', '', '', '', '']);
+      pointHeaders.push(d.length);
+      d.push(['Codigo','Descricao','Categoria','Qtde','Serie','Tamanho Placa','Observacoes']);
+      tableHeaders.push(d.length);
+      env.accessories.forEach(ac => {
+        d.push([ac.ref||'—', ac.desc, ac.cat||'Acessórios', ac.qty||1, series, '', '']);
+      });
+    }
+  });
+  const ws = XLSX.utils.aoa_to_sheet(d);
+  ws['!cols']=[{wch:18},{wch:50},{wch:14},{wch:7},{wch:8},{wch:14},{wch:22}];
+  try{
+    // Cabeçalho geral (linhas 1-3)
+    'ABCDEFG'.split('').forEach(c=>{
+      if(ws[c+'1']) ws[c+'1'].s = {font:{bold:true,sz:13,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'002855'}}};
+      if(ws[c+'2']) ws[c+'2'].s = {font:{color:{rgb:'002855'}}, fill:{fgColor:{rgb:'E8F0F9'}}};
+      if(ws[c+'3']) ws[c+'3'].s = {font:{color:{rgb:'002855'}}, fill:{fgColor:{rgb:'E8F0F9'}}};
+    });
+    // Estilizar headers de ambiente (azul forte, fonte 14)
+    envHeaders.forEach(row => _styleEnvHeader(ws, 'A'+row, 'G'));
+    // Estilizar headers de ponto (PRETO bold em fundo cinza claro) — em TODAS as colunas A-G
+    pointHeaders.forEach(row => {
+      const grayStyle = {
+        font: {bold:true, sz:12, color:{rgb:'000000'}},
+        fill: {patternType:'solid', fgColor:{rgb:'F3F4F6'}, bgColor:{rgb:'F3F4F6'}},
+        alignment: {vertical:'center'}
+      };
+      'ABCDEFG'.split('').forEach(col => {
+        const addr = col + row;
+        if(!ws[addr]) ws[addr] = {t:'s', v:''};
+        ws[addr].s = grayStyle;
       });
     });
-    const ws2=XLSX.utils.aoa_to_sheet(d2);
-    ws2['!cols']=[{wch:18},{wch:22},{wch:20},{wch:10},{wch:22},{wch:44},{wch:6},{wch:18},{wch:18},{wch:18},{wch:10}];
-    XLSX.utils.book_append_sheet(wb,ws2,'Por Ponto');
+    // Estilizar headers de tabela
+    tableHeaders.forEach(row => _styleTableHeader(ws, row, colsLetters));
+    // Merges
+    if(!ws['!merges']) ws['!merges']=[];
+    envHeaders.forEach(row => {
+      ws['!merges'].push({s:{r:row-1,c:0}, e:{r:row-1,c:6}});
+    });
+    pointHeaders.forEach(row => {
+      ws['!merges'].push({s:{r:row-1,c:0}, e:{r:row-1,c:6}});
+    });
+    // Set linha height
+    if(!ws['!rows']) ws['!rows']=[];
+    envHeaders.forEach(row => { ws['!rows'][row-1] = {hpt:24}; });
+    pointHeaders.forEach(row => { ws['!rows'][row-1] = {hpt:22}; });
+  }catch(e){console.warn('Style error:',e);}
+  return ws;
+}
 
-    XLSX.writeFile(wb,projName+(isEnvView&&hasMultiEnv?'_por_ambiente':'_total')+'_materiais.xlsx');
+// ── Visão 2: PONTOS SEMELHANTES ────────────────────────────────────────────
+// Agrupa pontos com configuração idêntica (mesmos módulos + mesmas qty).
+// A quantidade de pontos iguais aparece na coluna "Qtde Pontos" (destacada em laranja).
+function _buildBomByEnv_PontosSemelhantes(){
+  const partnerName=getPartnerName();
+  const partnerLine=partnerName?'Parceiro: '+partnerName:'Configurador de Produtos Simon Brasil';
+  const d=[
+    ['SIMON BRASIL — Lista de Materiais por Pontos Semelhantes', '', '', '', '', '', '', ''],
+    [partnerLine, '', '', '', '', '', '', ''],
+    ['Projeto: '+(ST.project?.name||''), '', '', '', '', 'Data:', new Date().toLocaleDateString('pt-BR'), ''],
+    [],
+  ];
+  const envHeaders = [];
+  const groupHeaders = [];
+  const tableHeaders = [];
+  const groupQtyCells = []; // {row, nPoints} — pra estilizar a célula de Qtde Pontos em laranja
+  const colsLetters = 'ABCDEFGH'.split('');
+
+  // Helper: gera fingerprint da configuração do ponto
+  function pointFingerprint(pt){
+    if(pt.selectedModules.length===0 && pt._minFormat){
+      return 'BLANK_'+pt._minFormat;
+    }
+    const sortedMods = [...pt.selectedModules]
+      .map(sm => sm.mod.ref + ':' + sm.qty)
+      .sort()
+      .join('|');
+    return sortedMods + '|fmt='+(pt._minFormat||'auto') + '|sz='+(pt._plateSize||'auto');
+  }
+
+  ST.environments.forEach(env=>{
+    if(env._isDirectList) return;
+    if(env.points.length === 0 && (!env.accessories || env.accessories.length===0)) return;
+    d.push([]);
+    d.push(['🏠 ' + env.name, '', '', '', '', '', '', '']);
+    envHeaders.push(d.length);
+
+    const series=getEnvSeries(env.id), pc=getEnvPC(env.id), mc=getEnvMC(env.id), sc=getEnvSc(env.id);
+
+    // Agrupa pontos por fingerprint
+    const groups = {};
+    env.points.forEach(pt=>{
+      const fp = pointFingerprint(pt);
+      if(!groups[fp]) groups[fp] = {points:[], representative:pt};
+      groups[fp].points.push(pt);
+    });
+
+    Object.values(groups).forEach(grp=>{
+      const pt = grp.representative;
+      const nPoints = grp.points.length;
+
+      // Cabeçalho do grupo: só o nome do ponto (preto, bold).
+      // A quantidade de pontos iguais aparece na MESMA LINHA na coluna D "Qtde Pontos" (laranja se >1)
+      // Linha: [📍 Nome | '' | '' | nPoints | '' | '' | '' | '']
+      const groupLabel = '📍 ' + pt.name;
+
+      d.push([]);
+      d.push([groupLabel, '', '', nPoints>1 ? nPoints : '', '', '', '', '']);
+      groupHeaders.push({row: d.length, nPoints});
+      // (sem linha "Pontos no grupo")
+      // Cabeçalho da tabela
+      d.push(['Codigo','Descricao','Categoria','Qtde Pontos','Qtde por Ponto','Qtde Total','Serie','Observacoes']);
+      tableHeaders.push(d.length);
+
+      // Renderiza linhas de SKUs do ponto (qtde Pontos vazia em todas — está só no cabeçalho)
+      function pushLine(ref, desc, cat, qtyPerPoint, obs){
+        d.push([
+          ref || '—',
+          desc,
+          cat,
+          '',  // Qtde Pontos vazio — está no cabeçalho do ponto acima
+          qtyPerPoint,
+          qtyPerPoint * nPoints,
+          series,
+          obs || ''
+        ]);
+      }
+
+      // Ponto cego
+      if(pt.selectedModules.length === 0 && pt._minFormat){
+        const blank = resolveBlankPlate(pt._minFormat==='4x4', 1, series, pc, mc, sc);
+        blank.forEach(bp => {
+          pushLine(bp.ref, bp.desc, bp.cat, bp.qty||1, 'Conjunto cego');
+        });
+        return;
+      }
+      const a = pt.selectedModules.length>0
+        ? computeAssembly(pt.selectedModules, series, pc, mc, pt._minFormat||null, sc, pt._plateSize||null)
+        : null;
+
+      if(a && a.support) pushLine(a.support.ref, a.support.desc, 'Suporte', 1, '');
+      if(a && a.plate){
+        const obs = pt._plateSize ? 'Placa escolhida manualmente' : '';
+        pushLine(a.plate.ref, a.plate.desc, 'Placa', 1, obs);
+      }
+      pt.selectedModules.forEach(sm => {
+        pushLine(sm.mod.ref, sm.mod.desc, sm.mod.cat, sm.qty, sm.mod.isIO?'iO':'');
+      });
+      if(a && a.blind && a.blind.qty>0) pushLine(a.blind.ref, a.blind.desc, 'Tampa Cega', a.blind.qty, '');
+      if(a && a.halfBlind && a.halfBlind.qty>0) pushLine(a.halfBlind.ref, a.halfBlind.desc, 'Tampa Cega', a.halfBlind.qty, 'Meia tampa');
+    });
+
+    // Acessórios do ambiente (não-ponto)
+    if(env.accessories && env.accessories.length>0){
+      d.push([]);
+      d.push(['🔌 Acessórios do ambiente', '', '', '', '', '', '', '']);
+      groupHeaders.push({row: d.length, nPoints: 1});
+      d.push(['Codigo','Descricao','Categoria','Qtde Pontos','Qtde por Ponto','Qtde Total','Serie','Observacoes']);
+      tableHeaders.push(d.length);
+      env.accessories.forEach(ac => {
+        d.push([ac.ref||'—', ac.desc, ac.cat||'Acessórios', '', ac.qty||1, ac.qty||1, series, '']);
+      });
+    }
+  });
+  const ws = XLSX.utils.aoa_to_sheet(d);
+  ws['!cols']=[{wch:18},{wch:50},{wch:14},{wch:13},{wch:14},{wch:12},{wch:8},{wch:24}];
+  try{
+    // Cabeçalho geral (linhas 1-3)
+    'ABCDEFGH'.split('').forEach(c=>{
+      if(ws[c+'1']) ws[c+'1'].s = {font:{bold:true,sz:13,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'002855'}}};
+      if(ws[c+'2']) ws[c+'2'].s = {font:{color:{rgb:'002855'}}, fill:{fgColor:{rgb:'E8F0F9'}}};
+      if(ws[c+'3']) ws[c+'3'].s = {font:{color:{rgb:'002855'}}, fill:{fgColor:{rgb:'E8F0F9'}}};
+    });
+    // Headers de ambiente (azul forte, branco bold sz 14)
+    envHeaders.forEach(row => _styleEnvHeader(ws, 'A'+row, 'H'));
+    // Headers de ponto (PRETO bold em fundo cinza claro)
+    // Estiliza colunas A-C e E-H em cinza, e coluna D em LARANJA quando nPoints>1
+    groupHeaders.forEach(({row, nPoints}) => {
+      const grayStyle = {
+        font: {bold:true, sz:12, color:{rgb:'000000'}},
+        fill: {patternType:'solid', fgColor:{rgb:'F3F4F6'}, bgColor:{rgb:'F3F4F6'}},
+        alignment: {vertical:'center'}
+      };
+      const orangeStyle = {
+        font: {bold:true, sz:13, color:{rgb:'C2410C'}},
+        fill: {patternType:'solid', fgColor:{rgb:'FFEDD5'}, bgColor:{rgb:'FFEDD5'}},
+        alignment: {horizontal:'center', vertical:'center'}
+      };
+      ['A','B','C','E','F','G','H'].forEach(col => {
+        const addr = col + row;
+        if(!ws[addr]) ws[addr] = {t:'s', v:''};
+        ws[addr].s = grayStyle;
+      });
+      // Coluna D: laranja se nPoints>1, cinza caso contrário
+      const dAddr = 'D' + row;
+      if(!ws[dAddr]) ws[dAddr] = {t:'s', v:''};
+      ws[dAddr].s = nPoints>1 ? orangeStyle : grayStyle;
+    });
+    // Header de tabela
+    tableHeaders.forEach(row => _styleTableHeader(ws, row, colsLetters));
+    // Merges: AMBIENTE mescla A:H. PONTO mescla A:C (deixa D livre pra mostrar qty separada).
+    if(!ws['!merges']) ws['!merges']=[];
+    envHeaders.forEach(row => {
+      ws['!merges'].push({s:{r:row-1,c:0}, e:{r:row-1,c:7}});
+    });
+    groupHeaders.forEach(({row}) => {
+      // Mescla A:C (nome do ponto) e E:H (vazio com fundo cinza)
+      ws['!merges'].push({s:{r:row-1,c:0}, e:{r:row-1,c:2}});
+      ws['!merges'].push({s:{r:row-1,c:4}, e:{r:row-1,c:7}});
+    });
+    if(!ws['!rows']) ws['!rows']=[];
+    envHeaders.forEach(row => { ws['!rows'][row-1] = {hpt:24}; });
+    groupHeaders.forEach(({row}) => { ws['!rows'][row-1] = {hpt:22}; });
+  }catch(e){console.warn('Style error:',e);}
+  return ws;
+}
+
+// ── Visão 3: POR CÓDIGO ────────────────────────────────────────────────────
+// SKUs únicos consolidados por ambiente (mesma estrutura da BOM atual mas em uma aba só).
+function _buildBomByEnv_PorCodigo(){
+  const partnerName=getPartnerName();
+  const partnerLine=partnerName?'Parceiro: '+partnerName:'Configurador de Produtos Simon Brasil';
+  const d=[
+    ['SIMON BRASIL — Lista de Materiais por Codigo (consolidada por ambiente)', '', '', '', '', '', '', '', '', ''],
+    [partnerLine, '', '', '', '', '', '', '', '', ''],
+    ['Projeto: '+(ST.project?.name||''), '', '', '', 'Data:', new Date().toLocaleDateString('pt-BR'), '', '', '', ''],
+    [],
+  ];
+  const envHeaders = [];
+  const tableHeaders = [];
+  const colsLetters = 'ABCDEFGHIJ'.split('');
+
+  const byEnv = collectBOMByEnv();
+  Object.entries(byEnv).forEach(([envName, envItems]) => {
+    if(!Object.keys(envItems).length) return;
+    d.push([]);
+    d.push(['🏠 ' + envName, '', '', '', '', '', '', '', '', '']);
+    envHeaders.push(d.length);
+    d.push([]);
+    d.push(['Codigo','Qtde Projeto','Qtde Proposta','Descricao','Categoria','Serie','Emb.','Caixas','Preco Unit. R$','Total R$']);
+    tableHeaders.push(d.length);
+
+    const bomItems = applyMultiplesToBOM(envItems);
+    Object.values(bomItems).sort((a,b)=>{
+      const ra=catRank(a.cat), rb=catRank(b.cat);
+      if(ra!==rb) return ra-rb;
+      if(a.cat!==b.cat) return a.cat.localeCompare(b.cat);
+      return a.ref.localeCompare(b.ref);
+    }).forEach(it=>{
+      const p=ST.prices[it.ref]||0;
+      d.push([
+        it.ref, it.qty_projeto, it.qty_proposta, it.desc, it.cat, it.series,
+        it.emb, it.boxes, p>0?p:'', p>0?+(p*it.qty_proposta).toFixed(2):''
+      ]);
+    });
+  });
+  const ws = XLSX.utils.aoa_to_sheet(d);
+  ws['!cols']=[{wch:22},{wch:14},{wch:14},{wch:48},{wch:14},{wch:8},{wch:7},{wch:8},{wch:12},{wch:12}];
+  try{
+    'ABCDEFGHIJ'.split('').forEach(c=>{
+      if(ws[c+'1']) ws[c+'1'].s = {font:{bold:true,sz:13,color:{rgb:'FFFFFF'}}, fill:{fgColor:{rgb:'002855'}}};
+      if(ws[c+'2']) ws[c+'2'].s = {font:{color:{rgb:'002855'}}, fill:{fgColor:{rgb:'E8F0F9'}}};
+      if(ws[c+'3']) ws[c+'3'].s = {font:{color:{rgb:'002855'}}, fill:{fgColor:{rgb:'E8F0F9'}}};
+    });
+    envHeaders.forEach(row => _styleEnvHeader(ws, 'A'+row, 'J'));
+    tableHeaders.forEach(row => _styleTableHeader(ws, row, colsLetters));
+    if(!ws['!merges']) ws['!merges']=[];
+    envHeaders.forEach(row => {
+      ws['!merges'].push({s:{r:row-1,c:0}, e:{r:row-1,c:9}});
+    });
+    if(!ws['!rows']) ws['!rows']=[];
+    envHeaders.forEach(row => { ws['!rows'][row-1] = {hpt:24}; });
+  }catch(e){console.warn('Style error:',e);}
+  return ws;
+}
+
+function exportExcel(){
+  _xlsxReady(()=>{
+    // Detecta se a lib XLSX carregada é a versão com estilos (xlsx-js-style)
+    let hasStyleSupport = false;
+    try {
+      const testWs = XLSX.utils.aoa_to_sheet([['test']]);
+      testWs['A1'].s = {fill:{fgColor:{rgb:'FF0000'}}};
+      hasStyleSupport = !!(testWs['A1'].s && testWs['A1'].s.fill);
+    } catch(e){
+      hasStyleSupport = false;
+    }
+    if(!hasStyleSupport){
+      console.warn('[Excel] Lib XLSX carregada pode não suportar estilos. Cores e fontes podem não aparecer no arquivo.');
+      if(typeof showToast === 'function'){
+        showToast('⚠ Biblioteca Excel sem suporte a estilos foi carregada. Cores podem não aparecer. Verifique sua conexão.', 'warning', 5000);
+      }
+    }
+
+    const hasMultiEnv = ST.environments.length > 1;
+    const wb = XLSX.utils.book_new();
+    const projName = ST.project?.name || 'Simon';
+
+    // ── EXPORTAÇÃO UNIFICADA — sempre gera TODAS as views em um único arquivo ─
+    // Independente do modo atual no app (Total ou Por Ambiente), o Excel exportado
+    // contém todas as visões disponíveis para que o usuário escolha pela aba.
+
+    // Aba 1: Lista Total (BOM consolidada do projeto inteiro) — sempre presente
+    const wsTotal = _buildBomSheet(collectBOM(), 'Total');
+    XLSX.utils.book_append_sheet(wb, wsTotal, 'Lista Total');
+
+    // Abas 2-4: views por ambiente — só fazem sentido com múltiplos ambientes
+    if(hasMultiEnv){
+      // Aba 2: Por Código (SKUs únicos consolidados por ambiente)
+      const wsCodigo = _buildBomByEnv_PorCodigo();
+      XLSX.utils.book_append_sheet(wb, wsCodigo, 'Por Codigo');
+      // Aba 3: Pontos Semelhantes (agrupa pontos com mesma configuração)
+      const wsSemelhantes = _buildBomByEnv_PontosSemelhantes();
+      XLSX.utils.book_append_sheet(wb, wsSemelhantes, 'Pontos Semelhantes');
+      // Aba 4: Por Ponto (cada SKU listado por ponto)
+      const wsPorPonto = _buildBomByEnv_PorPonto();
+      XLSX.utils.book_append_sheet(wb, wsPorPonto, 'Por Ponto');
+    }
+
+    XLSX.writeFile(wb, projName + '_materiais.xlsx');
   });
 }
 
@@ -2708,6 +3526,21 @@ function exportExcel(){
 // ================================================================
 function addMod(ref){const pt=getActivePoint();if(!pt)return;const series=getEnvSeries(ST.activeEnvId);const mod=getMods(series).find(m=>m.ref===ref);if(!mod)return;const ex=pt.selectedModules.find(m=>m.mod.ref===ref);if(ex)ex.qty++;else pt.selectedModules.push({mod,qty:1});save();render();}
 function chgQty(idx,delta){const pt=getActivePoint();if(!pt)return;pt.selectedModules[idx].qty+=delta;if(pt.selectedModules[idx].qty<=0)pt.selectedModules.splice(idx,1);save();render();}
+function setPlateSize(ptId, size){
+  // Encontra o ponto em qualquer ambiente
+  let pt = null;
+  for(const env of ST.environments){
+    pt = env.points.find(p=>p.id===ptId);
+    if(pt) break;
+  }
+  if(!pt) return;
+  if(size === null || size === undefined){
+    delete pt._plateSize;
+  } else {
+    pt._plateSize = size;
+  }
+  save(); render();
+}
 function rmPoint(envId,ptId){const env=ST.environments.find(e=>e.id===envId);if(!env)return;env.points=env.points.filter(p=>p.id!==ptId);if(ST.activePointId===ptId)ST.activePointId=null;save();render();}
 
 // Acessórios externos do ambiente (dispositivos que não vão em placa)
@@ -3645,29 +4478,43 @@ const HELP_SECTIONS = [
     title: 'Visão Geral',
     body: `
       <h4>O que é o Configurador?</h4>
-      <p>É uma ferramenta para projetar, configurar e orçar pontos elétricos com produtos da linha Simon Brasil. Você cria <strong>projetos</strong>, divide em <strong>ambientes</strong> (cômodos), e adiciona <strong>pontos de instalação</strong> (interruptores, tomadas, etc.) em cada ambiente.</p>
+      <p>É uma ferramenta para projetar, configurar e orçar pontos elétricos com produtos da linha Simon Brasil. Você cria <strong>projetos</strong>, divide em <strong>ambientes</strong> (cômodos), e adiciona <strong>pontos de instalação</strong> (interruptores, tomadas, etc.) em cada ambiente. O configurador então monta automaticamente as placas, suportes e tampas cegas necessárias e gera a Lista de Materiais (BOM) pronta para orçamento.</p>
 
       <h4>Estrutura do projeto</h4>
       <div class="help-diagram">
         <div class="help-tree">
           <div class="help-tree-l1">📁 Projeto <span class="help-tree-hint">("Casa do João")</span></div>
           <div class="help-tree-l2">🏠 Ambiente <span class="help-tree-hint">("Sala")</span></div>
-          <div class="help-tree-l3">📍 Ponto <span class="help-tree-hint">(parede da TV)</span></div>
+          <div class="help-tree-l3">📍 Ponto <span class="help-tree-hint">(parede da TV) — 1 placa</span></div>
           <div class="help-tree-l4">⚡ Módulos <span class="help-tree-hint">(2× tomadas, 1× interruptor...)</span></div>
-          <div class="help-tree-l3">📍 Ponto <span class="help-tree-hint">(parede da entrada)</span></div>
+          <div class="help-tree-l3">📍 Ponto <span class="help-tree-hint">(parede da entrada) — 1 placa</span></div>
           <div class="help-tree-l2">🏠 Ambiente <span class="help-tree-hint">("Cozinha")</span></div>
         </div>
       </div>
 
       <h4>3 maneiras de começar</h4>
       <ul class="help-list">
-        <li><strong>📥 Importar:</strong> envie um PDF de projeto elétrico ou planilha de materiais — a IA reconhece automaticamente os produtos.</li>
-        <li><strong>📂 Abrir:</strong> continua trabalhando em um projeto salvo anteriormente.</li>
-        <li><strong>＋ Novo:</strong> cria um projeto vazio e configura tudo manualmente.</li>
+        <li><strong>📥 Importar Projeto / Lista:</strong> envie um PDF de projeto elétrico, planilha, lista do WhatsApp ou texto colado — a IA reconhece automaticamente os produtos.</li>
+        <li><strong>📂 Abrir Projeto:</strong> retoma um projeto salvo anteriormente no navegador.</li>
+        <li><strong>＋ Novo Projeto Manual:</strong> cria um projeto vazio e configura tudo manualmente.</li>
       </ul>
 
+      <h4>Séries Simon disponíveis</h4>
+      <table class="help-table">
+        <tr><th>Série</th><th>Linha</th><th>Características</th></tr>
+        <tr><td><strong>Simon 19</strong></td><td>Econômica</td><td>Placa+suporte integrados, 1 cor (Branco)</td></tr>
+        <tr><td><strong>Simon 20</strong></td><td>Intermediária</td><td>Placa+suporte integrados, 2 cores</td></tr>
+        <tr><td><strong>Simon 30</strong></td><td>Superior</td><td>Placa+suporte separados, 3 cores</td></tr>
+        <tr><td><strong>Simon 35</strong></td><td>Premium</td><td>10 cores de placa (Champagne, Carvalho, Tabaco etc.)</td></tr>
+        <tr><td><strong>Simon 26 / 26iO</strong></td><td>Conectiva + Smart iO</td><td>Suporta automação iO Connect</td></tr>
+        <tr><td><strong>Simon 82</strong></td><td>Luxo</td><td>Acabamentos especiais (Prisma Lux, Nature)</td></tr>
+      </table>
+
+      <h4>Salvamento automático</h4>
+      <p>Tudo é salvo automaticamente no <strong>navegador</strong>. Você pode fechar a aba e retomar depois — basta clicar em <strong>Abrir Projeto</strong>. Para mover um projeto para outro dispositivo, exporte/importe o JSON via "Configurações do Projeto".</p>
+
       <div class="help-tip">
-        💡 <strong>Dica:</strong> os botões da barra superior só aparecem quando há um projeto aberto. Comece sempre criando ou abrindo um projeto.
+        💡 <strong>Dica:</strong> os botões da barra superior (Lista de Materiais, Excel ↓) só aparecem quando há um projeto aberto. Comece sempre criando ou abrindo um projeto.
       </div>
     `
   },
@@ -3677,18 +4524,35 @@ const HELP_SECTIONS = [
     title: 'Importação por IA',
     body: `
       <h4>Quando usar a importação?</h4>
-      <p>Quando você já tem o projeto pronto em outro formato — PDF do projetista elétrico, planilha de materiais, lista de produtos, etc. A IA lê o documento e gera os ambientes e pontos automaticamente.</p>
+      <p>Quando você já tem o projeto pronto em outro formato — PDF do projetista elétrico, planilha de materiais, lista de produtos no WhatsApp ou e-mail. A IA lê o documento, identifica os produtos Simon e gera os ambientes e pontos automaticamente.</p>
+
+      <h4>Formatos aceitos</h4>
+      <ul class="help-list">
+        <li><strong>PDF</strong> — projetos elétricos com plantas e simbologia, ou levantamentos textuais</li>
+        <li><strong>DOCX, XLSX, CSV, TXT</strong> — listas de materiais ou descrições por ambiente</li>
+        <li><strong>JPG, PNG</strong> — fotos de listas, prints de WhatsApp ou tabelas</li>
+        <li><strong>Texto colado</strong> — pode digitar ou colar diretamente no campo</li>
+        <li><strong>DWG / AutoCAD</strong> — não é processado diretamente. Exporte como PDF antes (Arquivo → Imprimir → "DWG to PDF.pc3" ou "Microsoft Print to PDF").</li>
+      </ul>
 
       <h4>Passo a passo</h4>
       <ol class="help-list-ord">
-        <li>Clique em <strong>Importar ▾</strong> no topo da tela.</li>
-        <li>Arraste o arquivo na área indicada ou clique para selecionar. Aceita: PDF, DOCX, XLSX, CSV, TXT, JPG, PNG, prints de WhatsApp. Para arquivos DWG, exporte primeiro como PDF.</li>
-        <li>Se preferir digitar/colar texto, use o botão "✏️ Digitar / colar texto manualmente" abaixo da área de upload.</li>
-        <li>Selecione a <strong>série</strong> (S19, S20, S26, S26iO, S30, S35, S82) e a <strong>cor</strong> (branco, grafite, etc.) que serão aplicadas a todos os componentes do projeto.</li>
-        <li>Clique em <strong>Analisar com IA →</strong>. A IA detecta automaticamente se é um projeto elétrico (planta com simbologia) ou uma lista de materiais (BOM consolidado) e organiza os pontos por ambiente.</li>
-        <li>Revise a <strong>prévia dos itens</strong> identificados — você pode editar antes de confirmar.</li>
-        <li>Clique em <strong>✅ Importar para o Configurador</strong> para gerar os ambientes e pontos automaticamente.</li>
+        <li>Clique em <strong>📂 Importar Projeto / Lista</strong> no topo ou na barra lateral.</li>
+        <li>Arraste o arquivo na área indicada ou clique para selecionar. Se preferir digitar/colar texto, use o botão "✏️ Digitar / colar texto manualmente".</li>
+        <li>Selecione a <strong>série</strong> (S19, S20, S26, S26iO, S30, S35, S82) e a <strong>cor base</strong> que serão aplicadas a todos os componentes.</li>
+        <li>Clique em <strong>Analisar com IA →</strong>. A IA detecta automaticamente o formato (planta com simbologia, lista de materiais ou levantamento ponto-a-ponto).</li>
+        <li>Revise a <strong>prévia dos itens identificados</strong> — você pode editar quantidade ou descrição antes de confirmar.</li>
+        <li>Clique em <strong>✅ Importar para o Configurador</strong> para gerar ambientes e pontos automaticamente.</li>
+        <li>O <strong>Color Wizard</strong> abrirá para você confirmar as cores finais (placa, módulos e suporte).</li>
       </ol>
+
+      <h4>3 tipos de documento que a IA reconhece</h4>
+      <table class="help-table">
+        <tr><th>Tipo</th><th>Exemplo</th><th>Como funciona</th></tr>
+        <tr><td><strong>Levantamento ponto-a-ponto</strong></td><td>"01 conjunto 4x2 para 03 módulos: 2 tomadas + 1 cego"</td><td>Cada conjunto vira 1 ponto físico separado</td></tr>
+        <tr><td><strong>Lista de materiais</strong></td><td>"8 Suporte 4x2 + 24 Tomadas 10A + 6 Interruptores"</td><td>Distribui módulos pelos suportes informados</td></tr>
+        <tr><td><strong>Esquema sem placa</strong></td><td>"Sala: 3 tomadas, 1 interruptor"</td><td>IA agrupa por ponto_id e infere o formato</td></tr>
+      </table>
 
       <h4>Decomposição automática (Simon 26iO Touch/Wi-Fi)</h4>
       <p>Para itens da linha iO Connect, a IA decompõe automaticamente em componentes:</p>
@@ -3700,12 +4564,22 @@ const HELP_SECTIONS = [
         <tr><td>1 tomada Wi-Fi</td><td>Tomada 2P+T 10A + Módulo Controle iO</td></tr>
       </table>
 
-      <div class="help-tip">
-        💡 <strong>Dica:</strong> o configurador respeita sempre a cor que você escolheu — ele ignora menções de "branco" ou "preto" na descrição original.
-      </div>
+      <h4>O que a IA NUNCA faz na importação</h4>
+      <ul class="help-list">
+        <li><strong>Nunca usa SKUs de "Conjunto" pré-montados</strong> (catálogo Simon tem produtos prontos como Conjunto 1 Tomada Branco — esses são reservados para o usuário adicionar manualmente, se quiser).</li>
+        <li><strong>Nunca aplica cor diferente da escolhida</strong> — se você escolhe Grafite, ela ignora menções de "branco" no documento.</li>
+        <li><strong>Ignora itens riscados/tachados</strong> e anotações em vermelho (usa anotações como dica de contexto, não como itens novos).</li>
+      </ul>
+
+      <h4>Importação de documentos grandes</h4>
+      <p>Se a IA truncar a resposta em projetos com muitos ambientes, o configurador faz <strong>fallback automático</strong>: identifica os ambientes que faltaram e faz uma segunda chamada pedindo apenas os restantes. Você verá "Documento grande detectado — buscando ambientes restantes…" na tela.</p>
 
       <div class="help-warn">
-        ⚠ <strong>Atenção:</strong> sempre revise os itens antes de confirmar. A IA é boa, mas pode errar em listas ambíguas. Você pode editar manualmente depois.
+        ⚠ <strong>Atenção:</strong> sempre revise os itens antes de confirmar. A IA é boa, mas pode errar em listas ambíguas. Você pode editar manualmente depois — inclusive renomear ambientes, mover pontos entre ambientes, e ajustar módulos individuais.
+      </div>
+
+      <div class="help-tip">
+        💡 <strong>Dica para listas grandes:</strong> se a IA não conseguir identificar ambientes específicos e tudo cair em "Geral", você pode usar Shift+Click na barra lateral para selecionar vários pontos e organizá-los em ambientes manualmente (veja seção "Ambientes e Pontos").
       </div>
     `
   },
@@ -3715,15 +4589,45 @@ const HELP_SECTIONS = [
     title: 'Ambientes e Pontos',
     body: `
       <h4>Criar um ambiente</h4>
-      <p>Use a barra lateral esquerda. Clique em <strong>＋ Novo Ambiente</strong> e dê um nome (ex: "Sala", "Cozinha", "Quarto Master"). Você pode definir uma <strong>série específica</strong> para o ambiente (que sobrescreve a série do projeto), útil quando você quer mesclar séries.</p>
+      <p>Use a barra lateral esquerda. Clique em <strong>＋ Novo Ambiente</strong> e dê um nome (ex: "Sala", "Cozinha", "Quarto Master"). Você pode definir uma <strong>série específica</strong> para o ambiente (que sobrescreve a série do projeto), útil quando você quer mesclar séries (ex: S82 na Sala e S26 nos Quartos).</p>
+
+      <h4>Renomear um ambiente</h4>
+      <p>Faça <strong>duplo clique no nome</strong> do ambiente na barra lateral. O nome vira um campo editável — digite o novo nome e pressione <kbd>Enter</kbd> (ou <kbd>Esc</kbd> para cancelar).</p>
+
+      <h4>Organizar pontos em ambientes (seleção múltipla)</h4>
+      <p>Quando você importa um documento sem divisão clara de ambientes, todos os pontos podem ficar agrupados num único "Geral". Para reorganizar:</p>
+      <ol class="help-list-ord">
+        <li>Segure <kbd>Shift</kbd>, <kbd>Ctrl</kbd> ou <kbd>⌘ Cmd</kbd> e clique nos pontos que quer agrupar.</li>
+        <li>Os pontos selecionados ficam destacados em laranja e aparece um banner laranja no topo da lista.</li>
+        <li>No banner, escolha:
+          <ul class="help-list">
+            <li><strong>＋ Novo ambiente</strong> — cria um ambiente novo já com os selecionados</li>
+            <li><strong>→ Mover</strong> — envia os selecionados para um ambiente existente</li>
+            <li><strong>✕</strong> — limpa a seleção sem fazer nada</li>
+          </ul>
+        </li>
+      </ol>
+      <p>Funciona <strong>entre ambientes diferentes</strong> — você pode pegar pontos de vários ambientes e juntar todos num novo.</p>
 
       <h4>Adicionar um ponto de instalação</h4>
-      <p>Cada "ponto" representa uma <strong>placa única na parede</strong> (4x2 ou 4x4). Dentro de um ambiente:</p>
+      <p>Cada "ponto" representa <strong>uma placa única na parede</strong> (formato 4x2 ou 4x4). Dentro de um ambiente:</p>
       <ol class="help-list-ord">
         <li>Clique em <strong>＋ Novo Ponto</strong> na barra lateral.</li>
         <li>Dê um nome (ex: "Ao lado da porta", "Bancada da pia", "Cabeceira").</li>
         <li>Opcionalmente adicione uma <strong>localização</strong> descritiva.</li>
       </ol>
+
+      <h4>Conjuntos cegos</h4>
+      <p>Quando o levantamento pede "01 conjunto 4x4 cego" (placa fechada sem módulos funcionais), o configurador cria um ponto especial sem módulos com flag <strong>_minFormat</strong>. O sistema gera automaticamente:</p>
+      <ul class="help-list">
+        <li><strong>Placa cega dedicada</strong> + suporte (em séries que tenham — S19, S20, S30, S35 4x2, S26 4x2)</li>
+        <li><strong>Suporte + placa normal + N tampas cegas</strong> (em séries sem placa cega — S35 4x4, S26 4x4, S82)</li>
+      </ul>
+      <p>Ao clicar num ponto cego, aparece uma caixa amarela explicando o que será gerado. Para transformar em ponto funcional, basta adicionar módulos pela lista.</p>
+
+      <div class="help-warn">
+        ⚠ <strong>"Módulo cego" ≠ "Conjunto cego":</strong> "01 módulo cego" listado dentro de um conjunto com outros módulos é apenas uma <strong>tampa de preenchimento</strong>. "01 conjunto 4x4 cego" sem módulos listados é um <strong>ponto inteiro vazio</strong>.
+      </div>
 
       <h4>Acessórios do ambiente</h4>
       <p>Itens que <strong>não vão em placas</strong> (DIN iO, Hub iO, sensores, carregadores, cabos USB, HDMI) são adicionados pelo botão <strong>＋ Acessório</strong> que aparece embaixo dos pontos de cada ambiente.</p>
@@ -3739,12 +4643,18 @@ const HELP_SECTIONS = [
         </div>
       </div>
 
-      <h4>Hub iO automático</h4>
-      <p>Em projetos com <strong>20 ou mais dispositivos iO</strong>, o configurador adiciona automaticamente um <strong>Hub iO</strong> num ambiente chamado <strong>"Automação iO"</strong>. Você verá uma notificação discreta no canto da tela.</p>
-      <p>Se tentar adicionar manualmente um Hub em projeto com menos de 20 dispositivos iO, ou um segundo Hub num projeto que já tem um, o configurador pedirá confirmação antes de incluir.</p>
+      <h4>Hub iO automático (≥20 dispositivos iO)</h4>
+      <p>Em projetos com <strong>20 ou mais dispositivos iO</strong>, o configurador adiciona automaticamente um <strong>Hub iO</strong> num ambiente chamado <strong>"Automação iO"</strong>. Você verá uma notificação discreta no canto inferior direito da tela.</p>
+      <p>O configurador valida 3 cenários quando você adiciona Hub manualmente:</p>
+      <table class="help-table">
+        <tr><th>Cenário</th><th>O que acontece</th></tr>
+        <tr><td><strong>&lt;20 pontos iO + adicionar Hub</strong></td><td>Diálogo: "Hub iO não é necessário... Deseja incluir mesmo assim?"</td></tr>
+        <tr><td><strong>≥20 pontos iO + sem Hub</strong></td><td>Hub adicionado automaticamente sem perguntar</td></tr>
+        <tr><td><strong>Já tem Hub + adicionar outro</strong></td><td>Diálogo: "Já existe Hub. Deseja incluir um adicional mesmo assim?"</td></tr>
+      </table>
 
       <div class="help-tip">
-        💡 <strong>Dica:</strong> use nomes descritivos para os pontos. Isso facilita revisar a lista de materiais e identificar onde cada componente vai instalado.
+        💡 <strong>Dica:</strong> use nomes descritivos para os pontos (ex: "Cabeceira esquerda", "Bancada do fogão"). Isso facilita revisar a lista de materiais e identificar onde cada componente vai instalado.
       </div>
     `
   },
@@ -3759,43 +4669,181 @@ const HELP_SECTIONS = [
         <li><strong>Lista de módulos disponíveis</strong> à esquerda (filtrável por categoria e busca).</li>
         <li><strong>Prévia visual</strong> da placa montada à direita.</li>
         <li><strong>Caixa de montagem automática</strong> abaixo, mostrando placa + suporte + tampas cegas necessárias.</li>
+        <li><strong>Seletor de tamanho de placa</strong> (1M, 2M, 3M, 4M, 6M) com a recomendada destacada em verde.</li>
       </ul>
 
       <h4>Adicionar módulos</h4>
       <ol class="help-list-ord">
-        <li>Use as <strong>chips de categoria</strong> (Interruptores, Tomadas, USB, RJ45, iO Smart, etc.) ou a <strong>busca</strong> para filtrar.</li>
+        <li>Use os <strong>chips de categoria</strong> (Interruptores, Tomadas, USB, RJ45, iO Smart, etc.) ou a <strong>busca</strong> para filtrar.</li>
         <li>Clique no módulo desejado para adicioná-lo ao ponto.</li>
         <li>Ajuste a quantidade com os botões <strong>＋ / －</strong>.</li>
-        <li>O configurador escolhe a placa correta (4x2 com 1, 2 ou 3 posições, ou 4x4) e adiciona tampas cegas se sobrar espaço.</li>
+        <li>O configurador escolhe automaticamente a <strong>placa mais econômica</strong> (sem tampas cegas extras quando possível).</li>
       </ol>
 
-      <h4>Cores</h4>
-      <p>Há 3 níveis de cor, do mais geral para o mais específico:</p>
+      <h4>Tipos de módulo (1, 2 ou 3 posições)</h4>
+      <p>Cada módulo ocupa 1, 2 ou 3 posições na placa:</p>
+      <ul class="help-list">
+        <li><strong>Simples (1 pos):</strong> interruptor, tomada 10A/20A, USB simples, etc.</li>
+        <li><strong>Duplo (2 pos):</strong> Interruptor iO Duplo, alguns dimmers, tomadas duplas em série</li>
+        <li><strong>Triplo (3 pos):</strong> Triplo Interruptor iO (ocupa toda a placa 4x2)</li>
+      </ul>
+      <p>O configurador soma as posições e escolhe automaticamente o formato (4x2 com até 3 posições, 4x4 com até 6 posições).</p>
+
+      <h4>Otimização automática de placa</h4>
+      <p>Para minimizar custo e tampas cegas, o configurador escolhe a <strong>menor placa que comporta</strong> os módulos selecionados. Exemplos para Simon 30:</p>
+      <table class="help-table">
+        <tr><th>Módulos</th><th>Placa escolhida</th><th>Tampas cegas</th></tr>
+        <tr><td>1 tomada simples</td><td>Placa 1M (4x2)</td><td>0</td></tr>
+        <tr><td>1 tomada + 1 interruptor</td><td>Placa 2M (4x2)</td><td>0</td></tr>
+        <tr><td>3 módulos simples</td><td>Placa 3M (4x2)</td><td>0</td></tr>
+        <tr><td>4 módulos simples</td><td>Placa 4M (4x4)</td><td>0</td></tr>
+        <tr><td>5 módulos simples</td><td>Placa 6M (4x4)</td><td>1</td></tr>
+        <tr><td>6 módulos simples</td><td>Placa 6M (4x4)</td><td>0</td></tr>
+      </table>
+
+      <h4>Trocar manualmente o tamanho da placa</h4>
+      <p>No painel de configuração do ponto, abaixo da caixa de montagem automática, você verá o seletor:</p>
+      <p>📏 <strong>Tamanho da placa</strong> (X posições usadas)</p>
+      <ul class="help-list">
+        <li><strong>Pílula verde "recomendada"</strong> — placa exata, sem tampas cegas (escolhida automaticamente)</li>
+        <li><strong>Pílula azul selecionada</strong> — qual está sendo usada agora</li>
+        <li><strong>Pílulas com "+N cegas"</strong> — placas maiores que requerem tampas cegas (aviso laranja)</li>
+        <li><strong>Pílulas desabilitadas</strong> — placas menores que não comportam os módulos</li>
+        <li>Clique em <strong>↺ Voltar para tamanho automático</strong> para retornar à recomendação</li>
+      </ul>
+      <p>Útil quando o cliente prefere uma placa maior por questão estética (ex: simetria entre pontos vizinhos).</p>
+
+      <div class="help-warn">
+        ⚠ <strong>Cores diferentes por série:</strong> A Simon 35 tem 10 cores de placa, mas só 2 cores de módulo (Branco/Grafite). Algumas cores não têm placa 2M (Champagne, Carvalho, Tabaco, etc.) — nesses casos o sistema usa placa 3M com 1 tampa cega e exibe um aviso.
+      </div>
+
+      <h4>Cores — 3 níveis hierárquicos</h4>
+      <p>Há 3 botões de cor no topo do ponto, do mais geral para o mais específico:</p>
       <table class="help-table">
         <tr><th>Botão</th><th>Aplica em</th></tr>
-        <tr><td>🏗 Projeto</td><td>Todos os ambientes do projeto</td></tr>
-        <tr><td>🏠 Ambiente</td><td>Todos os pontos do ambiente</td></tr>
-        <tr><td>🎨 Ponto</td><td>Apenas este ponto específico</td></tr>
+        <tr><td>🏗 Projeto</td><td>Todos os ambientes do projeto (abre o Color Wizard completo)</td></tr>
+        <tr><td>🏠 Ambiente</td><td>Todos os pontos do ambiente atual</td></tr>
+        <tr><td>🎨 Ponto</td><td>Apenas este ponto específico (override local)</td></tr>
       </table>
-      <p>O configurador permite cores diferentes para placa, módulos e suporte (em séries que tenham essa flexibilidade).</p>
+      <p>O configurador permite cores diferentes para <strong>placa, módulos e suporte</strong> (em séries que tenham essa flexibilidade — S30, S35, S26).</p>
+
+      <h4>Color Wizard pós-importação</h4>
+      <p>Após uma importação, abre automaticamente o <strong>Color Wizard</strong> com 2 modos:</p>
+      <ul class="help-list">
+        <li><strong>🎨 Série Única</strong> — todos os ambientes usam a mesma série e cor base (ex: S30 Branco em toda a casa)</li>
+        <li><strong>🏘 Múltiplas Séries</strong> — define série e cor por ambiente (ex: S82 na sala, S26 nos quartos)</li>
+      </ul>
+      <p>Para cada nível de cor (placa, módulos, suporte) você verá os swatches disponíveis na série escolhida — basta clicar no desejado.</p>
 
       <h4>Lista de Materiais (BOM)</h4>
-      <p>Clique em <strong>Lista de Materiais ▾</strong> no topo. Você verá:</p>
+      <p>Clique em <strong>Lista de Materiais ▾</strong> no topo. A BOM é organizada na seguinte ordem:</p>
+      <ol class="help-list-ord">
+        <li><strong>Suporte</strong> (caixas e suportes 4x2 / 4x4)</li>
+        <li><strong>Placa</strong> (placas 1M, 2M, 3M, 4M, 6M)</li>
+        <li><strong>Módulos</strong> (interruptores, tomadas, USB, etc.)</li>
+        <li><strong>Tampa Cega</strong> (módulos cegos)</li>
+        <li><strong>Acessórios</strong> (Hub iO, DIN, sensores, cabos)</li>
+        <li><strong>Conjunto</strong> (SKUs pré-montados — só aparece se você adicionar manualmente)</li>
+      </ol>
+      <p>Você pode alternar entre:</p>
       <ul class="help-list">
-        <li><strong>BOM total</strong> consolidado por categoria, com SKUs, quantidades e preços.</li>
-        <li><strong>BOM por ambiente</strong> para entregar ao instalador.</li>
-        <li>Possibilidade de <strong>editar preços</strong> manualmente para gerar a proposta comercial.</li>
+        <li><strong>📊 Total</strong> — BOM consolidada do projeto inteiro</li>
+        <li><strong>🏠 Por Ambiente</strong> — BOM separada por cômodo (útil para entregar ao instalador)</li>
       </ul>
 
+      <h4>Múltiplos de embalagem</h4>
+      <p>A BOM mostra <strong>2 quantidades</strong>:</p>
+      <ul class="help-list">
+        <li><strong>Qtde Projeto</strong> — quantidade real necessária no projeto</li>
+        <li><strong>Qtde Proposta</strong> (laranja) — ajustada para o múltiplo da embalagem (ex: caixa de 10 unidades). O ▲ indica itens ajustados para cima.</li>
+      </ul>
+      <p>Você pode <strong>editar preços manualmente</strong> em cada linha — o total é recalculado automaticamente.</p>
+
       <h4>Exportar para Excel</h4>
-      <p>O botão <strong>Excel ↓</strong> gera uma planilha com todos os itens, separados por ambiente, prontos para enviar ao cliente ou orçamentista.</p>
+      <p>O botão <strong>Excel ↓</strong> gera <strong>sempre o mesmo arquivo</strong>, com todas as visões disponíveis em abas separadas — independente do modo (Total ou Por Ambiente) que você esteja vendo no app:</p>
+      <ul class="help-list">
+        <li><strong>Aba "Lista Total"</strong> — BOM consolidada do projeto inteiro, ideal para pedido global</li>
+        <li><strong>Aba "Por Código"</strong> — SKUs únicos consolidados por ambiente (ideal para orçamento detalhado)</li>
+        <li><strong>Aba "Pontos Semelhantes"</strong> — pontos com configuração idêntica agrupados (ex: "5 pontos com 1 tomada 10A")</li>
+        <li><strong>Aba "Por Ponto"</strong> — cada SKU listado pelo ponto onde aparece (ideal para o instalador)</li>
+      </ul>
+      <p>As 3 últimas abas (Por Código, Pontos Semelhantes, Por Ponto) só são geradas se o projeto tiver <strong>2 ou mais ambientes</strong>. Em projetos com 1 ambiente único, o Excel sai apenas com a "Lista Total".</p>
+      <p>Em todas as abas com múltiplos ambientes, cada ambiente aparece com um <strong>cabeçalho azul destacado</strong> e linha em branco antes, facilitando localização visual. Nomes de pontos aparecem em <strong>preto bold</strong> com fundo cinza, e a quantidade de pontos iguais (na aba "Pontos Semelhantes") fica em <strong>laranja</strong> bem visível.</p>
 
       <div class="help-tip">
-        💡 <strong>Dica:</strong> antes de exportar, revise sempre os pontos críticos: posições preenchidas vs. capacidade da placa, mistura de cores, e itens iO que precisam de Hub.
+        💡 <strong>Dica:</strong> antes de exportar, revise sempre os pontos críticos: tamanho de placa escolhido, cores aplicadas, e itens iO que precisam de Hub.
       </div>
 
       <div class="help-tip">
         💾 <strong>Salvamento automático:</strong> tudo é salvo automaticamente no seu navegador. Para abrir em outro dispositivo, exporte/importe o JSON do projeto via "Configurações do Projeto".
+      </div>
+    `
+  },
+  {
+    id: 'shortcuts',
+    icon: '⌨️',
+    title: 'Atalhos & Dicas',
+    body: `
+      <h4>Atalhos de teclado e mouse</h4>
+      <table class="help-table">
+        <tr><th>Atalho</th><th>Onde</th><th>O que faz</th></tr>
+        <tr><td><kbd>Duplo clique</kbd></td><td>Nome do ambiente</td><td>Renomeia inline (Enter confirma, Esc cancela)</td></tr>
+        <tr><td><kbd>Shift</kbd> + Click</td><td>Ponto na sidebar</td><td>Adiciona à seleção múltipla</td></tr>
+        <tr><td><kbd>Ctrl</kbd> + Click</td><td>Ponto na sidebar</td><td>Idem (Windows/Linux)</td></tr>
+        <tr><td><kbd>⌘ Cmd</kbd> + Click</td><td>Ponto na sidebar</td><td>Idem (Mac)</td></tr>
+        <tr><td>Click normal</td><td>Ponto na sidebar</td><td>Limpa seleção e abre o ponto</td></tr>
+        <tr><td><kbd>Enter</kbd></td><td>Input de renomeação</td><td>Salva o novo nome</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Input de renomeação</td><td>Cancela e mantém nome original</td></tr>
+        <tr><td>Arrastar</td><td>Área de upload</td><td>Aceita arquivos (PDF, DOCX, XLSX, JPG, PNG, etc.)</td></tr>
+      </table>
+
+      <h4>Botões importantes do topbar</h4>
+      <table class="help-table">
+        <tr><th>Botão</th><th>O que faz</th></tr>
+        <tr><td><strong>📂 Importar</strong></td><td>Abre o assistente de importação por IA</td></tr>
+        <tr><td><strong>📋 Lista de Materiais</strong></td><td>Vai para a aba BOM</td></tr>
+        <tr><td><strong>Excel ↓</strong></td><td>Baixa a BOM como planilha .xlsx</td></tr>
+        <tr><td><strong>?</strong></td><td>Abre este tutorial</td></tr>
+      </table>
+
+      <h4>Botões da sidebar</h4>
+      <table class="help-table">
+        <tr><th>Botão</th><th>O que faz</th></tr>
+        <tr><td><strong>⚙ (engrenagem)</strong></td><td>Editar série e cores do ambiente</td></tr>
+        <tr><td><strong>＋ Novo ponto</strong></td><td>Cria um ponto vazio no ambiente</td></tr>
+        <tr><td><strong>＋ Acessório</strong> (laranja)</td><td>Adiciona itens não-placa (Hub iO, sensores)</td></tr>
+        <tr><td><strong>×</strong> (no hover)</td><td>Remove o ponto/acessório</td></tr>
+      </table>
+
+      <h4>Dicas de produtividade</h4>
+      <ul class="help-list">
+        <li><strong>Importação primeiro:</strong> mesmo para projetos pequenos, vale a pena escrever a lista no WhatsApp e importar — é mais rápido que clicar manualmente.</li>
+        <li><strong>Cores depois:</strong> não se preocupe com cores na importação. O Color Wizard que abre depois cuida disso e aplica em todo o projeto de uma vez.</li>
+        <li><strong>Nomes curtos:</strong> nomes de pontos com até 30 caracteres aparecem completos na sidebar. Mais que isso é truncado com "…".</li>
+        <li><strong>Renomeie ambientes "Geral":</strong> se a IA não identificou ambientes, use Shift+Click para selecionar grupos de pontos e organizá-los.</li>
+        <li><strong>Tamanho da placa:</strong> a recomendada (verde) é sempre a mais econômica. Só mude se quiser simetria estética.</li>
+      </ul>
+
+      <h4>Solução de problemas comuns</h4>
+      <table class="help-table">
+        <tr><th>Problema</th><th>Solução</th></tr>
+        <tr><td>"Nada acontece ao clicar Importar"</td><td>Verifique a chave da API (Configurações do Projeto)</td></tr>
+        <tr><td>"Faltam ambientes na importação"</td><td>O documento pode ter passado do limite de tokens. O sistema faz fallback automático — espere o "buscando ambientes restantes…"</td></tr>
+        <tr><td>"Aparece SKU errado"</td><td>Edite o item na prévia da importação ou troque o módulo manualmente no ponto</td></tr>
+        <tr><td>"Cor saiu branca em vez de grafite"</td><td>Reabra o Color Wizard (botão 🏗 Projeto) e reaplique a cor desejada</td></tr>
+        <tr><td>"DWG não é aceito"</td><td>Exporte como PDF no AutoCAD/BricsCAD/DWG TrueView antes de subir</td></tr>
+      </table>
+
+      <h4>Limites do configurador</h4>
+      <ul class="help-list">
+        <li><strong>Salvamento local:</strong> os dados ficam no localStorage do navegador. Limpar o cache apaga os projetos. Use "Exportar JSON" para backup.</li>
+        <li><strong>Por dispositivo:</strong> projetos não sincronizam entre navegadores/dispositivos automaticamente.</li>
+        <li><strong>API da IA:</strong> a importação consome tokens da API Anthropic. Documentos muito longos podem precisar de várias chamadas.</li>
+        <li><strong>DWG/DXF:</strong> não suportado diretamente — precisa converter para PDF.</li>
+      </ul>
+
+      <div class="help-tip">
+        💡 <strong>Dúvida específica?</strong> Cada seção do tutorial cobre detalhes do tema. Use as abas no topo deste modal para navegar entre Visão Geral, Importação, Ambientes e Módulos.
       </div>
     `
   }
@@ -5415,7 +6463,22 @@ function finishCwiz(){
   }
   render();
   const pts=ST.environments.reduce((s,e)=>s+e.points.length,0);
-  setTimeout(()=>alert('✅ Importação concluída!\n\n'+ST.environments.length+' ambiente(s) configurados.\n'+pts+' ponto(s) de instalação criados.\n\nRevise cada ponto e ajuste os módulos se necessário.'),100);
+  // Detectar se a IA não conseguiu identificar ambientes:
+  // (a) só existe 1 ambiente E ele se chama "Geral" / "Sem ambiente" / "Importado", OU
+  // (b) tem ≥3 pontos e todos estão concentrados num ambiente "genérico"
+  const genericNames = ['geral','sem ambiente','importado','indefinido','default','main'];
+  const onlyOne = ST.environments.length === 1;
+  const firstEnv = ST.environments[0];
+  const isGeneric = firstEnv && genericNames.includes((firstEnv.name||'').toLowerCase().trim());
+  const showOrganizeHint = onlyOne && isGeneric && firstEnv.points.length >= 3;
+
+  setTimeout(()=>{
+    let msg = '✅ Importação concluída!\n\n'+ST.environments.length+' ambiente(s) configurados.\n'+pts+' ponto(s) de instalação criados.\n\nRevise cada ponto e ajuste os módulos se necessário.';
+    if(showOrganizeHint){
+      msg += '\n\n💡 Dica: a IA não conseguiu identificar ambientes específicos no documento. Você pode usar Shift+Click ou Cmd/Ctrl+Click na lista lateral para selecionar vários pontos e organizá-los em ambientes (Sala, Cozinha, Quartos, etc).';
+    }
+    alert(msg);
+  },100);
 }
 
 function skipColorWizard(){
@@ -5759,7 +6822,7 @@ function setPtColor(type, colorId){
   const pc=getEnvPC(envId);
   const mc=getEnvMC(envId);
   const sc=getEnvSc(envId);
-  const asm=pt?.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,sc):null;
+  const asm=pt?.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,sc,pt._plateSize||null):null;
   renderPreview(asm,pt?.selectedModules||[],series,pc,mc);
   // Update swatch selection
   const panel=document.getElementById('pt-color-panel');
