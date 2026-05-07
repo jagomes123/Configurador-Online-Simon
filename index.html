@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0088)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_43.html -->
+<!-- saved from url=(0088)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_53.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
@@ -625,6 +625,23 @@ html,body{height:100%;font-family:var(--font-sans);font-size:14px;color:var(--te
 .drop-zone-text{font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
 .drop-zone-sub{font-size:12px;color:var(--text-tertiary)}
 .drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+.drop-zone-unified{
+  border:2px dashed var(--border-medium);border-radius:var(--radius-lg);
+  padding:48px 24px;text-align:center;cursor:pointer;transition:all 0.18s;
+  position:relative;overflow:hidden;background:var(--bg-secondary);
+}
+.drop-zone-unified:hover,.drop-zone-unified.dragover{
+  border-color:var(--simon-blue);background:var(--accent-light);
+  transform:scale(1.005);
+}
+.drop-zone-unified.has-file{
+  border-color:var(--green);background:var(--green-light);border-style:solid;
+}
+.drop-zone-unified .drop-zone-icon{font-size:42px;margin-bottom:12px}
+.drop-zone-unified .drop-zone-text{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:6px}
+.drop-zone-unified .drop-zone-sub{font-size:12px;color:var(--text-tertiary);font-family:var(--font-mono)}
+.drop-zone-unified input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
 
 .text-input-area{
   width:100%;min-height:160px;padding:12px;
@@ -1628,7 +1645,22 @@ function computeAssembly(selMods, series, plateColor, modColor, minFormat, suppo
   if(!s){ console.warn('computeAssembly: unknown series', series); return {error:true,warnings:['⚠ Série desconhecida: '+series],totalPos,format:'4x2',maxPos:3}; }
   if(!s.integrated){
     if(series==='S82') support = s.supports?.[format]?.any || null;
-    else if(s.supports?.[format]){ const key = series==='S35' ? (supportColor||modColor||Object.keys(s.supports[format])[0]) : (modColor||Object.keys(s.supports[format])[0]); support = s.supports[format][key] || s.supports[format][Object.keys(s.supports[format])[0]] || null; }
+    else if(s.supports?.[format]){
+      // S35: prefer sc (support color), then mc (module color), then heuristic fallback by pc
+      // For S35: support ids are '39' (Branco), '38' (Grafite), '34' (Alumínio); mc ids are '30' (Branco), '38' (Grafite); pc has 10 colors.
+      // If sc not set, try to infer: mc==='38' → support '38' (Grafite); mc==='30' → support '39' (Branco)
+      let key;
+      if(series==='S35'){
+        if(supportColor && s.supports[format][supportColor]) key = supportColor;
+        else if(modColor==='38' && s.supports[format]['38']) key = '38';   // grafite
+        else if(modColor==='34' && s.supports[format]['34']) key = '34';   // alumínio
+        else if(s.supports[format]['39']) key = '39';                       // branco (default S35)
+        else key = Object.keys(s.supports[format])[0];
+      } else {
+        key = modColor || Object.keys(s.supports[format])[0];
+      }
+      support = s.supports[format][key] || s.supports[format][Object.keys(s.supports[format])[0]] || null;
+    }
   }
   const pc = plateColor, pcName = s.pc?(s.pc.find(c=>c.id===pc)?.name||pc):pc;
   if(series==='S19'){const m={'4x2':{1:'19911-30',2:'19922-30',3:'19913-30'},'4x4':{2:'19911-50',4:'19922-50',6:'19913-50'}};const sz=format==='4x2'?(blindCount===2?1:blindCount===1?2:3):(blindCount===4?2:blindCount===2?4:6);plate={ref:m[format][sz]||m[format][format==='4x2'?3:6],desc:`Placa ${sz}p + suporte ${format} Branco`};}
@@ -2057,6 +2089,23 @@ function renderPointConfig(pt){
     h+=`<div class="sel-mods"><span class="section-label" style="margin-top:16px;display:block">Módulos selecionados</span>`;
     pt.selectedModules.forEach((sm2,i)=>{h+=`<div class="sel-mod"><div class="mod-dot" style="background:${CAT_CLR[sm2.mod.cat]||'#888'}"></div><div class="sel-mod-info"><div class="mod-ref">${sm2.mod.ref}${sm2.mod.isIO?'<span class="io-tag">iO</span>':''}</div><div class="mod-desc">${sm2.mod.desc}</div></div><div class="qty-ctrl"><button class="qty-btn" onclick="chgQty(${i},-1)">−</button><span class="qty-num">${sm2.qty}</span><button class="qty-btn" onclick="chgQty(${i},1)">+</button></div></div>`;});
     h+='</div>';
+  } else if(pt._minFormat){
+    // Ponto cego importado: mostra info do conjunto cego
+    const sc=getEnvSc(envId);
+    const blank = resolveBlankPlate(pt._minFormat==='4x4', 1, series, pc, mc, sc);
+    h+=`<div style="background:#FFF8E1;border:1px solid #FFE082;border-left:4px solid #FF9800;border-radius:8px;padding:14px;margin-top:16px">
+      <div style="font-size:13px;font-weight:700;color:#5D4037;margin-bottom:8px">🟧 Conjunto ${pt._minFormat} cego</div>
+      <div style="font-size:12px;color:#5D4037;line-height:1.5;margin-bottom:10px">Este ponto é um conjunto cego (sem módulos funcionais). O sistema gera automaticamente:</div>
+      <div style="font-family:var(--font-mono);font-size:11px;background:white;border-radius:6px;padding:8px 10px;border:1px solid #FFE082">`;
+    blank.forEach(bp=>{
+      h+=`<div style="display:flex;justify-content:space-between;padding:3px 0">
+        <span><strong>${bp.ref||'—'}</strong> ${bp.desc}</span>
+        <span style="color:#FF6B35;font-weight:700">${bp.qty}×</span>
+      </div>`;
+    });
+    h+=`</div>
+      <div style="font-size:11px;color:#7D6754;margin-top:8px;font-style:italic">Para transformar em ponto funcional, adicione módulos pela lista acima.</div>
+    </div>`;
   }
   if(asm) h+=renderAsmBox(asm);
   h+=`</div><div class="preview-panel" id="preview-panel"></div></div>`;
@@ -2351,6 +2400,18 @@ function collectBOM(){
       return;
     }
     env.points.forEach(pt=>{
+      // Ponto cego (sem módulos mas com _minFormat) → resolver via resolveBlankPlate
+      if(pt.selectedModules.length===0 && pt._minFormat){
+        const sc=getEnvSc(env.id);
+        const is4x4 = (pt._minFormat==='4x4');
+        const blank = resolveBlankPlate(is4x4, 1, series, pc, mc, sc);
+        blank.forEach(bp=>{
+          const k = bp.ref || (bp.desc+'__blank__'+env.name);
+          if(!items[k]) items[k]={ref:bp.ref||'',desc:bp.desc,cat:bp.cat,series,qty:0};
+          items[k].qty += (bp.qty||1);
+        });
+        return; // não cai no resto
+      }
       pt.selectedModules.forEach(sm2=>{const k=sm2.mod.ref;if(!items[k])items[k]={ref:k,desc:sm2.mod.desc,cat:sm2.mod.cat,series,qty:0};items[k].qty+=sm2.qty;});
       const a=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,ST.project?.sc||null):null;
       if(a&&!a.error){
@@ -2388,6 +2449,18 @@ function collectBOMByEnv(){
       });
     } else {
       env.points.forEach(pt=>{
+        // Ponto cego (sem módulos mas com _minFormat) → resolver via resolveBlankPlate
+        if(pt.selectedModules.length===0 && pt._minFormat){
+          const sc=getEnvSc(env.id);
+          const is4x4 = (pt._minFormat==='4x4');
+          const blank = resolveBlankPlate(is4x4, 1, series, pc, mc, sc);
+          blank.forEach(bp=>{
+            const k = bp.ref || (bp.desc+'__blank__'+env.name);
+            if(!items[k]) items[k]={ref:bp.ref||'',desc:bp.desc,cat:bp.cat,series,qty:0};
+            items[k].qty += (bp.qty||1);
+          });
+          return;
+        }
         pt.selectedModules.forEach(sm2=>{const k=sm2.mod.ref;if(!items[k])items[k]={ref:k,desc:sm2.mod.desc,cat:sm2.mod.cat,series,qty:0};items[k].qty+=sm2.qty;});
         const a=pt.selectedModules.length>0?computeAssembly(pt.selectedModules,series,pc,mc,pt._minFormat||null,ST.project?.sc||null):null;
         if(a&&!a.error){
@@ -3055,6 +3128,20 @@ Analise a lista de materiais e extraia TODOS os itens com suas quantidades, resp
    Use ponto_id para AGRUPAR módulos do MESMO conjunto/placa, e ponto_id DIFERENTE para cada nova
    linha que começa com "01 conjunto" ou "01 placa" no documento.
 
+   ⚠️ MUITO IMPORTANTE: Em levantamentos no formato "01 conjunto 4x2 para X módulos: ○ ○ ○" (cada
+   conjunto descrevendo um ponto físico com seus módulos listados em bullets), VOCÊ NÃO DEVE
+   retornar item_type:"support" nem item_type:"plate" para esses conjuntos. O configurador gera
+   placa e suporte automaticamente baseado nos módulos listados. Retorne APENAS os módulos com
+   item_type:"module" ou "blind", com ponto_id distinto para cada conjunto.
+   Inclua plate_format ("4x2" ou "4x4") no PRIMEIRO item de cada ponto_id para o configurador
+   saber o formato escolhido pelo cliente.
+
+   Exemplo correto:
+   "Copa: 01 conjunto 4x2 para 03 módulos: 2 tomadas 10A + 1 cego"
+   →  {ambiente:"Copa", desc:"Tomada 2P+T 10A", qty:2, item_type:"module", ponto_id:"copa-pt1", plate_format:"4x2"}
+   →  {ambiente:"Copa", desc:"Módulo cego", qty:1, item_type:"blind", ponto_id:"copa-pt1"}
+   Se houver 4 conjuntos diferentes na Copa, gere ponto_id "copa-pt1", "copa-pt2", "copa-pt3", "copa-pt4".
+
 3. ITENS RISCADOS/TACHADOS — se você detectar marcações de cancelamento (texto riscado,
    "[cancelado]", "[removido]", traços horizontais sobre o texto), IGNORE esse item.
 
@@ -3062,6 +3149,15 @@ Analise a lista de materiais e extraia TODOS os itens com suas quantidades, resp
    "tomada 20a", "geladeira", "filtro", "lava roupa" são DICAS contextuais sobre o ponto
    (uso real ou correção). Use a anotação para refinar o nome do ponto quando útil
    (ex: ponto.location = "geladeira"), mas NÃO crie itens novos a partir delas.
+
+5. ⚠️ AMBIGUIDADE DA PALAVRA "CONJUNTO":
+   No documento, "01 conjunto 4x2", "01 conjunto 4x4", "conjunto para X módulos" SEMPRE significa
+   um PONTO FÍSICO (placa + suporte + módulos a serem montados) — NÃO é um SKU pré-montado.
+   NUNCA retorne SKU da categoria "Conjunto" da Simon (refs como "30700-30", "30900-30",
+   produtos pré-montados). O configurador vai gerar suporte + placa + módulos + tampas separados.
+   Retorne APENAS os módulos individuais com item_type:"module" ou "blind".
+   Se você encontrar a palavra "conjunto" no documento, INTERPRETE como "ponto físico" e
+   liste os módulos que vão dentro dele com mesmo ponto_id.
 
 ═══════════════════════════════════════════════════════════════════════════
 
@@ -3086,8 +3182,19 @@ REGRAS GERAIS:
 - NÃO agrupe itens separados da lista em uma linha só — cada linha do documento é tratada independentemente
 - Preserve quantidades EXATAMENTE como estão na lista
 - NÃO tente adivinhar ou aplicar cor (branco/preto) pela descrição — IGNORE menções de cor. A cor vem da tela de import do usuário.
-- Para placa cega (sem posições): item_type "blank_plate"
-- Módulos cegos: item_type "blind"
+
+⚠️ DIFERENÇA CRÍTICA — "conjunto cego" vs "módulo cego":
+- "01 conjunto 4x4 CEGO" / "02 conjuntos 4x2 CEGOS" (sem módulos listados dentro)
+   → item_type "blank_plate". É um PONTO inteiro vazio, sem módulos funcionais.
+   → desc: "Conjunto 4x4 cego" ou "Placa cega"
+- "01 módulo cego" / "02 módulos cegos" (listado DENTRO de um conjunto que tem outros módulos)
+   → item_type "blind". É APENAS uma tampa cega para preencher 1 posição vaga numa placa.
+   → Compartilha o mesmo ponto_id dos outros módulos do conjunto.
+   → Exemplo: "01 conjunto 4x2 para 03 módulos: 02 tomadas 10A + 01 módulo cego"
+     → 2× tomada (item_type:"module") + 1× tampa cega (item_type:"blind"), TODOS com mesmo ponto_id.
+
+NUNCA classifique "01 módulo cego" dentro de um conjunto com outros módulos como "blank_plate" —
+isso criaria um ponto inteiro vazio quando na verdade é só uma tampa de preenchimento.
 
 ════════════════════════════════════════════════════════════════════════════
 REGRAS DE DECOMPOSIÇÃO — Simon 26 iO TOUCH/Wi-Fi (CRÍTICO!)
@@ -3214,7 +3321,10 @@ Para cada item retorne um objeto JSON com:
     "support" → suporte 4x2, suporte 4x4, caixa de embutir, caixa de superfície
     "plate"   → placa 4x2, placa 4x4, placa 1/2/3/4/6 módulos, frame, acabamento
     "blind"   → módulo cego, tampa cega, tecla cega
-    "assembly"→ conjunto (suporte + placa + módulo juntos)
+    NUNCA use item_type:"assembly" ou retorne SKUs de conjuntos pré-montados (categoria "Conjunto"
+    da Simon, ex: "30700-XX", "30900-XX"). O configurador monta suporte+placa+módulos
+    automaticamente. Para "01 conjunto 4x2 para X módulos: ○...", retorne APENAS os módulos
+    com mesmo ponto_id (ver SITUAÇÃO 3 abaixo).
 - ponto_id: OBRIGATÓRIO quando NÃO há suportes/placas no documento
     Use uma string descritiva para agrupar módulos que ficam NO MESMO ponto físico na parede.
     Ex: "sala-tv-interr-tomada" para um interruptor e tomada na mesma parede/local.
@@ -3243,6 +3353,66 @@ Exemplos:
     {ponto_id:"sala-tv-B2", qty:1, desc:"Tomada 2P+T 10A", item_type:"module"}
     {ponto_id:"sala-tv-B3", qty:1, desc:"Tomada 2P+T 10A", item_type:"module"}
   Quando não há informação de agrupamento, use ponto_id único por unidade.
+
+═══════════════════════════════════════════════════════════════════════════
+SITUAÇÃO 3 — LEVANTAMENTO PONTO-A-PONTO (CRÍTICO!)
+═══════════════════════════════════════════════════════════════════════════
+Quando o documento descreve cada PONTO FÍSICO da parede como "01 conjunto",
+"01 placa", "1 conjunto 4x2", "1 conjunto 4x4 para X módulos:" seguido de uma
+lista indentada de módulos com bullets (○, ●, -, *, etc), isso é um
+LEVANTAMENTO PONTO-A-PONTO. CADA "01 conjunto" é UM PONTO FÍSICO INDEPENDENTE.
+
+Exemplo do formato típico:
+  Copa:
+  ● 01 conjunto 4x2 para 01 módulo de cigarra de campainha.
+  ● 01 conjunto 4x4 para 06 módulos:
+      ○ 02 interruptores simples;
+      ○ 01 interruptor paralelo;
+      ○ 02 tomadas 127V 10A;
+      ○ 01 tomada 127V 20A.
+  ● 01 conjunto 4x2 para 03 módulos:
+      ○ 02 tomadas 127V 10A;
+      ○ 01 tomada 127V 20A.
+
+Isso são 3 PONTOS FÍSICOS distintos no ambiente "Copa". Você DEVE retornar:
+  - SEM item_type "support" ou "plate" para esses conjuntos
+  - APENAS item_type "module" e "blind" para os módulos listados
+  - ponto_id ÚNICO para cada "01 conjunto" (ex: "copa-pt1", "copa-pt2", "copa-pt3")
+  - O formato (4x2/4x4) deve ir no campo plate_format do PRIMEIRO item de cada ponto_id
+  - Todos os módulos do mesmo conjunto compartilham o mesmo ponto_id
+
+Saída esperada para o exemplo acima:
+[
+  {"ambiente":"Copa","desc":"Cigarra campainha","qty":1,"item_type":"module","ponto_id":"copa-pt1","plate_format":"4x2"},
+  {"ambiente":"Copa","desc":"Interruptor simples 10A","qty":2,"item_type":"module","ponto_id":"copa-pt2","plate_format":"4x4"},
+  {"ambiente":"Copa","desc":"Interruptor paralelo 10A","qty":1,"item_type":"module","ponto_id":"copa-pt2"},
+  {"ambiente":"Copa","desc":"Tomada 2P+T 10A","qty":2,"item_type":"module","ponto_id":"copa-pt2"},
+  {"ambiente":"Copa","desc":"Tomada 2P+T 20A","qty":1,"item_type":"module","ponto_id":"copa-pt2"},
+  {"ambiente":"Copa","desc":"Tomada 2P+T 10A","qty":2,"item_type":"module","ponto_id":"copa-pt3","plate_format":"4x2"},
+  {"ambiente":"Copa","desc":"Tomada 2P+T 20A","qty":1,"item_type":"module","ponto_id":"copa-pt3"}
+]
+
+REGRAS CRÍTICAS DA SITUAÇÃO 3:
+1. NUNCA retorne item_type:"support" ou item_type:"plate" para "conjuntos" do levantamento.
+   O configurador vai gerar suporte/placa automaticamente baseado nos módulos.
+2. SEMPRE retorne ponto_id distinto para cada "01 conjunto" (numere sequencialmente: pt1, pt2, pt3...).
+3. Todos os módulos dentro do mesmo conjunto (○ ○ ○) compartilham o mesmo ponto_id.
+4. Inclua plate_format ("4x2" ou "4x4") no PRIMEIRO item de cada ponto_id.
+5. ⚠️ DIFERENÇA CRÍTICA — "01 módulo cego" vs "01 conjunto cego":
+   • "01 módulo cego" / "02 módulos cegos" listado DENTRO de um conjunto que tem outros módulos
+     → item_type:"blind", MESMO ponto_id dos outros módulos do conjunto.
+     Exemplo: "01 conjunto 4x2 para 03 módulos: 02 tomadas 10A + 01 módulo cego"
+       → 2× tomada (item_type:"module") + 1× tampa cega (item_type:"blind"), todos com ponto_id "copa-pt3".
+     NUNCA classifique "módulo cego" deste tipo como "blank_plate" — é apenas tampa de preenchimento!
+   • "01 conjunto 4x4 cego" / "02 conjuntos 4x2 cegos" (SEM módulos listados dentro)
+     → item_type:"blank_plate", ponto_id próprio (sem outros módulos compartilhando).
+     Exemplo: "02 conjuntos 4x4 cegos" → 2 itens separados, cada um:
+       {desc:"Conjunto 4x4 cego", item_type:"blank_plate", ponto_id:"qb-cego-1", plate_format:"4x4"}
+6. IGNORAR linhas riscadas/tachadas. Anotações em vermelho ou manuscritas são DICAS contextuais
+   para refinar a descrição (ex: "geladeira", "lava roupa") — use no campo location se útil,
+   mas NUNCA crie itens novos a partir delas.
+
+═══════════════════════════════════════════════════════════════════════════
 
 CONVERSÕES OBRIGATÓRIAS — agrupe SEMPRE no mesmo ponto_id:
 - "interruptor duplo normal" / "2 teclas simples" → 2x {desc:"Interruptor simples 10A"} no MESMO ponto_id
@@ -3512,16 +3682,12 @@ const HELP_SECTIONS = [
       <h4>Passo a passo</h4>
       <ol class="help-list-ord">
         <li>Clique em <strong>Importar ▾</strong> no topo da tela.</li>
-        <li>Escolha o tipo de documento:
-          <ul class="help-list">
-            <li><strong>Projeto Elétrico</strong> — PDF com plantas/simbologia. A IA usa simbologia padrão (paralelo, intermediário, bipolar, etc.) para gerar a lista.</li>
-            <li><strong>Lista de Materiais</strong> — planilha ou texto com itens já discriminados (interruptores, tomadas, placas, suportes).</li>
-          </ul>
-        </li>
+        <li>Arraste o arquivo na área indicada ou clique para selecionar. Aceita: PDF, DOCX, XLSX, CSV, TXT, JPG, PNG, prints de WhatsApp. Para arquivos DWG, exporte primeiro como PDF.</li>
+        <li>Se preferir digitar/colar texto, use o botão "✏️ Digitar / colar texto manualmente" abaixo da área de upload.</li>
         <li>Selecione a <strong>série</strong> (S19, S20, S26, S26iO, S30, S35, S82) e a <strong>cor</strong> (branco, grafite, etc.) que serão aplicadas a todos os componentes do projeto.</li>
-        <li>Faça upload do arquivo (PDF, XLSX, DOCX, imagem) ou cole o texto diretamente.</li>
-        <li>A IA processa e mostra a <strong>prévia dos itens</strong> identificados — revise antes de confirmar.</li>
-        <li>Clique em <strong>Importar</strong> para gerar os ambientes e pontos automaticamente.</li>
+        <li>Clique em <strong>Analisar com IA →</strong>. A IA detecta automaticamente se é um projeto elétrico (planta com simbologia) ou uma lista de materiais (BOM consolidado) e organiza os pontos por ambiente.</li>
+        <li>Revise a <strong>prévia dos itens</strong> identificados — você pode editar antes de confirmar.</li>
+        <li>Clique em <strong>✅ Importar para o Configurador</strong> para gerar os ambientes e pontos automaticamente.</li>
       </ol>
 
       <h4>Decomposição automática (Simon 26iO Touch/Wi-Fi)</h4>
@@ -3882,7 +4048,7 @@ const STRUCTURAL_KEYWORDS = [
   'modulo cego','módulo cego','tampa cega','tecla cega','saida de fio',
   'saída de fio','saida de cabos','saída de cabos','cego',
 ];
-const STRUCTURAL_ITEM_TYPES = ['support','plate','blind','assembly'];
+const STRUCTURAL_ITEM_TYPES = ['support','plate','blind','blank_plate'];
 
 function isStructural(desc, item_type){
   // 1. Trust the AI classification if present
@@ -3959,7 +4125,7 @@ function normalizeImportItems(items){
         else if(desc.includes('dupla')||desc.includes('duplo')){perPlate=2;newDesc=item.desc.replace(/dupla?o?\s*/gi,'').trim()||item.desc;newRef=null;}
       }
     }
-    return{...item,ref:newRef,desc:newDesc,qty:Math.max(1,parseInt(item.qty)||1),_per_plate:perPlate,_structural:_struct,item_type:item.item_type||(_struct?'support':'module'),ponto_id:item.ponto_id||null};
+    return{...item,ref:newRef,desc:newDesc,qty:Math.max(1,parseInt(item.qty)||1),_per_plate:perPlate,_structural:_struct,item_type:item.item_type||(_struct?'support':'module'),ponto_id:item.ponto_id||null,plate_format:item.plate_format||null};
   });
 }
 
@@ -3969,16 +4135,16 @@ async function runAnalysis(){
   renderImport();
   try{
     let items=[];
-    const _sys=IMP.isListMode?CLAUDE_SYSTEM_LIST:CLAUDE_SYSTEM;
+    const _sys=CLAUDE_SYSTEM; // Detecção automática: sempre usa CLAUDE_SYSTEM (cobre todos os casos)
     if(IMP.method==='text'){
       setLoadingStep(1);await sleep(300);setLoadingStep(2);
-      const _msg=IMP.isListMode?'Extraia todos os itens desta lista de materiais com quantidades:\n\n':'Analise esta lista de materiais elétricos:\n\n';
+      const _msg='Analise este texto e extraia todos os materiais Simon Brasil organizados por ambiente:\n\n';
       items=await callClaudeAPI(null,_msg+IMP.rawText,_sys);
     }else if(IMP.file){
       setLoadingStep(1);
       const content=await prepareContentForAPI(IMP.file,IMP.fileType);
       setLoadingStep(2);await sleep(200);
-      const _fmsg=IMP.isListMode?'Extraia todos os itens desta lista de materiais ('+getFileTypeLabel(IMP.fileType)+'):':'Analise este documento ('+getFileTypeLabel(IMP.fileType)+') e extraia todos os materiais Simon Brasil.';
+      const _fmsg='Analise este documento ('+getFileTypeLabel(IMP.fileType)+') e extraia todos os materiais Simon Brasil organizados por ambiente.';
       items=await callClaudeAPI(content,_fmsg,_sys);
     }
 
@@ -4048,6 +4214,7 @@ async function runAnalysis(){
       _structural:it._structural||false,
       item_type:it.item_type||'module',
       ponto_id:it.ponto_id||null,
+      plate_format:it.plate_format||null,
       serie_hint:it.serie_hint||null,
       confidence:it.ref?'high':(it.serie_hint?'med':'low')
     }));
@@ -4080,7 +4247,7 @@ function renderImport(){
     footer=`<div style="font-size:12px;color:var(--text-secondary)"><strong>${n}</strong> itens em <strong>${envs}</strong> ambiente(s)</div>
       <div style="display:flex;gap:8px">
         <button class="btn" onclick="IMP.step='choose';renderImport()">← Voltar</button>
-        <button class="btn btn-green" onclick="finalizeImport()" style="font-size:13px;padding:8px 18px">${IMP.isListMode?"📋 Gerar Lista de Materiais":"✅ Importar para o Configurador"}</button>
+        <button class="btn btn-green" onclick="finalizeImport()" style="font-size:13px;padding:8px 18px">✅ Importar para o Configurador</button>
       </div>`;
   }else if(IMP.step==='error'){
     body=`<div style="text-align:center;padding:40px 20px">
@@ -4099,8 +4266,8 @@ function renderImport(){
     <div class="imp-modal">
       <div class="imp-header">
         <div class="imp-header-left">
-          <h2>${IMP.isListMode?"📋 Lista de Material Direta":"📂 Importar Projeto Elétrico"}</h2>
-          <p>${IMP.isListMode?"A IA identifica os produtos e gera a lista com códigos Simon Brasil":"A IA analisa o documento e monta a lista Simon Brasil automaticamente"}</p>
+          <h2>📂 Importar projeto</h2>
+          <p>A IA analisa o documento, identifica os produtos Simon Brasil e organiza por ambiente automaticamente</p>
         </div>
         <button class="wiz-close" onclick="closeImport()">×</button>
       </div>
@@ -4113,63 +4280,36 @@ function renderImport(){
 
 function renderImportChoose(){
   const d=IMP;
-  // Mode selector
-  const modeBar=`<div style="display:flex;gap:8px;margin-bottom:18px;background:var(--bg-secondary);padding:4px;border-radius:10px;border:1px solid var(--border-light)">
-    <button onclick="IMP.isListMode=false;renderImport()" style="flex:1;padding:9px 12px;border-radius:7px;border:none;cursor:pointer;font-family:var(--font-sans);font-size:13px;font-weight:600;transition:all 0.15s;${!IMP.isListMode?'background:#fff;color:var(--simon-blue);box-shadow:0 1px 4px rgba(0,0,0,0.1)':'background:transparent;color:var(--text-tertiary)'}">
-      📐 Projeto Elétrico
-      <div style="font-size:10px;font-weight:400;margin-top:2px;opacity:0.75">Planta / esquema / pontos por ambiente</div>
-    </button>
-    <button onclick="IMP.isListMode=true;renderImport()" style="flex:1;padding:9px 12px;border-radius:7px;border:none;cursor:pointer;font-family:var(--font-sans);font-size:13px;font-weight:600;transition:all 0.15s;${IMP.isListMode?'background:#fff;color:var(--simon-blue);box-shadow:0 1px 4px rgba(0,0,0,0.1)':'background:transparent;color:var(--text-tertiary)'}">
-      📋 Lista de Material
-      <div style="font-size:10px;font-weight:400;margin-top:2px;opacity:0.75">BOM com suportes, placas e módulos</div>
-    </button>
-  </div>`;
-  const fmtCards=[
-    {id:'fmt-dwg',icon:'📐',title:'Projeto DWG',formats:'AutoCAD · BricsCAD · DWG · DXF',cls:'dwg-card',method:'dwg',listHide:true},
-    {id:'fmt-pdf',icon:'📄',title:'PDF / Word / Excel',formats:'PDF · DOCX · XLSX · TXT · CSV',method:'file'},
-    {id:'fmt-img',icon:'📷',title:'Foto / Imagem',formats:'JPG · PNG · WhatsApp · Foto de lista',method:'file'},
-    {id:'fmt-txt',icon:'✏️',title:'Digitar / Colar texto',formats:'Lista manual · WhatsApp · E-mail',method:'text'},
-  ];
-  let h=modeBar+`<div class="fmt-cards">`;
-  fmtCards.filter(card=>!(IMP.isListMode&&card.listHide)).forEach(card=>{
-    const active=(d.method===card.method&&d._fmtSel===card.id)||(card.method==='dwg'&&d.method==='dwg');
-    h+=`<div class="fmt-card ${card.cls||''} ${active?'active':''}" onclick="selectFmtCard('${card.id}','${card.method}')">
-      <div class="fmt-card-icon">${card.icon}</div>
-      <div class="fmt-card-title">${card.title}</div>
-      <div class="fmt-card-formats">${card.formats}</div>
-    </div>`;
-  });
-  h+='</div>';
-  if(d.method==='dwg'&&!IMP.isListMode){
-    h+=`<div class="dwg-guide">
-      <h4>🚧 Como exportar um arquivo DWG</h4>
-      <p style="font-size:12px;color:#7C3410;margin-bottom:12px">Arquivos DWG são binários e precisam ser convertidos antes da análise.</p>
-      <ol class="dwg-steps">
-        <li><span class="dwg-step-num">1</span><span class="dwg-step-text">Abra no <strong>AutoCAD</strong>, <strong>BricsCAD</strong> ou gratuito <strong>DWG TrueView</strong></span></li>
-        <li><span class="dwg-step-num">2</span><span class="dwg-step-text"><strong>Arquivo → Imprimir → DWG to PDF.pc3</strong> ou "Microsoft Print to PDF"</span></li>
-        <li><span class="dwg-step-num">3</span><span class="dwg-step-text">Salve o PDF e faça upload usando a opção <strong>PDF / Word / Excel</strong></span></li>
-      </ol>
-      <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn" onclick="selectFmtCard('fmt-pdf','file')" style="font-size:12px">📄 Upload do PDF</button>
-        <button class="btn" onclick="selectFmtCard('fmt-img','file')" style="font-size:12px">📷 Upload de imagem</button>
-      </div>
-    </div>`;
-  }
-  if(d.method==='file'){
-    const hasFile=!!d.file;
-    h+=`<div class="drop-zone ${hasFile?'has-file':''}" id="imp-dropzone">
-      <div class="drop-zone-icon">${hasFile?'✅':'📁'}</div>
-      <div class="drop-zone-text">${hasFile?d.file.name:'Arraste o arquivo aqui ou clique para selecionar'}</div>
-      <div class="drop-zone-sub">${hasFile?getFileTypeLabel(d.fileType)+' · '+Math.round(d.file.size/1024)+'KB':'PDF · DOCX · XLSX · JPG · PNG · TXT'}</div>
+  const isText = (d.method==='text');
+  const hasFile = !!d.file;
+
+  let h='';
+
+  if(!isText){
+    // Dropzone unificada: aceita TODOS os tipos de arquivo
+    h+=`<div class="drop-zone-unified ${hasFile?'has-file':''}" id="imp-dropzone">
+      <div class="drop-zone-icon">${hasFile?'✅':'📂'}</div>
+      <div class="drop-zone-text">${hasFile?d.file.name:'Arraste seu arquivo aqui ou clique para selecionar'}</div>
+      <div class="drop-zone-sub">${hasFile?getFileTypeLabel(d.fileType)+' · '+Math.round(d.file.size/1024)+'KB':'PDF · DOCX · XLSX · CSV · TXT · JPG · PNG · WhatsApp'}</div>
       <input type="file" id="imp-file-input" accept=".pdf,.docx,.doc,.xlsx,.xls,.csv,.txt,.png,.jpg,.jpeg,.webp" onchange="handleFileInputChange(event)">
-    </div>`;
-  }
-  if(d.method==='text'){
-    h+=`<div>
+    </div>
+    <div style="text-align:center;margin:14px 0;font-size:12px;color:var(--text-tertiary);position:relative">
+      <span style="background:var(--bg-primary);padding:0 12px;position:relative;z-index:1">ou</span>
+      <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border-light);z-index:0"></div>
+    </div>
+    <button class="btn" onclick="IMP.method='text';renderImport()" style="width:100%;padding:12px;font-size:13px;background:var(--bg-secondary);border:1px solid var(--border-medium);color:var(--text-primary);display:flex;align-items:center;justify-content:center;gap:8px">
+      ✏️ Digitar / colar texto manualmente
+      <span style="font-size:11px;color:var(--text-tertiary);font-weight:400">Lista do WhatsApp · E-mail · Texto livre</span>
+    </button>`;
+  } else {
+    // Modo texto manual
+    h+=`<button class="btn" onclick="IMP.method=null;IMP.rawText='';renderImport()" style="margin-bottom:12px;font-size:12px;padding:6px 12px">← Voltar para upload de arquivo</button>
+    <div>
       <label style="font-size:12px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:8px">Cole aqui a lista de materiais, mensagem do WhatsApp, e-mail ou qualquer texto com os produtos:</label>
       <textarea class="text-input-area" id="imp-text-area" placeholder="Exemplos:&#10;• Sala: 3x interruptor simples, 2x tomada 20A&#10;• Quarto 1: 1x paralelo, 2x tomada 10A&#10;&#10;Ou cole diretamente uma lista com códigos como:&#10;30101-30 x5, 30426-30 x8" oninput="IMP.rawText=this.value;updateNextBtn()">${d.rawText}</textarea>
     </div>`;
   }
+
   return h;
 }
 
@@ -4194,7 +4334,7 @@ function renderImportReview(){
     <div class="imp-sum-item"><div class="imp-sum-num">${items.filter(i=>!i._structural).reduce((s,i)=>s+i.qty*(i._per_plate||1),0)}</div><div class="imp-sum-label">Total BOM</div></div>
     <div class="imp-sum-item"><div class="imp-sum-num" style="color:var(--text-tertiary)">${items.filter(i=>i._structural).length}</div><div class="imp-sum-label" style="color:var(--text-tertiary)">⚙ Auto</div></div>
   </div>
-  ${IMP.isListMode?`<div style="font-size:11px;color:var(--simon-blue);background:var(--accent-light);border-radius:6px;padding:9px 12px;margin-bottom:10px;border:1px solid rgba(0,87,168,0.15)">📋 <strong>Modo Lista de Material</strong> — Os itens serão mapeados para os códigos Simon Brasil sem criar configurações de placa. A série e cor selecionadas serão aplicadas a todos os ambientes.</div>`:items.filter(i=>i._structural).length?`<div style="font-size:11px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:6px;padding:7px 12px;margin-bottom:10px"><strong>ℹ ${items.filter(i=>i._structural).length} item(ns) estrutural(is)</strong> (suportes, placas, módulos cegos) — marcados ⚙ Auto e não criarão pontos separados.</div>`:''}
+  ${items.filter(i=>i._structural).length?`<div style="font-size:11px;color:var(--text-secondary);background:var(--bg-secondary);border-radius:6px;padding:7px 12px;margin-bottom:10px"><strong>ℹ ${items.filter(i=>i._structural).length} item(ns) estrutural(is)</strong> (suportes, placas, módulos cegos) — marcados ⚙ Auto e não criarão pontos separados.</div>`:''}
   <div class="series-select-area">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <label style="margin-bottom:0">Série Simon utilizada no projeto</label>
@@ -4273,7 +4413,8 @@ function selectFmtCard(cardId,method){IMP.method=method;IMP._fmtSel=cardId;if(me
 function updateNextBtn(){
   const btn=document.getElementById('imp-next-btn');if(!btn)return;
   const apiKey=getApiKey();
-  const ready=(IMP.method==='file'&&IMP.file)||(IMP.method==='text'&&IMP.rawText.trim().length>5)||(IMP.method==='dwg');
+  // Aceita: arquivo carregado OU texto digitado (>5 chars)
+  const ready = (!!IMP.file) || (IMP.method==='text' && IMP.rawText && IMP.rawText.trim().length>5);
   btn.disabled=!(ready&&apiKey);
   btn.style.opacity=(ready&&apiKey)?'1':'0.5';
 }
@@ -4292,8 +4433,52 @@ function handleFileInputChange(e){const f=e.target.files[0];if(f)setUploadedFile
 
 function setUploadedFile(f){
   const type=detectFileType(f);
-  if(type==='dwg'){IMP.method='dwg';IMP.file=null;renderImport();return;}
-  IMP.file=f;IMP.fileType=type;renderImport();updateNextBtn();
+  if(type==='dwg'){
+    // DWG não é suportado diretamente — mostrar modal explicativo amigável
+    showDwgHelpDialog(f.name);
+    return;
+  }
+  IMP.method='file';
+  IMP.file=f;
+  IMP.fileType=type;
+  renderImport();
+  updateNextBtn();
+}
+
+function showDwgHelpDialog(fileName){
+  const mr = document.getElementById('modal-root');
+  if(!mr) return;
+  mr.innerHTML = `
+    <div class="overlay" onclick="if(event.target===this)closeModal()" style="z-index:9999">
+      <div class="modal" style="max-width:520px">
+        <h3>📐 Arquivos DWG precisam ser convertidos</h3>
+        <div style="background:#FFF8E1;border:1px solid #FFE082;border-left:4px solid #FF9800;border-radius:8px;padding:12px 14px;font-size:13px;color:#5D4037;line-height:1.55;margin:-4px 0 16px">
+          O arquivo <strong>${fileName||'DWG'}</strong> é um formato binário do AutoCAD que não pode ser interpretado diretamente pela IA.
+          <br><br>
+          <strong>Para analisar este projeto, exporte como PDF primeiro:</strong>
+        </div>
+        <ol style="padding-left:0;list-style:none;margin:0 0 18px;font-size:13px">
+          <li style="display:flex;gap:10px;margin-bottom:8px">
+            <span style="background:var(--simon-blue);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</span>
+            <span>Abra o arquivo no <strong>AutoCAD</strong>, <strong>BricsCAD</strong> ou no <strong>DWG TrueView</strong> (gratuito da Autodesk).</span>
+          </li>
+          <li style="display:flex;gap:10px;margin-bottom:8px">
+            <span style="background:var(--simon-blue);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</span>
+            <span>Clique em <strong>Arquivo → Imprimir</strong> e escolha a impressora <strong>"DWG to PDF.pc3"</strong> ou <strong>"Microsoft Print to PDF"</strong>.</span>
+          </li>
+          <li style="display:flex;gap:10px;margin-bottom:8px">
+            <span style="background:var(--simon-blue);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</span>
+            <span>Salve o PDF gerado e <strong>arraste-o aqui</strong> no configurador.</span>
+          </li>
+        </ol>
+        <div style="background:var(--accent-light);border-radius:6px;padding:10px 12px;font-size:11px;color:var(--simon-blue);margin-bottom:18px">
+          💡 <strong>Por quê?</strong> A IA precisa "ver" a planta para reconhecer simbologia elétrica (paralelos, intermediários, tomadas, etc.). PDFs preservam o desenho visual.
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" onclick="closeModal()">Entendi</button>
+        </div>
+      </div>
+    </div>`;
 }
 
 function startImport(){
@@ -4325,15 +4510,32 @@ function bestModMatch(desc, mods){
   // Low-weight: color words (often vary)
   const COLOR_WORDS = ['branco','grafite','preto','vermelho','champagne','aluminio'];
 
+  // Sinônimos / equivalências: palavras que devem ser tratadas como semelhantes
+  // (ex: "cigarra" e "campainha" referem-se ao mesmo tipo de produto)
+  const SYNONYM_GROUPS = [
+    ['cigarra','campainha','sineta'],
+  ];
+  function expandSynonyms(text){
+    let out = text;
+    SYNONYM_GROUPS.forEach(group=>{
+      if(group.some(w=>text.includes(w))){
+        // Se qualquer sinônimo do grupo está presente, conta como se todos estivessem
+        group.forEach(w=>{ if(!out.includes(w)) out += ' ' + w; });
+      }
+    });
+    return out;
+  }
+
   function score(mod){
-    const md = mod.desc.toLowerCase()
+    const md = expandSynonyms(mod.desc.toLowerCase()
       .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-      .replace(/[^a-z0-9 ]/g,' ');
+      .replace(/[^a-z0-9 ]/g,' '));
+    const dExp = expandSynonyms(d);
     let pts = 0;
     let typeMatched = 0, typeMissed = 0;
 
     TYPE_WORDS.forEach(w=>{
-      const inDesc = d.includes(w);
+      const inDesc = dExp.includes(w);
       const inMod  = md.includes(w);
       if(inDesc && inMod)  { pts += 10; typeMatched++; }
       if(inDesc && !inMod) { pts -= 15; typeMissed++; }  // strong penalty for missing required type
@@ -4341,19 +4543,19 @@ function bestModMatch(desc, mods){
     });
 
     AMP_WORDS.forEach(w=>{
-      const inDesc = d.includes(w);
+      const inDesc = dExp.includes(w);
       const inMod  = md.includes(w);
       if(inDesc && inMod)  pts += 3;
       if(inDesc && !inMod) pts -= 3;
     });
 
     COLOR_WORDS.forEach(w=>{
-      if(d.includes(w) && md.includes(w)) pts += 1;
+      if(dExp.includes(w) && md.includes(w)) pts += 1;
     });
 
     // Bonus if both contain/don't contain "com led" or "luminosa"
     ['com led','luminosa','led'].forEach(w=>{
-      const inDesc = d.includes(w);
+      const inDesc = dExp.includes(w);
       const inMod  = md.includes(w);
       if(inDesc && inMod)  pts += 4;
       if(inDesc && !inMod) pts -= 6;
@@ -4446,7 +4648,8 @@ function resolveBlankPlate(is4x4, qty, series, pc, mc, sc){
 function resolveDirectRef(item, series, pc, mc){
   const allMods=getMods(series);
   const d=(item.desc||'').toUpperCase();
-  if(item.ref){const m=allMods.find(m=>m.ref===item.ref);if(m)return{ref:m.ref,desc:m.desc,cat:m.cat};}
+  // Match exato por ref — mas NUNCA aceitar SKUs da categoria 'Conjunto' em importação automática
+  if(item.ref){const m=allMods.find(m=>m.ref===item.ref&&m.cat!=='Conjunto');if(m)return{ref:m.ref,desc:m.desc,cat:m.cat};}
   if(item.item_type==='module'||item.item_type==='blind'){
     const pool=item.item_type==='blind'?allMods.filter(m=>m.cat==='Tampa Cega'):allMods.filter(m=>m.cat!=='Conjunto');
 
@@ -4522,7 +4725,6 @@ function finalizeDirectList(){
 
 
 function finalizeImport(){
-  if(IMP.isListMode){ finalizeDirectList(); return; }
   const items=IMP.extractedItems;
   if(!items.length){alert('Nenhum item para importar.');return;}
   if(!ST.project){
@@ -4610,15 +4812,66 @@ function finalizeImport(){
       ST.environments.push(env);
     }
 
-    const structural = envItems.filter(i=>i._structural && i.item_type!=='blind');
-    const modules    = envItems.filter(i=>!i._structural);
+    // ── BLANK PLATES (conjuntos cegos) ────────────────────────────────────
+    // "01 conjunto 4x4 cego", "02 conjuntos 4x2 cegos" → cria pontos sem módulos,
+    // forçando o computeAssembly a gerar suporte + placa cega (ou placa+6 cegos quando
+    // a série não tem placa cega 4x4).
+    // ATENÇÃO: NÃO confundir "conjunto cego" (ponto inteiro vazio) com "módulo cego"
+    // (uma única tampa cega para preencher 1 posição numa placa com módulos).
+    // Só consideramos "blank_plate" se:
+    //   1. item_type === 'blank_plate' (IA classificou explicitamente), OU
+    //   2. descrição contém "CONJUNTO ... CEGO" ou "PLACA ... CEGA" — sem mencionar módulos
+    const blankPlates = envItems.filter(i => {
+      if(i.item_type === 'blank_plate') return true;
+      const d = (i.desc||'').toUpperCase();
+      const mentionsConjuntoOrPlaca = /(?:CONJUNTO|PLACA)\b.*\b(?:CEGO|CEGA|CEGOS|CEGAS)\b/.test(d);
+      const mentionsModule = /\bM[ÓO]DULO\b|\bM[ÓO]DULOS\b/.test(d);
+      // "Módulo cego" / "Módulos cegos" → NÃO é blank_plate, é uma tampa cega normal (item_type=blind)
+      return mentionsConjuntoOrPlaca && !mentionsModule;
+    });
+    blankPlates.forEach(bp=>{
+      const qty=Math.max(1,parseInt(bp.qty)||1);
+      const desc=(bp.desc||'').toUpperCase();
+      const is4x4 = (bp.plate_format==='4x4') || /4X4|4 X 4/.test(desc);
+      const minFmt = is4x4 ? '4x4' : '4x2'; // sempre forçar formato (4x2 ou 4x4) para pontos cegos
+      // Cria N pontos cegos (sem módulos). O computeAssembly vai gerar a placa+suporte+tampas.
+      for(let i=0;i<qty;i++){
+        const lbl = qty>1 ? `Conjunto ${is4x4?'4x4':'4x2'} cego (${i+1}/${qty})` : `Conjunto ${is4x4?'4x4':'4x2'} cego`;
+        env.points.push({
+          id:uid(),
+          name:lbl,
+          location:envName,
+          selectedModules:[],
+          _minFormat:minFmt,
+          _blankPoint:true,
+          _importNote:'Conjunto cego — placa cega ou placa + módulos cegos completos'
+        });
+      }
+    });
+
+    // Remove blank_plates do array de items (mas NÃO remove "módulo cego" — que continua sendo um blind normal)
+    const blankPlatesSet = new Set(blankPlates);
+    const structural = envItems.filter(i=>i._structural && i.item_type!=='blind' && !blankPlatesSet.has(i));
+    const modules    = envItems.filter(i=>!i._structural && !blankPlatesSet.has(i));
+
+    // Detect "Levantamento ponto-a-ponto" mode: if modules have distinct ponto_ids,
+    // we treat each unique ponto_id as a physical point, ignoring structural items
+    // (the AI shouldn't have returned them in this format anyway, but we tolerate).
+    const distinctPontoIds = new Set();
+    let modulesWithPontoId = 0;
+    for(const m of modules){
+      if(m.ponto_id){ distinctPontoIds.add(m.ponto_id); modulesWithPontoId++; }
+    }
+    // If at least 2 distinct ponto_ids exist AND most modules have ponto_id,
+    // use point-by-point mode (situação 3) — ignores structural items
+    const usePontoIdMode = distinctPontoIds.size >= 2 && modulesWithPontoId >= modules.length * 0.6;
 
     // ══════════════════════════════════════════════════════════
-    // SITUAÇÃO 1: Cliente forneceu suportes e/ou placas
+    // SITUAÇÃO 1: Cliente forneceu suportes e/ou placas (sem ponto_id)
     // NÃO criar placas adicionais — distribuir módulos DENTRO
     // das quantidades informadas pelo cliente
     // ══════════════════════════════════════════════════════════
-    if(structural.length>0 && modules.length>0){
+    if(structural.length>0 && modules.length>0 && !usePontoIdMode){
 
       // Build plate registry: {qty, cap, fmt, desc, modules:[]}
       // Merge plate + support with same qty (prefer plate desc for cap)
@@ -4763,9 +5016,12 @@ function finalizeImport(){
           const pos=mod?(mod.pos||1):1;
           if(mod){selMods.push({mod,qty});totalPos+=pos*qty;}
         }
-        // Choose plate format based on total positions needed
-        const fmt=totalPos>3?'4x4':'4x2';
-        const minFmt=fmt==='4x4'?'4x4':null;
+        // Use AI-provided plate_format if available (preserves cliente's choice 4x2 vs 4x4),
+        // else infer from total positions
+        const aiFormat = groupItems.find(it=>it.plate_format)?.plate_format || null;
+        const fmt = aiFormat || (totalPos>3?'4x4':'4x2');
+        // Force minFormat to ensure correct plate is generated even if some modules failed to resolve
+        const minFmt = fmt; // sempre setar (4x2 ou 4x4), não só 4x4
         // Nome curto: primeiras 3 palavras de cada desc, separadas por " + "
         const parts=groupItems.map(it=>{
           const d=(it.desc||'').replace(/\s+/g,' ').trim();
@@ -5011,23 +5267,11 @@ function buildCwizColorPicker(series, selectedId, envIdx, type){
       });
     });
   } else {
-    const arr = type==='pc' ? s.pc : s.mc;
+    const arr = type==='pc' ? s.pc : (type==='sc' ? s.sc : s.mc);
     if(!arr) return '';
     arr.forEach(c=>{
       const sel=selectedId===c.id;
       h+=`<div class="cswatch ${sel?'sel':''}" onclick="${clickFn.replace('{ID}',c.id)}" title="${c.name}">
-        <div class="cswatch-circle" style="background:${c.hex};${sel?'':'border:1px solid rgba(0,0,0,0.1)'}"></div>
-        <div class="cswatch-label">${c.name}</div></div>`;
-    });
-  }
-  // Support color for S35
-  if(type==='sc' && s.sc && s.sc.length>1){
-    const clickFn2 = envIdx===-1
-      ? `setCwGlobalColor('sc','{ID}')`
-      : `cwizSetColor(${envIdx},'sc','{ID}')`;
-    s.sc.forEach(c=>{
-      const sel=selectedId===c.id;
-      h+=`<div class="cswatch ${sel?'sel':''}" onclick="${clickFn2.replace('{ID}',c.id)}" title="${c.name}">
         <div class="cswatch-circle" style="background:${c.hex};${sel?'':'border:1px solid rgba(0,0,0,0.1)'}"></div>
         <div class="cswatch-label">${c.name}</div></div>`;
     });
@@ -5056,10 +5300,14 @@ function setCwGlobalColor(type, colorId){
 function setCwGlobalDiff(checked){ CW.globalDiff=checked; } // kept for legacy refs
 
 function remapEnvModules(env,newSeries,prefMc){
-  // Direct list envs: re-resolve each item against the new series
+  // Cor da placa preferida vem do próprio env (já atualizado antes desta chamada)
+  const prefPc = env.pcOv || prefMc;
+  const prefSc = env.scOv || null;
+  // Direct list envs: re-resolve each item against the new series + new colors
   if(env._isDirectList&&env._directItems){
     env._directItems.forEach(di=>{
-      const resolved=resolveDirectRef({desc:di.originalDesc||di.desc,ref:di.ref,item_type:di.item_type},newSeries,prefMc,prefMc);
+      // Resolve item with the env's NEW pc/mc/sc
+      const resolved=resolveDirectRef({desc:di.originalDesc||di.desc,ref:di.ref,item_type:di.item_type},newSeries,prefPc,prefMc,prefSc);
       if(resolved.ref) di.ref=resolved.ref;
       if(resolved.desc) di.desc=resolved.desc;
       if(resolved.cat) di.cat=resolved.cat;
@@ -5092,11 +5340,26 @@ function remapEnvModules(env,newSeries,prefMc){
 }
 function applyCwizSingle(){
   // Apply same series+colors to ALL environments
+  const targetSeries = CW.globalSeries;
+  const targetMc = CW.globalMc || CW.globalPc;
+  const targetPc = CW.globalPc;
+  const targetSc = CW.globalSc || null;
   ST.environments.forEach(env=>{
-    env.seriesOv = CW.globalSeries===ST.project?.series ? null : CW.globalSeries;
-    env.pcOv     = CW.globalPc;
-    env.mcOv     = CW.globalMc||CW.globalPc;
-    env.scOv     = CW.globalSc||null;
+    const oldSeries = env.seriesOv || ST.project?.series || targetSeries;
+    const seriesChanged = (oldSeries !== targetSeries);
+    const oldPc = env.pcOv;
+    const oldMc = env.mcOv;
+    const oldSc = env.scOv;
+    // Re-resolve modules/items if any color or series changed
+    const colorOrSeriesChanged = seriesChanged || oldPc !== targetPc || oldMc !== targetMc || oldSc !== targetSc;
+    env.seriesOv = targetSeries===ST.project?.series ? null : targetSeries;
+    env.pcOv     = targetPc;
+    env.mcOv     = targetMc;
+    env.scOv     = targetSc;
+    if(colorOrSeriesChanged){
+      // For direct lists: pass mc as the suffix preference so refs get the right color suffix
+      remapEnvModules(env, targetSeries, targetMc);
+    }
   });
   finishCwiz();
 }
