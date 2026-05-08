@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0090)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_63_1.html -->
+<!-- saved from url=(0088)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_v_67.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20v%2022_files/css2" rel="stylesheet">
 <!-- XLSX com suporte a estilos (xlsx-js-style) — bundle.js inclui jszip embutido -->
-<script src="./Simon Brasil — Configurador + Proposta v63_files/xlsx.bundle.js"></script>
+<script src="./Simon Brasil — Configurador + Proposta v 67_files/xlsx.bundle.js"></script>
 <script src="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20v%2022_files/mammoth.browser.min.js"></script>
 
 <style>
@@ -1033,6 +1033,596 @@ html,body{height:100%;font-family:var(--font-sans);font-size:14px;color:var(--te
 }
 .help-footer .btn{min-width:100px}
 .help-footer .btn:disabled{opacity:0.4;cursor:not-allowed}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   TOUR GUIADO — CTA + cenas auto-play (40s)
+   ──────────────────────────────────────────────────────────────────────── */
+.tour-cta{
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(135deg, #002855 0%, #0061A5 100%);
+  color:#fff;border-radius:12px;padding:14px 18px;
+  margin-bottom:18px;
+  box-shadow:0 2px 8px rgba(0,87,168,0.18);
+}
+.tour-cta-text{flex:1;min-width:0}
+.tour-cta-title{font-size:14px;font-weight:700;margin-bottom:2px}
+.tour-cta-sub{font-size:12px;opacity:0.9;line-height:1.4}
+.tour-cta-btn{
+  background:rgba(255,255,255,0.95);color:var(--simon-navy);
+  border:none;border-radius:8px;padding:9px 16px;
+  font-size:13px;font-weight:700;cursor:pointer;
+  white-space:nowrap;transition:all 0.15s;
+  font-family:var(--font-sans);
+}
+.tour-cta-btn:hover{background:#fff;transform:translateY(-1px);box-shadow:0 3px 8px rgba(0,0,0,0.15)}
+
+/* Tour overlay e modal */
+.tour-overlay{background:rgba(0,15,40,0.85);backdrop-filter:blur(4px)}
+.tour-modal{
+  position:relative;
+  width:min(700px, 92vw);max-width:700px;
+  background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  font-family:var(--font-sans);
+  animation:tourSlideIn 0.4s ease-out;
+}
+@keyframes tourSlideIn{
+  from{opacity:0;transform:translateY(20px) scale(0.96)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.tour-progress-bar{
+  position:relative;height:4px;background:rgba(0,87,168,0.1);
+  width:100%;
+}
+.tour-progress-fill{
+  position:absolute;top:0;height:100%;
+  background:var(--simon-blue);
+}
+.tour-progress-active{
+  background:linear-gradient(90deg, var(--simon-blue), #4A9EE0);
+}
+@keyframes tourProgress{
+  from{width:0}
+  to{width:var(--target-w, 100%)}
+}
+.tour-close{
+  position:absolute;top:14px;right:14px;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,0.05);color:var(--text-secondary);
+  border:none;cursor:pointer;font-size:20px;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;z-index:10;
+}
+.tour-close:hover{background:rgba(0,0,0,0.1);color:var(--text-primary)}
+.tour-scene-counter{
+  position:absolute;top:18px;left:18px;
+  font-size:11px;color:var(--text-tertiary);
+  font-family:var(--font-mono);font-weight:600;
+}
+.tour-scene-content{padding:48px 32px 32px;min-height:480px}
+.tour-scene-title{
+  font-size:22px;font-weight:700;color:var(--simon-navy);
+  margin-bottom:6px;text-align:center;
+}
+.tour-scene-subtitle{
+  font-size:13px;color:var(--text-secondary);
+  text-align:center;margin-bottom:24px;line-height:1.5;
+}
+.tour-scene-body{
+  background:var(--bg-secondary);border-radius:12px;
+  padding:20px;min-height:340px;
+  display:flex;align-items:center;justify-content:center;
+}
+.tour-screen{
+  width:100%;max-width:560px;
+  background:#fff;border-radius:10px;
+  padding:20px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.08);
+  border:1px solid var(--border-light);
+}
+
+/* Cena 1 — Welcome */
+.tour-welcome{text-align:center;padding:30px 20px}
+.tour-welcome-logo{
+  font-size:56px;margin-bottom:12px;
+  animation:tourPulse 2s ease-in-out infinite;
+}
+@keyframes tourPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.08)}
+}
+.tour-welcome-title{
+  font-size:22px;font-weight:800;color:var(--simon-navy);
+  margin-bottom:18px;
+}
+.tour-welcome-sub{
+  font-size:13px;color:var(--text-secondary);margin-bottom:18px;
+}
+.tour-welcome-options{display:flex;flex-direction:column;gap:8px;max-width:280px;margin:0 auto}
+.tour-opt{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;background:var(--bg-secondary);
+  border:1px solid var(--border-light);border-radius:8px;
+  text-align:left;
+}
+.tour-opt-ico{font-size:20px;flex-shrink:0}
+.tour-opt-lbl{font-size:13px;color:var(--text-primary);font-weight:500}
+
+/* Cena 2 — Import */
+.tour-import{padding:14px}
+.tour-modal-header{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border-light)}
+.tour-modal-title{font-size:15px;font-weight:700;color:var(--simon-navy)}
+.tour-dropzone{
+  position:relative;border:2px dashed var(--border-medium);
+  border-radius:10px;padding:32px 20px;text-align:center;
+  background:var(--bg-secondary);transition:all 0.4s;
+  margin-bottom:12px;
+}
+.tour-dropzone-active{
+  border-color:var(--simon-blue);background:rgba(0,87,168,0.05);
+  animation:tourDropzonePulse 1.5s ease-in-out infinite;
+}
+@keyframes tourDropzonePulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,87,168,0.4)}
+  50%{box-shadow:0 0 0 10px rgba(0,87,168,0)}
+}
+.tour-dropzone-icon{font-size:36px;margin-bottom:8px}
+.tour-dropzone-text{font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+.tour-dropzone-sub{font-size:11px;color:var(--text-tertiary);font-family:var(--font-mono)}
+.tour-floating-file{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) translateY(-100px);
+  background:#fff;border:1px solid var(--simon-blue);
+  border-radius:8px;padding:6px 12px;
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:600;color:var(--simon-navy);
+  box-shadow:0 4px 12px rgba(0,87,168,0.25);
+  animation:tourFileDrop 4s ease-in-out forwards;
+}
+@keyframes tourFileDrop{
+  0%{transform:translate(-50%,-50%) translateY(-120px) rotate(-5deg);opacity:0}
+  20%{transform:translate(-50%,-50%) translateY(-60px) rotate(-3deg);opacity:1}
+  60%{transform:translate(-50%,-50%) translateY(-20px) rotate(2deg);opacity:1}
+  85%{transform:translate(-50%,-50%) translateY(0) rotate(0);opacity:1}
+  100%{transform:translate(-50%,-50%) translateY(0) scale(0.95);opacity:0}
+}
+.tour-file-name{font-family:var(--font-mono);font-size:11px}
+.tour-config-row{display:flex;gap:8px;justify-content:center}
+.tour-config-pill{
+  background:var(--accent-light);color:var(--simon-blue);
+  padding:6px 12px;border-radius:6px;font-size:12px;
+  border:1px solid rgba(0,87,168,0.2);
+}
+
+/* Cena 3 — Loading */
+.tour-loading{padding:30px 20px;text-align:center}
+.tour-spinner{
+  width:48px;height:48px;margin:0 auto 16px;
+  border:4px solid rgba(0,87,168,0.15);
+  border-top-color:var(--simon-blue);
+  border-radius:50%;animation:tourSpin 1s linear infinite;
+}
+@keyframes tourSpin{to{transform:rotate(360deg)}}
+.tour-loading-text{font-size:14px;font-weight:600;color:var(--simon-navy);margin-bottom:14px}
+.tour-loading-progress{
+  width:280px;height:6px;margin:0 auto 18px;
+  background:rgba(0,87,168,0.1);border-radius:3px;overflow:hidden;
+}
+.tour-loading-bar{
+  height:100%;background:linear-gradient(90deg, var(--simon-blue), #4A9EE0);
+  border-radius:3px;animation:tourLoadingBar 4s ease-out forwards;
+  width:0;
+}
+@keyframes tourLoadingBar{
+  0%{width:0}
+  30%{width:35%}
+  60%{width:65%}
+  100%{width:90%}
+}
+.tour-loading-steps{display:flex;flex-direction:column;gap:6px;max-width:280px;margin:0 auto;text-align:left}
+.tour-loading-step{
+  font-size:12px;padding:6px 10px;border-radius:6px;
+  color:var(--text-tertiary);background:var(--bg-secondary);
+}
+.tour-loading-step.done{color:#16A34A;background:#F0FDF4}
+.tour-loading-step.active{color:var(--simon-blue);background:var(--accent-light);font-weight:600}
+
+/* Cena 4 — Review */
+.tour-review{padding:14px}
+.tour-review-header{
+  background:var(--accent-light);color:var(--simon-blue);
+  padding:8px 12px;border-radius:6px;font-size:12px;
+  font-weight:600;margin-bottom:10px;
+  border:1px solid rgba(0,87,168,0.2);
+}
+.tour-review-table{display:flex;flex-direction:column;gap:4px;margin-bottom:14px}
+.tour-review-row{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;background:var(--bg-secondary);
+  border-radius:6px;font-size:12px;
+  border:1px solid var(--border-light);
+}
+.tour-row-tag{
+  flex-shrink:0;padding:2px 8px;border-radius:4px;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;
+}
+.tour-tag-blue{background:#DBEAFE;color:#1E40AF}
+.tour-tag-orange{background:#FED7AA;color:#9A3412}
+.tour-tag-purple{background:#E9D5FF;color:#6B21A8}
+.tour-tag-green{background:#D1FAE5;color:#065F46}
+.tour-review-row > span:nth-child(2){flex:1;color:var(--text-primary)}
+.tour-row-qty{font-family:var(--font-mono);font-weight:600;color:var(--text-secondary)}
+.tour-review-cta{
+  background:#16A34A;color:#fff;
+  padding:10px;border-radius:8px;
+  text-align:center;font-size:13px;font-weight:700;
+  animation:tourCtaPulse 1.4s ease-in-out infinite;
+}
+@keyframes tourCtaPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.02)}
+}
+
+/* Cena 5 — Colors */
+.tour-colors{padding:18px 20px;display:flex;flex-direction:column;gap:16px}
+.tour-colors-section{display:flex;flex-direction:column;gap:8px}
+.tour-colors-label{
+  font-size:11px;font-weight:700;color:var(--text-secondary);
+  text-transform:uppercase;letter-spacing:0.04em;
+}
+.tour-colors-row{display:flex;gap:10px}
+.tour-swatch{
+  width:48px;height:48px;border-radius:8px;
+  border:2px solid var(--border-medium);cursor:pointer;
+  transition:all 0.2s;
+}
+.tour-swatch.selected{
+  border-color:var(--simon-blue);
+  box-shadow:0 0 0 2px rgba(0,87,168,0.2);
+  transform:scale(1.05);
+}
+.tour-sw-white{background:#F5F5F5}
+.tour-sw-graphite{background:#3A3A3A}
+.tour-sw-aluminum{background:#A8A8A8}
+.tour-sw-graphite-matte{background:#4A4A4A}
+.tour-sw-aluminum-matte{background:#9A9A9A}
+
+/* Cena 6 — Sidebar view */
+.tour-sidebar-view{padding:14px}
+.tour-sb-mock{
+  background:#fff;border:1px solid var(--border-medium);
+  border-radius:8px;padding:8px;width:100%;
+  font-size:13px;font-family:var(--font-sans);
+}
+.tour-sb-section{
+  font-size:10px;font-weight:700;color:var(--text-tertiary);
+  letter-spacing:0.06em;padding:6px 10px;
+}
+.tour-sb-import{
+  border:1.5px dashed var(--simon-blue);color:var(--simon-blue);
+  background:rgba(0,87,168,0.04);
+  padding:8px 10px;border-radius:6px;
+  font-weight:600;font-size:12px;margin:0 4px 10px;text-align:center;
+}
+.tour-sb-env-block{margin-bottom:8px}
+.tour-sb-env{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 10px;font-weight:700;color:var(--simon-navy);
+  font-size:13px;
+}
+.tour-sb-badge{
+  font-size:9px;background:var(--accent-light);color:var(--accent);
+  padding:2px 6px;border-radius:4px;font-weight:600;
+}
+.tour-sb-pt{
+  padding:5px 10px 5px 22px;font-size:12px;color:var(--text-primary);
+  border-radius:4px;animation:tourSbAppear 0.4s ease-out forwards;
+}
+.tour-sb-pt.active{background:var(--accent-light);color:var(--simon-blue);font-weight:600}
+@keyframes tourSbAppear{
+  from{opacity:0;transform:translateX(-10px)}
+  to{opacity:1;transform:translateX(0)}
+}
+.tour-sb-env-block:nth-child(3) .tour-sb-pt{animation-delay:0.2s}
+.tour-sb-env-block:nth-child(4) .tour-sb-pt{animation-delay:0.4s}
+.tour-sb-env-block:nth-child(5) .tour-sb-pt{animation-delay:0.6s}
+
+/* Cena 7 — Point config */
+.tour-point-config{padding:14px}
+.tour-pt-header{
+  font-size:14px;font-weight:700;color:var(--simon-navy);
+  padding:8px 12px;background:var(--accent-light);border-radius:6px;
+  margin-bottom:12px;display:flex;align-items:center;gap:10px;
+}
+.tour-pt-series{
+  font-size:10px;background:var(--simon-blue);color:#fff;
+  padding:2px 8px;border-radius:4px;font-weight:600;
+}
+.tour-pt-modules{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.tour-pt-mod{
+  background:var(--bg-secondary);border:1px solid var(--border-light);
+  padding:8px 12px;border-radius:6px;font-size:12px;
+  display:flex;justify-content:space-between;
+}
+.tour-pt-mod-qty{font-family:var(--font-mono);font-weight:600;color:var(--text-secondary)}
+.tour-pt-asm{
+  background:#F0FDF4;border:1px solid #86EFAC;
+  border-radius:8px;padding:10px 12px;margin-bottom:12px;
+}
+.tour-pt-asm-title{font-size:11px;font-weight:700;color:#15803D;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em}
+.tour-pt-asm-row{
+  display:flex;justify-content:space-between;
+  font-size:12px;padding:3px 0;color:var(--text-primary);
+  border-top:1px solid rgba(0,0,0,0.05);
+}
+.tour-pt-asm-row:first-of-type{border-top:none}
+.tour-pt-pills{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.tour-pt-pill{
+  font-size:11px;padding:5px 10px;border-radius:14px;
+  background:#fff;border:1px solid var(--border-medium);
+  color:var(--text-secondary);font-weight:500;
+}
+.tour-pt-pill.selected{
+  background:#16A34A;color:#fff;border-color:#16A34A;font-weight:700;
+}
+
+/* Cena 8 — BOM */
+.tour-bom{padding:14px}
+.tour-bom-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px;background:var(--simon-navy);color:#fff;
+  border-radius:8px 8px 0 0;font-size:13px;font-weight:600;
+}
+.tour-bom-excel-btn{
+  background:#16A34A;color:#fff;
+  padding:5px 12px;border-radius:5px;font-size:11px;font-weight:700;
+  animation:tourBomBtnPulse 1.5s ease-in-out infinite;
+}
+@keyframes tourBomBtnPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(22,163,74,0.5)}
+  50%{box-shadow:0 0 0 8px rgba(22,163,74,0)}
+}
+.tour-bom-table{
+  background:#fff;border:1px solid var(--border-light);
+  border-top:none;max-height:200px;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.tour-bom-row{
+  display:grid;grid-template-columns:90px 1fr 50px;gap:8px;
+  padding:5px 12px;font-size:11px;color:var(--text-primary);
+  border-bottom:1px solid var(--border-light);
+}
+.tour-bom-row > span:first-child{font-family:var(--font-mono);color:var(--text-tertiary);font-size:10px}
+.tour-bom-row > span:last-child{font-family:var(--font-mono);font-weight:700;text-align:right}
+.tour-bom-cat{
+  display:block;background:var(--bg-secondary);
+  padding:4px 12px;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.04em;color:var(--text-secondary);
+  border-bottom:1px solid var(--border-medium);
+}
+.tour-bom-summary{
+  background:#F0FDF4;border:1px solid #86EFAC;
+  padding:10px 12px;border-radius:0 0 8px 8px;
+  text-align:center;font-size:13px;font-weight:600;color:#15803D;
+}
+
+/* Cena 9 — Excel window mockup */
+.tour-excel{padding:0;background:#F3F4F6;border-radius:10px;overflow:hidden}
+.tour-excel-window{
+  background:#fff;border-radius:8px;overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  border:1px solid #E5E7EB;
+}
+.tour-excel-titlebar{
+  background:#107C41;color:#fff;
+  padding:8px 14px;display:flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:600;
+}
+.tour-excel-icon{font-size:16px}
+.tour-excel-name{font-family:var(--font-mono);font-size:11px;letter-spacing:0.02em}
+.tour-excel-toolbar{
+  background:#F9FAFB;border-bottom:1px solid #E5E7EB;
+  padding:6px 14px;display:flex;align-items:center;gap:10px;
+  font-size:11px;
+}
+.tour-excel-mock-btn{
+  background:#fff;border:1px solid #D1D5DB;
+  padding:2px 8px;border-radius:3px;font-family:var(--font-mono);font-weight:600;
+  color:#374151;
+}
+.tour-excel-formula{
+  flex:1;background:#fff;border:1px solid #D1D5DB;border-radius:3px;
+  padding:2px 8px;font-size:11px;color:var(--simon-navy);font-weight:600;
+}
+.tour-excel-content{
+  background:#fff;
+  max-height:200px;overflow:hidden;
+}
+.tour-excel-grid{display:flex;flex-direction:column}
+.tour-excel-row{
+  display:grid;grid-template-columns:90px 1fr 40px;
+  gap:0;padding:5px 12px;font-size:11px;
+  border-bottom:1px solid #F3F4F6;color:#1F2937;
+}
+.tour-excel-row > span:nth-child(2){padding-left:8px}
+.tour-excel-row > span:last-child{font-family:var(--font-mono);font-weight:600;text-align:right;color:#6B7280}
+.tour-excel-mono{font-family:var(--font-mono);color:#6B7280;font-size:10px}
+.tour-excel-env-header{
+  display:block;
+  background:#0061A5;color:#fff;
+  padding:6px 12px;font-weight:700;font-size:13px;
+  border-bottom:1px solid #003D6B;
+}
+.tour-excel-env-header + .tour-excel-row{border-top:none}
+.tour-excel-table-header{
+  display:grid;grid-template-columns:90px 1fr 40px;
+  background:#E8F0F9;color:#002855;font-weight:700;font-size:10px;
+  text-transform:uppercase;letter-spacing:0.04em;
+  padding:5px 12px;
+}
+.tour-excel-tabs{
+  display:flex;background:#F9FAFB;border-top:1px solid #E5E7EB;
+  padding:0;overflow-x:auto;
+}
+.tour-excel-tab{
+  padding:7px 12px;font-size:11px;color:#6B7280;
+  background:transparent;border-right:1px solid #E5E7EB;
+  cursor:pointer;white-space:nowrap;font-weight:500;
+  transition:all 0.2s;
+}
+.tour-excel-tab.active{
+  background:#fff;color:#107C41;font-weight:700;
+  border-top:2px solid #107C41;
+  margin-top:-1px;
+  animation:tourTabHighlight 1.5s ease-in-out infinite;
+}
+@keyframes tourTabHighlight{
+  0%,100%{box-shadow:inset 0 -2px 0 transparent}
+  50%{box-shadow:inset 0 -2px 0 rgba(16,124,65,0.3)}
+}
+
+/* ── Cena 1 reformulada — Mock fiel da tela inicial ────────────────────── */
+.tour-app-mock{
+  background:#fff;border-radius:8px;overflow:hidden;
+  border:1px solid var(--border-medium);
+  width:100%;
+}
+.tour-app-topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 12px;border-bottom:1px solid var(--border-light);
+  background:#fff;height:38px;
+}
+.tour-app-logo{
+  font-family:Georgia,serif;font-weight:700;font-size:18px;
+  color:var(--simon-blue);letter-spacing:-1px;
+}
+.tour-app-topbar-center{display:flex;align-items:center;gap:6px;flex:1;justify-content:center}
+.tour-app-projbtn,.tour-app-navbtn,.tour-app-helpbtn{
+  font-size:10px;padding:4px 8px;border-radius:4px;
+  background:transparent;color:var(--text-secondary);
+  border:1px solid var(--border-light);
+}
+.tour-app-projbtn{color:var(--simon-blue);font-weight:600}
+.tour-app-helpbtn{font-weight:700;color:var(--simon-blue);min-width:22px;text-align:center}
+.tour-app-divider{width:1px;height:18px;background:var(--border-light)}
+.tour-app-partner{font-size:18px;opacity:0.5}
+.tour-app-main{display:flex;height:280px}
+.tour-app-sidebar{
+  width:120px;border-right:1px solid var(--border-light);
+  background:var(--bg-secondary);padding:8px 4px;flex-shrink:0;
+}
+.tour-app-sb-section{
+  font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;
+  color:var(--text-tertiary);padding:4px 8px 6px;
+}
+.tour-app-sb-item{
+  font-size:10px;padding:5px 8px;border-radius:4px;
+  color:var(--text-primary);margin-bottom:2px;
+}
+.tour-app-sb-import{
+  font-size:10px;padding:6px 8px;
+  border:1px dashed #7C3AED;color:#7C3AED;background:rgba(124,58,237,0.05);
+  border-radius:6px;text-align:center;font-weight:600;
+  margin:4px 2px;
+  animation:tourSbImportPulse 2s ease-in-out infinite;
+}
+@keyframes tourSbImportPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,0.3)}
+  50%{box-shadow:0 0 0 6px rgba(124,58,237,0)}
+}
+.tour-app-content{
+  flex:1;padding:18px 16px;display:flex;flex-direction:column;align-items:center;
+  background:#fff;
+}
+.tour-app-hero-logo{
+  font-family:Georgia,serif;font-weight:700;font-size:24px;
+  color:var(--simon-blue);letter-spacing:-1px;margin-bottom:6px;
+}
+.tour-app-hero-title{
+  font-size:14px;font-weight:600;color:var(--simon-blue);
+  margin-bottom:6px;text-align:center;
+}
+.tour-app-hero-sub{
+  font-size:10px;color:var(--text-secondary);
+  text-align:center;line-height:1.5;max-width:320px;margin-bottom:18px;
+}
+.tour-app-cards{display:flex;gap:10px;justify-content:center;flex-wrap:nowrap}
+.tour-app-card{
+  width:100px;padding:14px 8px;background:#fff;
+  border:1.5px solid #D8E4EE;border-radius:4px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  transition:all 0.18s;
+}
+.tour-app-card:nth-child(1){animation:tourCardFocus 4s ease-in-out infinite}
+@keyframes tourCardFocus{
+  0%,75%,100%{border-color:#D8E4EE;transform:scale(1)}
+  35%,55%{border-color:var(--simon-blue);box-shadow:0 4px 18px rgba(0,97,165,0.25);transform:scale(1.04)}
+}
+.tour-app-card-lbl{font-size:9px;font-weight:400;color:#333;text-align:center;line-height:1.3}
+
+/* ── Cena 2 — Cursor + setas de drop ────────────────────────────────────── */
+.tour-cursor{
+  position:absolute;
+  z-index:5;pointer-events:none;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+  animation:tourCursorMove 5s ease-in-out forwards;
+}
+@keyframes tourCursorMove{
+  0%{top:-30px;left:-30px;opacity:0}
+  10%{top:-30px;left:-30px;opacity:1}
+  60%{top:50%;left:50%;transform:translate(-50%,-50%);opacity:1}
+  85%{top:50%;left:50%;transform:translate(-50%,-50%) scale(0.85);opacity:1}
+  100%{top:50%;left:50%;transform:translate(-50%,-50%) scale(0.85);opacity:0}
+}
+.tour-drop-arrow{
+  position:absolute;
+  font-size:24px;font-weight:700;color:var(--simon-blue);
+  bottom:8px;
+  animation:tourDropArrow 1.4s ease-in-out infinite;
+  text-shadow:0 1px 3px rgba(0,87,168,0.4);
+}
+.tour-drop-arrow-1{left:18%;animation-delay:0s}
+.tour-drop-arrow-2{left:50%;transform:translateX(-50%);animation-delay:0.2s}
+.tour-drop-arrow-3{right:18%;animation-delay:0.4s}
+@keyframes tourDropArrow{
+  0%,100%{transform:translateY(0) translateX(var(--tx,0));opacity:0.5}
+  50%{transform:translateY(8px) translateX(var(--tx,0));opacity:1}
+}
+.tour-drop-arrow-2{--tx:-50%}
+
+/* ── Cena 9 (Excel) — extras: caption, categoria, ponto header ────────── */
+.tour-excel-caption{
+  margin-top:10px;font-size:11px;color:var(--text-secondary);
+  text-align:center;line-height:1.4;padding:0 8px;
+}
+.tour-excel-caption strong{color:var(--simon-navy)}
+.tour-excel-cat-row{
+  display:block;background:#EAF0F8;color:#002855;
+  padding:4px 12px;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.04em;
+  border-bottom:1px solid #D6E4F2;
+}
+.tour-excel-pt-header{
+  display:grid;grid-template-columns:1fr 40px;
+  background:#F3F4F6;color:#000;font-weight:700;font-size:11px;
+  padding:5px 12px;
+  border-bottom:1px solid #E5E7EB;
+}
+.tour-excel-orange-cell{
+  background:#FFEDD5;color:#C2410C;
+  font-weight:700;text-align:center;
+  border-radius:3px;
+}
+.tour-excel-table-header-sm{
+  display:grid !important;grid-template-columns:80px 1fr 30px 50px 40px;
+  background:#E8F0F9;color:#002855;font-weight:700;font-size:9px;
+  text-transform:uppercase;letter-spacing:0.04em;
+  padding:4px 12px;
+  border-bottom:1px solid #D6E4F2;
+}
+.tour-excel-row-5col{
+  display:grid !important;grid-template-columns:80px 1fr 30px 50px 40px;
+}
 
 </style>
 <script>
@@ -4477,6 +5067,14 @@ const HELP_SECTIONS = [
     icon: '🏠',
     title: 'Visão Geral',
     body: `
+      <div class="tour-cta">
+        <div class="tour-cta-text">
+          <div class="tour-cta-title">▶ Tour rápido (45s)</div>
+          <div class="tour-cta-sub">Veja em 45 segundos como o configurador funciona, da importação à lista Excel exportada</div>
+        </div>
+        <button class="tour-cta-btn" onclick="startGuidedTour()">Iniciar tour</button>
+      </div>
+
       <h4>O que é o Configurador?</h4>
       <p>É uma ferramenta para projetar, configurar e orçar pontos elétricos com produtos da linha Simon Brasil. Você cria <strong>projetos</strong>, divide em <strong>ambientes</strong> (cômodos), e adiciona <strong>pontos de instalação</strong> (interruptores, tomadas, etc.) em cada ambiente. O configurador então monta automaticamente as placas, suportes e tampas cegas necessárias e gera a Lista de Materiais (BOM) pronta para orçamento.</p>
 
@@ -4920,6 +5518,423 @@ function prevHelpStep(){
 function goHelpStep(idx){
   _helpStep = idx;
   renderHelpModal();
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// TOUR GUIADO (40s, auto-play sem controles)
+// ────────────────────────────────────────────────────────────────────────────
+let _tourTimer = null;
+let _tourStep = 0;
+
+const TOUR_SCENES = [
+  {
+    duration: 4000,  // 4s — cena 1
+    title: '👋 Tela inicial do Configurador',
+    subtitle: 'Vamos ver em 45 segundos como criar uma lista de materiais completa',
+    body: `
+      <div class="tour-screen tour-app-mock">
+        <!-- Topbar -->
+        <div class="tour-app-topbar">
+          <div class="tour-app-logo">simon</div>
+          <div class="tour-app-topbar-center">
+            <span class="tour-app-projbtn">📁 Criar projeto ▾</span>
+            <span class="tour-app-divider"></span>
+            <span class="tour-app-navbtn">Importar ▾</span>
+            <span class="tour-app-navbtn">Abrir ▾</span>
+            <span class="tour-app-divider"></span>
+            <span class="tour-app-helpbtn">?</span>
+          </div>
+          <div class="tour-app-partner">🏢</div>
+        </div>
+        <!-- Main: sidebar + content -->
+        <div class="tour-app-main">
+          <div class="tour-app-sidebar">
+            <div class="tour-app-sb-section">PROJETO</div>
+            <div class="tour-app-sb-item">📁 Abrir Projeto</div>
+            <div class="tour-app-sb-item">⚙ Configurações</div>
+            <div class="tour-app-sb-import">📂 Importar Projeto / Lista</div>
+          </div>
+          <div class="tour-app-content">
+            <div class="tour-app-hero-logo">simon</div>
+            <div class="tour-app-hero-title">Configure seus pontos elétricos</div>
+            <div class="tour-app-hero-sub">Importe um projeto elétrico ou lista de materiais — a IA identifica automaticamente os produtos Simon</div>
+            <div class="tour-app-cards">
+              <div class="tour-app-card">
+                <svg width="38" height="38" viewBox="0 0 62 62" fill="none">
+                  <rect x="8" y="6" width="30" height="38" rx="2" stroke="#0061A5" stroke-width="2.5" fill="none"/>
+                  <line x1="12" y1="16" x2="30" y2="16" stroke="#0061A5" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="12" y1="22" x2="30" y2="22" stroke="#0061A5" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="12" y1="28" x2="22" y2="28" stroke="#0061A5" stroke-width="2" stroke-linecap="round"/>
+                  <circle cx="46" cy="46" r="12" stroke="#0061A5" stroke-width="2.5" fill="none"/>
+                  <path d="M41 46 L45 50 L51 42" stroke="#0061A5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+                <span class="tour-app-card-lbl">Importar Projeto / Lista</span>
+              </div>
+              <div class="tour-app-card">
+                <svg width="38" height="38" viewBox="0 0 62 62" fill="none">
+                  <path d="M6 20 L6 50 Q6 52 8 52 L54 52 Q56 52 56 50 L56 26 Q56 24 54 24 L28 24 L24 18 Q23 16 21 16 L8 16 Q6 16 6 18 Z" stroke="#0061A5" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+                  <path d="M6 26 L56 26" stroke="#0061A5" stroke-width="2.5"/>
+                  <line x1="31" y1="34" x2="31" y2="46" stroke="#0061A5" stroke-width="2.5" stroke-linecap="round"/>
+                  <polyline points="25,40 31,34 37,40" stroke="#0061A5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+                <span class="tour-app-card-lbl">Abrir Projeto Existente</span>
+              </div>
+              <div class="tour-app-card">
+                <svg width="38" height="38" viewBox="0 0 62 62" fill="none">
+                  <path d="M10 8 L38 8 L52 22 L52 54 Q52 56 50 56 L10 56 Q8 56 8 54 L8 10 Q8 8 10 8Z" stroke="#0061A5" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+                  <polyline points="38,8 38,22 52,22" stroke="#0061A5" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+                  <line x1="30" y1="34" x2="30" y2="46" stroke="#0061A5" stroke-width="2.5" stroke-linecap="round"/>
+                  <line x1="24" y1="40" x2="36" y2="40" stroke="#0061A5" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+                <span class="tour-app-card-lbl">Novo Projeto Manual</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
+  },
+  {
+    duration: 5000,  // 5s — cena 2
+    title: '📂 Importar projeto',
+    subtitle: 'Arraste seu arquivo (PDF, planilha, foto) ou clique para selecionar',
+    body: `
+      <div class="tour-screen tour-import">
+        <div class="tour-modal-header">
+          <span class="tour-modal-title">📂 Importar projeto</span>
+        </div>
+        <div class="tour-dropzone tour-dropzone-active">
+          <div class="tour-dropzone-icon">📂</div>
+          <div class="tour-dropzone-text">Arraste seu arquivo aqui ou clique para selecionar</div>
+          <div class="tour-dropzone-sub">PDF · DOCX · XLSX · CSV · TXT · JPG · PNG</div>
+          <!-- Arquivo voando do canto superior esquerdo até o centro -->
+          <div class="tour-floating-file">
+            <span>📄</span>
+            <span class="tour-file-name">Projeto_Casa.pdf</span>
+          </div>
+          <!-- Cursor seguindo o arquivo -->
+          <div class="tour-cursor">
+            <svg width="22" height="28" viewBox="0 0 22 28" fill="none">
+              <path d="M2 2 L2 22 L7 18 L10 26 L13 25 L10 17 L17 17 Z" fill="#fff" stroke="#000" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <!-- Setas indicando o drop -->
+          <div class="tour-drop-arrow tour-drop-arrow-1">↓</div>
+          <div class="tour-drop-arrow tour-drop-arrow-2">↓</div>
+          <div class="tour-drop-arrow tour-drop-arrow-3">↓</div>
+        </div>
+        <div class="tour-config-row">
+          <div class="tour-config-pill">Série: <strong>Simon 30</strong></div>
+          <div class="tour-config-pill">Cor: <strong>● Branco</strong></div>
+        </div>
+      </div>
+    `
+  },
+  {
+    duration: 4000,  // 4s — cena 3
+    title: '🤖 IA analisando...',
+    subtitle: 'A inteligência artificial identifica os produtos Simon e organiza por ambiente',
+    body: `
+      <div class="tour-screen tour-loading">
+        <div class="tour-spinner"></div>
+        <div class="tour-loading-text">Analisando documento com IA...</div>
+        <div class="tour-loading-progress">
+          <div class="tour-loading-bar"></div>
+        </div>
+        <div class="tour-loading-steps">
+          <div class="tour-loading-step done">✓ Lendo o documento</div>
+          <div class="tour-loading-step done">✓ Identificando ambientes</div>
+          <div class="tour-loading-step active">→ Mapeando produtos Simon...</div>
+          <div class="tour-loading-step">○ Organizando por ponto</div>
+        </div>
+      </div>
+    `
+  },
+  {
+    duration: 5000,  // 5s — cena 4
+    title: '✅ Itens identificados',
+    subtitle: 'Revise os produtos detectados e clique para importar',
+    body: `
+      <div class="tour-screen tour-review">
+        <div class="tour-review-header">23 itens identificados em 5 ambientes</div>
+        <div class="tour-review-table">
+          <div class="tour-review-row"><span class="tour-row-tag tour-tag-blue">Sala</span><span>Tomada 2P+T 10A</span><span class="tour-row-qty">×4</span></div>
+          <div class="tour-review-row"><span class="tour-row-tag tour-tag-blue">Sala</span><span>Interruptor Paralelo</span><span class="tour-row-qty">×2</span></div>
+          <div class="tour-review-row"><span class="tour-row-tag tour-tag-orange">Cozinha</span><span>Tomada 2P+T 20A</span><span class="tour-row-qty">×3</span></div>
+          <div class="tour-review-row"><span class="tour-row-tag tour-tag-purple">Quarto 1</span><span>Interruptor Simples</span><span class="tour-row-qty">×2</span></div>
+          <div class="tour-review-row"><span class="tour-row-tag tour-tag-green">Banheiro</span><span>Tomada + Interruptor</span><span class="tour-row-qty">×1</span></div>
+        </div>
+        <div class="tour-review-cta">✅ Importar para o Configurador</div>
+      </div>
+    `
+  },
+  {
+    duration: 4000,  // 4s — cena 5
+    title: '🎨 Defina as cores',
+    subtitle: 'Escolha cor da placa, módulos e suporte (em Simon 35)',
+    body: `
+      <div class="tour-screen tour-colors">
+        <div class="tour-colors-section">
+          <div class="tour-colors-label">🎨 COR DA PLACA</div>
+          <div class="tour-colors-row">
+            <div class="tour-swatch tour-sw-white selected"></div>
+            <div class="tour-swatch tour-sw-graphite"></div>
+            <div class="tour-swatch tour-sw-aluminum"></div>
+          </div>
+        </div>
+        <div class="tour-colors-section">
+          <div class="tour-colors-label">🎨 COR DOS MÓDULOS</div>
+          <div class="tour-colors-row">
+            <div class="tour-swatch tour-sw-white selected"></div>
+            <div class="tour-swatch tour-sw-graphite"></div>
+          </div>
+        </div>
+        <div class="tour-colors-section">
+          <div class="tour-colors-label">🔧 COR DO SUPORTE</div>
+          <div class="tour-colors-row">
+            <div class="tour-swatch tour-sw-white"></div>
+            <div class="tour-swatch tour-sw-graphite-matte selected"></div>
+            <div class="tour-swatch tour-sw-aluminum-matte"></div>
+          </div>
+        </div>
+      </div>
+    `
+  },
+  {
+    duration: 6000,  // 6s — cena 6
+    title: '🏠 Ambientes e pontos organizados',
+    subtitle: 'Renomeie ambientes (duplo clique) ou organize com Shift+Click',
+    body: `
+      <div class="tour-screen tour-sidebar-view">
+        <div class="tour-sb-mock">
+          <div class="tour-sb-section">PROJETO</div>
+          <div class="tour-sb-import">📂 Importar Projeto / Lista</div>
+          <div class="tour-sb-env-block">
+            <div class="tour-sb-env">Sala <span class="tour-sb-badge">S30</span> ⚙</div>
+            <div class="tour-sb-pt active">📍 Parede TV</div>
+            <div class="tour-sb-pt">📍 Entrada</div>
+            <div class="tour-sb-pt">📍 Sofá</div>
+          </div>
+          <div class="tour-sb-env-block">
+            <div class="tour-sb-env">Cozinha <span class="tour-sb-badge">S30</span> ⚙</div>
+            <div class="tour-sb-pt">📍 Bancada</div>
+            <div class="tour-sb-pt">📍 Geladeira</div>
+          </div>
+          <div class="tour-sb-env-block">
+            <div class="tour-sb-env">Quarto 1 <span class="tour-sb-badge">S30</span> ⚙</div>
+            <div class="tour-sb-pt">📍 Cabeceira</div>
+          </div>
+        </div>
+      </div>
+    `
+  },
+  {
+    duration: 5000,  // 5s — cena 7
+    title: '⚡ Configure cada ponto',
+    subtitle: 'O sistema escolhe a placa ideal automaticamente — sem tampas cegas extras',
+    body: `
+      <div class="tour-screen tour-point-config">
+        <div class="tour-pt-header">📍 Parede TV  <span class="tour-pt-series">S30</span> Sala</div>
+        <div class="tour-pt-modules">
+          <div class="tour-pt-mod">⚡ Tomada 2P+T 10A <span class="tour-pt-mod-qty">×2</span></div>
+          <div class="tour-pt-mod">🔌 Interruptor Paralelo <span class="tour-pt-mod-qty">×1</span></div>
+        </div>
+        <div class="tour-pt-asm">
+          <div class="tour-pt-asm-title">📐 Montagem automática (4x2 — placa 3 módulos)</div>
+          <div class="tour-pt-asm-row"><span>Suporte 4x2 universal</span><span>×1</span></div>
+          <div class="tour-pt-asm-row"><span>Placa 3M Branco</span><span>×1</span></div>
+          <div class="tour-pt-asm-row"><span>Tomada 2P+T 10A</span><span>×2</span></div>
+          <div class="tour-pt-asm-row"><span>Interruptor Paralelo</span><span>×1</span></div>
+        </div>
+        <div class="tour-pt-pills">
+          <span class="tour-pt-pill">1M +2 cegas</span>
+          <span class="tour-pt-pill">2M +1 cega</span>
+          <span class="tour-pt-pill selected">3M ✓ exata</span>
+        </div>
+      </div>
+    `
+  },
+  {
+    duration: 7000,  // 7s — cena 8
+    title: '📊 Lista de materiais pronta',
+    subtitle: 'Exporte para Excel com 4 abas: Total, Por Código, Pontos Semelhantes e Por Ponto',
+    body: `
+      <div class="tour-screen tour-bom">
+        <div class="tour-bom-header">
+          <span>📊 Lista de Materiais — Casa do João</span>
+          <span class="tour-bom-excel-btn">↓ Excel</span>
+        </div>
+        <div class="tour-bom-table">
+          <div class="tour-bom-row tour-bom-cat">SUPORTE</div>
+          <div class="tour-bom-row"><span>30901-30</span><span>Suporte 4x2 universal</span><span>×8</span></div>
+          <div class="tour-bom-row tour-bom-cat">PLACA</div>
+          <div class="tour-bom-row"><span>300913-30</span><span>Placa 3M Branco</span><span>×6</span></div>
+          <div class="tour-bom-row"><span>300922-30</span><span>Placa 2M Branco</span><span>×2</span></div>
+          <div class="tour-bom-row tour-bom-cat">MÓDULOS</div>
+          <div class="tour-bom-row"><span>300925-30</span><span>Tomada 2P+T 10A</span><span>×11</span></div>
+          <div class="tour-bom-row"><span>300926-30</span><span>Tomada 2P+T 20A</span><span>×3</span></div>
+          <div class="tour-bom-row"><span>300931-30</span><span>Interruptor Simples</span><span>×4</span></div>
+          <div class="tour-bom-row"><span>300932-30</span><span>Interruptor Paralelo</span><span>×2</span></div>
+        </div>
+        <div class="tour-bom-summary">
+          ✅ Pronto! 23 produtos · 5 ambientes
+        </div>
+      </div>
+    `
+  },
+  {
+    duration: 2500,  // 2.5s — cena 9a: aba Lista Total
+    title: '📑 Excel exportado',
+    subtitle: 'Arquivo único com 4 abas: Total, Por Código, Pontos Semelhantes e Por Ponto',
+    body: `
+      <div class="tour-screen tour-excel">
+        <div class="tour-excel-window">
+          <div class="tour-excel-titlebar">
+            <span class="tour-excel-icon">📗</span>
+            <span class="tour-excel-name">Casa_do_Joao_materiais.xlsx</span>
+          </div>
+          <div class="tour-excel-toolbar">
+            <span class="tour-excel-mock-btn">A1</span>
+            <span class="tour-excel-formula">Lista Total — todas categorias consolidadas</span>
+          </div>
+          <div class="tour-excel-content">
+            <div class="tour-excel-grid">
+              <div class="tour-excel-row tour-excel-table-header">
+                <span>Codigo</span><span>Descricao</span><span>Qtd</span>
+              </div>
+              <div class="tour-excel-row tour-excel-cat-row">SUPORTE</div>
+              <div class="tour-excel-row"><span class="tour-excel-mono">30901-30</span><span>Suporte 4x2 universal</span><span>8</span></div>
+              <div class="tour-excel-row tour-excel-cat-row">PLACA</div>
+              <div class="tour-excel-row"><span class="tour-excel-mono">300913-30</span><span>Placa 3M Branco</span><span>6</span></div>
+              <div class="tour-excel-row"><span class="tour-excel-mono">300922-30</span><span>Placa 2M Branco</span><span>2</span></div>
+              <div class="tour-excel-row tour-excel-cat-row">MÓDULOS</div>
+              <div class="tour-excel-row"><span class="tour-excel-mono">300925-30</span><span>Tomada 2P+T 10A</span><span>11</span></div>
+            </div>
+          </div>
+          <div class="tour-excel-tabs">
+            <div class="tour-excel-tab active">📋 Lista Total</div>
+            <div class="tour-excel-tab">📑 Por Codigo</div>
+            <div class="tour-excel-tab">🔁 Pontos Semelhantes</div>
+            <div class="tour-excel-tab">📍 Por Ponto</div>
+          </div>
+        </div>
+        <div class="tour-excel-caption"><strong>📋 Lista Total:</strong> BOM consolidada de todo o projeto, ideal para orçamento global</div>
+      </div>
+    `
+  },
+  {
+    duration: 2500,  // 2.5s — cena 9b: aba Por Ponto
+    title: '📑 Excel exportado',
+    subtitle: 'Arquivo único com 4 abas: Total, Por Código, Pontos Semelhantes e Por Ponto',
+    body: `
+      <div class="tour-screen tour-excel">
+        <div class="tour-excel-window">
+          <div class="tour-excel-titlebar">
+            <span class="tour-excel-icon">📗</span>
+            <span class="tour-excel-name">Casa_do_Joao_materiais.xlsx</span>
+          </div>
+          <div class="tour-excel-toolbar">
+            <span class="tour-excel-mock-btn">A1</span>
+            <span class="tour-excel-formula">📍 Parede TV — SKUs por ponto</span>
+          </div>
+          <div class="tour-excel-content">
+            <div class="tour-excel-grid">
+              <div class="tour-excel-row tour-excel-env-header">🏠 Sala</div>
+              <div class="tour-excel-row tour-excel-pt-header">
+                <span>📍 Parede TV</span>
+              </div>
+              <div class="tour-excel-row"><span class="tour-excel-mono">30901-30</span><span>Suporte 4x2</span><span>1</span></div>
+              <div class="tour-excel-row"><span class="tour-excel-mono">300913-30</span><span>Placa 3M Branco</span><span>1</span></div>
+              <div class="tour-excel-row"><span class="tour-excel-mono">300925-30</span><span>Tomada 10A</span><span>2</span></div>
+              <div class="tour-excel-row tour-excel-pt-header">
+                <span>📍 Bancada Cozinha</span>
+              </div>
+              <div class="tour-excel-row"><span class="tour-excel-mono">300926-30</span><span>Tomada 20A</span><span>1</span></div>
+            </div>
+          </div>
+          <div class="tour-excel-tabs">
+            <div class="tour-excel-tab">📋 Lista Total</div>
+            <div class="tour-excel-tab">📑 Por Codigo</div>
+            <div class="tour-excel-tab">🔁 Pontos Semelhantes</div>
+            <div class="tour-excel-tab active">📍 Por Ponto</div>
+          </div>
+        </div>
+        <div class="tour-excel-caption"><strong>📍 Por Ponto:</strong> cada SKU pelo ponto onde instala — ideal para o instalador</div>
+      </div>
+    `
+  }
+];
+
+function startGuidedTour(){
+  // Fecha o tutorial se estiver aberto
+  closeModal();
+  _tourStep = 0;
+  renderTourScene();
+}
+
+function renderTourScene(){
+  const mr = document.getElementById('modal-root');
+  if(!mr) return;
+  const total = TOUR_SCENES.length;
+  if(_tourStep >= total){
+    closeGuidedTour();
+    return;
+  }
+  const scene = TOUR_SCENES[_tourStep];
+  // Calcula tempo total do tour e posição da barra de progresso
+  const totalDuration = TOUR_SCENES.reduce((s,sc)=>s+sc.duration, 0);
+  let elapsed = 0;
+  for(let i=0;i<_tourStep;i++) elapsed += TOUR_SCENES[i].duration;
+  const progressStart = (elapsed/totalDuration)*100;
+  const progressEnd = ((elapsed+scene.duration)/totalDuration)*100;
+
+  // Display de passo: agrupa cenas com mesmo título sequencial num único número (ex: cenas Excel = passo 9)
+  // Cada cena pode ter "groupId"; cenas com mesmo groupId = mesmo número exibido.
+  // Conta passos exibidos: agrupa runs consecutivos do mesmo título
+  const displayGroups = [];
+  TOUR_SCENES.forEach((sc, i) => {
+    const lastGroup = displayGroups[displayGroups.length-1];
+    if(lastGroup && lastGroup.title === sc.title){
+      lastGroup.indices.push(i);
+    } else {
+      displayGroups.push({title: sc.title, indices:[i]});
+    }
+  });
+  const displayTotal = displayGroups.length;
+  let displayStep = 1;
+  for(let g=0; g<displayGroups.length; g++){
+    if(displayGroups[g].indices.includes(_tourStep)){ displayStep = g+1; break; }
+  }
+
+  mr.innerHTML = `
+    <div class="overlay tour-overlay" onclick="if(event.target===this)closeGuidedTour()">
+      <div class="tour-modal">
+        <div class="tour-progress-bar">
+          <div class="tour-progress-fill" style="left:0;width:${progressStart}%"></div>
+          <div class="tour-progress-fill tour-progress-active" style="left:${progressStart}%;width:${progressEnd-progressStart}%;animation:tourProgress ${scene.duration}ms linear forwards"></div>
+        </div>
+        <button class="tour-close" onclick="closeGuidedTour()" aria-label="Fechar">×</button>
+        <div class="tour-scene-counter">${displayStep} / ${displayTotal}</div>
+        <div class="tour-scene-content">
+          <div class="tour-scene-title">${scene.title}</div>
+          <div class="tour-scene-subtitle">${scene.subtitle}</div>
+          <div class="tour-scene-body">${scene.body}</div>
+        </div>
+      </div>
+    </div>
+  `;
+  // Auto-avança após o tempo da cena
+  if(_tourTimer) clearTimeout(_tourTimer);
+  _tourTimer = setTimeout(()=>{
+    _tourStep++;
+    renderTourScene();
+  }, scene.duration);
+}
+
+function closeGuidedTour(){
+  if(_tourTimer){ clearTimeout(_tourTimer); _tourTimer = null; }
+  _tourStep = 0;
+  closeModal();
 }
 
 
