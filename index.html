@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<!-- saved from url=(0074)file:///Users/joaogomes-simon/Downloads/Simon_Brasil_Configurador_V83.html -->
+<!-- saved from url=(0071)file:///C:/Users/jagomes/Downloads/Simon_Brasil_Configurador_V86_3.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simon Brasil — Configurador + Proposta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
-<link href="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20v%2022_files/css2" rel="stylesheet">
+<link href="./Simon Brasil — Configurador + Proposta V86_files/css2" rel="stylesheet">
 <!-- XLSX com suporte a estilos (xlsx-js-style) — bundle.js inclui jszip embutido -->
-<script src="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20V71_files/xlsx.bundle.js"></script>
-<script src="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20v%2022_files/mammoth.browser.min.js"></script>
+<script src="./Simon Brasil — Configurador + Proposta V86_files/xlsx.full.min.js.baixados"></script>
+<script src="./Simon Brasil — Configurador + Proposta V86_files/mammoth.browser.min.js.baixados"></script>
 
 <style>
 /* ── Reset & Base ─────────────────────────────────────────────────────────── */
@@ -6844,8 +6844,9 @@ async function runAnalysis(){
       serie_hint:it.serie_hint||null,
       confidence:it.ref?'high':(it.serie_hint?'med':'low')
     }));
+    console.log('[IMPORT] AI analysis done. Items:', IMP.extractedItems.length, 'Setting step=review');
     IMP.step='review';renderImport();
-  }catch(err){IMP.step='error';IMP.errorMsg=err.message;renderImport();}
+  }catch(err){console.error('[IMPORT] runAnalysis error:', err); IMP.step='error';IMP.errorMsg=err.message;renderImport();}
 }
 
 // ──────────────────────────────────────────────────────────────────────────
@@ -6895,8 +6896,9 @@ function expandRepeatCount(items){
 }
 
 function renderImport(){
+  console.log('[IMPORT] renderImport called. step=', IMP.step, 'items=', IMP.extractedItems?.length);
   const mr=document.getElementById('import-root');
-  if(!mr)return;
+  if(!mr){console.error('[IMPORT] FATAL: import-root element missing from DOM'); alert('Erro: elemento import-root ausente. Recarregue a página.'); return;}
   let body='',footer='';
   const apiKey=getApiKey();
 
@@ -6913,7 +6915,13 @@ function renderImport(){
     body=renderImportLoading();
     footer=`<span style="font-size:12px;color:var(--text-secondary)">Analisando com IA Claude…</span><span></span>`;
   }else if(IMP.step==='review'){
-    body=renderImportReview();
+    try {
+      body=renderImportReview();
+      console.log('[IMPORT] renderImportReview returned', body.length, 'chars');
+    } catch(e) {
+      console.error('[IMPORT] renderImportReview threw:', e);
+      body = `<div style="padding:40px;text-align:center;color:#DC2626"><div style="font-size:32px;margin-bottom:12px">⚠</div><div style="font-weight:700;margin-bottom:8px">Erro ao renderizar tela de revisão</div><div style="font-size:12px;font-family:monospace;background:#FEE;padding:10px;border-radius:6px;text-align:left">${(e.message||e).toString().replace(/</g,'&lt;')}</div><div style="margin-top:14px;font-size:12px;color:#666">Mande este erro ao desenvolvedor.</div></div>`;
+    }
     const n=IMP.extractedItems.length;
     const envs=[...new Set(IMP.extractedItems.map(i=>i.ambiente))].length;
     footer=`<div style="font-size:12px;color:var(--text-secondary)"><strong>${n}</strong> itens em <strong>${envs}</strong> ambiente(s)</div>
@@ -7405,6 +7413,7 @@ function finalizeDirectList(){
 
 // Decide if extra preference steps are needed before finalize
 function prepareFinalize(){
+  console.log('[IMPORT] prepareFinalize called. items=', IMP.extractedItems?.length, 'series=', IMP.importSeries);
   const items = IMP.extractedItems || [];
   if(!items.length){alert('Nenhum item para importar.');return;}
   const series = IMP.importSeries;
@@ -7428,8 +7437,12 @@ function prepareFinalize(){
   if(typeof IMP.red20APreference === 'undefined') IMP.red20APreference = 'standard';
 
   // If nothing to ask, skip straight to finalize
-  if(!IMP.askUSB && !IMP.askRed20A){ finalizeImport(); return; }
+  if(!IMP.askUSB && !IMP.askRed20A){
+    console.log('[IMPORT] No USB/20A items, going straight to finalizeImport');
+    finalizeImport(); return;
+  }
 
+  console.log('[IMPORT] USB or 20A items found, showing preferences step. askUSB=', IMP.askUSB, 'askRed20A=', IMP.askRed20A);
   IMP.step = 'preferences';
   renderImport();
 }
@@ -7511,6 +7524,7 @@ function renderImportPreferences(){
 }
 
 function finalizeImport(){
+  console.log('[IMPORT] finalizeImport called. items=', IMP.extractedItems?.length, 'series=', IMP.importSeries);
   const items=IMP.extractedItems;
   if(!items.length){alert('Nenhum item para importar.');return;}
   if(!ST.project){
@@ -7850,7 +7864,9 @@ let CW = {
 
 
 function openColorWizard(){
-  if(!ST.environments.length){ render(); return; }
+  console.log('[COLOR-WIZARD] openColorWizard called. envCount=', ST.environments.length);
+  if(!ST.environments.length){ console.warn('[COLOR-WIZARD] No environments, skipping wizard'); render(); return; }
+  if(!document.getElementById('cwiz-root')){ console.error('[COLOR-WIZARD] cwiz-root missing from DOM'); alert('Erro: elemento cwiz-root ausente. Recarregue a página.'); return; }
   // Build per-env config objects with current/default values
   const defaultSeries = ST.project?.series || 'S30';
   CW.globalSeries = defaultSeries;
@@ -7939,32 +7955,8 @@ function renderCwiz(){
         </div>
 
         ${CW.mode==='single' ? `
-          <div style="background:var(--bg-secondary);border-radius:var(--radius-lg);padding:18px;border:1px solid var(--border-light)">
-            <div class="cwiz-section-label" style="margin-bottom:12px">⚡ Série para todos os ambientes</div>
-            <div class="series-row" style="margin-bottom:16px">
-              ${SERIE_OPTIONS.map(s=>`
-                <span class="s-pill ${CW.globalSeries===s.id?'sel':''}" onclick="setCwGlobalSeries('${s.id}')">${s.label}<span style="font-size:9px;opacity:0.7;margin-left:4px">${s.tier}</span></span>
-              `).join('')}
-            </div>
-
-            <div class="cwiz-section-label" style="margin-bottom:8px">🎨 Cor da Placa</div>
-            <div class="color-swatch-row" id="cwiz-global-pc" style="margin-bottom:14px">
-              ${buildCwizColorPicker(CW.globalSeries, CW.globalPc, -1, 'pc')}
-            </div>
-
-            ${SM[CW.globalSeries]?.mc?.length>1 ? `
-            <div class="cwiz-section-label" style="margin-bottom:8px">🎨 Cor dos Módulos</div>
-            <div class="color-swatch-row" id="cwiz-global-mc" style="margin-bottom:14px">
-              ${buildCwizColorPicker(CW.globalSeries, CW.globalMc, -1, 'mc')}
-            </div>` : ''}
-
-          ${SM[CW.globalSeries]?.sc?.length>1 ? `
-            <div class="cwiz-section" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light)">
-              <div class="cwiz-section-label">🔧 Cor do Suporte (S35)</div>
-              <div class="color-swatch-row" id="cwiz-global-sc">
-                ${buildCwizColorPicker(CW.globalSeries, CW.globalSc, -1, 'sc')}
-              </div>
-            </div>` : ''}
+          <div style="background:var(--accent-light);border:1px solid rgba(0,87,168,0.2);border-radius:var(--radius-md);padding:10px 14px;font-size:12px;color:var(--simon-blue)">
+            ℹ No próximo passo você escolhe a série e as cores que serão aplicadas em todos os ambientes.
           </div>
         ` : ''}
 
@@ -7976,19 +7968,66 @@ function renderCwiz(){
       </div>`;
 
     footer = `
-      <span style="font-size:12px;color:var(--text-secondary)">Passo 1 de ${CW.mode==='multiple'?2:1}</span>
+      <span style="font-size:12px;color:var(--text-secondary)">Passo 1 de 2</span>
       <div style="display:flex;gap:8px">
         <button class="btn" onclick="skipColorWizard()">Pular — usar padrões</button>
-        ${CW.mode==='multiple'
-          ? `<button class="btn btn-primary" onclick="CW.step=2;renderCwiz()">Configurar ambientes →</button>`
-          : CW.mode==='single'
-            ? `<button class="btn btn-primary" onclick="applyCwizSingle()">✅ Aplicar a todos</button>`
-            : `<button class="btn btn-primary" disabled style="opacity:0.4">Escolha uma opção →</button>`
+        ${CW.mode==='single' || CW.mode==='multiple'
+          ? `<button class="btn btn-primary" onclick="CW.step=2;renderCwiz()">${CW.mode==='single'?'Escolher série e cores':'Configurar ambientes'} →</button>`
+          : `<button class="btn btn-primary" disabled style="opacity:0.4">Escolha uma opção →</button>`
         }
       </div>`;
 
+  } else if(CW.step===2 && CW.mode==='single'){
+    // ── Step 2 (Single): pick series + colors for ALL ambientes ───
+    body = `
+      <div style="max-width:540px;margin:0 auto">
+        <div style="text-align:center;padding:8px 0 18px">
+          <h3 style="font-size:16px;font-weight:700;color:var(--simon-navy);margin-bottom:6px">
+            Série e cores para todos os ambientes
+          </h3>
+          <p style="font-size:12px;color:var(--text-secondary)">
+            Aplicado a ${envCount} ambiente(s) · ${ptCount} ponto(s)
+          </p>
+        </div>
+
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-lg);padding:18px;border:1px solid var(--border-light)">
+          <div class="cwiz-section-label" style="margin-bottom:12px">⚡ Série Simon</div>
+          <div class="series-row" style="margin-bottom:16px">
+            ${SERIE_OPTIONS.map(s=>`
+              <span class="s-pill ${CW.globalSeries===s.id?'sel':''}" onclick="setCwGlobalSeries('${s.id}')">${s.label}<span style="font-size:9px;opacity:0.7;margin-left:4px">${s.tier}</span></span>
+            `).join('')}
+          </div>
+
+          <div class="cwiz-section-label" style="margin-bottom:8px">🎨 Cor da Placa</div>
+          <div class="color-swatch-row" id="cwiz-global-pc" style="margin-bottom:14px">
+            ${buildCwizColorPicker(CW.globalSeries, CW.globalPc, -1, 'pc')}
+          </div>
+
+          ${SM[CW.globalSeries]?.mc?.length>1 ? `
+          <div class="cwiz-section-label" style="margin-bottom:8px">🎨 Cor dos Módulos</div>
+          <div class="color-swatch-row" id="cwiz-global-mc" style="margin-bottom:14px">
+            ${buildCwizColorPicker(CW.globalSeries, CW.globalMc, -1, 'mc')}
+          </div>` : ''}
+
+          ${SM[CW.globalSeries]?.sc?.length>1 ? `
+          <div class="cwiz-section" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light)">
+            <div class="cwiz-section-label">🔧 Cor do Suporte (S35)</div>
+            <div class="color-swatch-row" id="cwiz-global-sc">
+              ${buildCwizColorPicker(CW.globalSeries, CW.globalSc, -1, 'sc')}
+            </div>
+          </div>` : ''}
+        </div>
+      </div>`;
+
+    footer = `
+      <span style="font-size:12px;color:var(--text-secondary)">Passo 2 de 2 — Série única</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="CW.step=1;renderCwiz()">← Voltar</button>
+        <button class="btn btn-primary" onclick="applyCwizSingle()">✅ Aplicar a todos</button>
+      </div>`;
+
   } else if(CW.step===2){
-    // ── Step 2: Per-environment configuration ───────────────────
+    // ── Step 2 (Multiple): per-environment configuration ───────────
     let cards = '';
     CW.envConfigs.forEach((cfg, i)=>{
       const s = SM[cfg.series];
