@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<!-- saved from url=(0071)file:///C:/Users/jagomes/Downloads/Simon_Brasil_Configurador_V86_3.html -->
+<!-- saved from url=(0071)file:///C:/Users/jagomes/Downloads/Simon_Brasil_Configurador_V91_1.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simon Brasil — Configurador + Proposta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
-<link href="./Simon Brasil — Configurador + Proposta V86_files/css2" rel="stylesheet">
+<link href="./Simon Brasil — Configurador + Proposta V91_files/css2" rel="stylesheet">
 <!-- XLSX com suporte a estilos (xlsx-js-style) — bundle.js inclui jszip embutido -->
-<script src="./Simon Brasil — Configurador + Proposta V86_files/xlsx.full.min.js.baixados"></script>
-<script src="./Simon Brasil — Configurador + Proposta V86_files/mammoth.browser.min.js.baixados"></script>
+<script src="./Simon Brasil — Configurador + Proposta V91_files/xlsx.full.min.js.baixados"></script>
+<script src="./Simon Brasil — Configurador + Proposta V91_files/mammoth.browser.min.js.baixados"></script>
 
 <style>
 /* ── Reset & Base ─────────────────────────────────────────────────────────── */
@@ -4989,7 +4989,7 @@ Para cada item retorne um objeto JSON com:
 - desc: descrição do item
 - qty: quantidade (número inteiro)
 - item_type: OBRIGATÓRIO — classifique CADA item:
-    "module"  → interruptores, tomadas, USB, RJ45, dimmer, pulsador, sensor, cigarra, saída de fio, HDMI, coaxial
+    "module"  → interruptores, tomadas, USB, RJ45, dimmer, pulsador, sensor, cigarra, saída de fio, saída de cabos, HDMI, coaxial
     "support" → suporte 4x2, suporte 4x4, caixa de embutir, caixa de superfície
     "plate"   → placa 4x2, placa 4x4, placa 1/2/3/4/6 módulos, frame, acabamento
     "blind"   → módulo cego, tampa cega, tecla cega
@@ -5213,8 +5213,8 @@ IGNORE cor na descrição (branco/preto/branca/preta) — a cor vem da tela de i
 SIMBOLOGIA TRADICIONAL DE PROJETOS ELÉTRICOS
 ════════════════════════════════════════════════════════════════════════════
 Tomadas bifásicas 220V:
-- "TOMADA BAIXA BIFÁSICA" / "TOMADA MÉDIA BIFÁSICA" / "TOMADA ALTA BIFÁSICA" (220V, h=qualquer) → desc:"Tomada 2P+T 20A", item_type:"module"
-- "TOMADA BIFÁSICA" (qualquer variante) → desc:"Tomada 2P+T 20A", item_type:"module"
+- "TOMADA BAIXA BIFÁSICA" / "TOMADA MÉDIA BIFÁSICA" / "TOMADA ALTA BIFÁSICA" (220V, h=qualquer) → desc:"Tomada 2P+T 20A 220V", item_type:"module"
+- "TOMADA BIFÁSICA" (qualquer variante) → desc:"Tomada 2P+T 20A 220V", item_type:"module"
 - "TOMADA P/ TV" / "TOMADA TV" → desc:"Tomada coaxial para TV 75 ohms", item_type:"module"
 - "CAIXA ACESSO INTERNET" / "PONTO DE INTERNET" / "AUTOMAÇÃO" (caixa de dados) → desc:"Tomada RJ45 CAT.6", item_type:"module"
 Tomadas de uso específico (abreviações):
@@ -6667,8 +6667,11 @@ const STRUCTURAL_KEYWORDS = [
   'placa 3 modulo','placa 6 modulo','placa cega','acabamento','frame',
   'conjunto placa','conjunto 1','conjunto 2','conjunto 3',
   // Blinds / closures
-  'modulo cego','módulo cego','tampa cega','tecla cega','saida de fio',
-  'saída de fio','saida de cabos','saída de cabos','cego',
+  // V87: REMOVED 'saida de fio', 'saída de fio', 'saida de cabos', 'saída de cabos' from this list.
+  // Those are FUNCTIONAL MODULES (cable outlet modules with their own SKUs, e.g. 8200051-060 in S82,
+  // 19801-30 in S19/S20), not structural blinds. Treating them as structural meant the import
+  // dropped them and auto-filled the slots with cego covers instead.
+  'modulo cego','módulo cego','tampa cega','tecla cega','cego',
 ];
 const STRUCTURAL_ITEM_TYPES = ['support','plate','blind','blank_plate'];
 
@@ -6716,8 +6719,9 @@ function normalizeImportItems(items){
     {pat:/ponto\s+duplo\s+de\s+for[çc]a/i,desc:'Tomada 2P+T 10A',per:2},
     {pat:/ponto\s+triplo\s+de\s+for[çc]a/i,desc:'Tomada 2P+T 10A',per:3},
     // Simbologia especial de projectos (legenda técnica)
-    {pat:/tomada\s+(baixa|m[eé]dia|alta)\s+bif[aá]sica/i,desc:'Tomada 2P+T 20A',per:1},
-    {pat:/tomada\s+bif[aá]sica/i,desc:'Tomada 2P+T 20A',per:1},
+    // V90: keep "220V" suffix so prepareFinalize's voltage detector picks up the bifásica items.
+    {pat:/tomada\s+(baixa|m[eé]dia|alta)\s+bif[aá]sica/i,desc:'Tomada 2P+T 20A 220V',per:1},
+    {pat:/tomada\s+bif[aá]sica/i,desc:'Tomada 2P+T 20A 220V',per:1},
     {pat:/tomada\s+p[\/]?\s*tv|tomada\s+tv/i,desc:'Tomada coaxial para TV 75 ohms',per:1},
     {pat:/caixa\s+acesso\s+internet|ponto\s+internet/i,desc:'Tomada RJ45 CAT.6',per:1},
     {pat:/\bMOO\b|microondas/i,desc:'Tomada 2P+T 20A (Microondas)',per:1},
@@ -6931,10 +6935,10 @@ function renderImport(){
       </div>`;
   }else if(IMP.step==='preferences'){
     body=renderImportPreferences();
-    footer=`<div style="font-size:12px;color:var(--text-secondary)">Passo extra — preferências da série</div>
+    footer=`<div style="font-size:12px;color:var(--text-secondary)">Passo extra — preferências da série ${IMP.importSeries}</div>
       <div style="display:flex;gap:8px">
-        <button class="btn" onclick="IMP.step='review';renderImport()">← Voltar</button>
-        <button class="btn btn-green" onclick="finalizeImport()" style="font-size:13px;padding:8px 18px">✅ Confirmar e Importar</button>
+        <button class="btn" onclick="applyPostWizardPreferencesAndFinish()">Pular</button>
+        <button class="btn btn-green" onclick="applyPostWizardPreferencesAndFinish()" style="font-size:13px;padding:8px 18px">✅ Aplicar preferências</button>
       </div>`;
   }else if(IMP.step==='error'){
     body=`<div style="text-align:center;padding:40px 20px">
@@ -7189,7 +7193,7 @@ function bestModMatch(desc, mods){
     'simples','paralelo','intermediario','bipolar','campainha','minuteria',
     'dimmer','variador','rotativo','sensor','presenca','persianas','persiana',
     'tomada','interruptor','pulsador','usb','rj45','rj11','coaxial','hdmi',
-    'cigarra','lanterna','emergencia','cartao','cega','saida de fio','saida cabos',
+    'cigarra','lanterna','emergencia','cartao','cega','saida de fio','saida de cabos','saida cabos',
     'toque','minuteria','io duplo','io simples','triplo io','duplo','triplo'
   ];
   // Medium-weight: amperage / voltage
@@ -7201,6 +7205,7 @@ function bestModMatch(desc, mods){
   // (ex: "cigarra" e "campainha" referem-se ao mesmo tipo de produto)
   const SYNONYM_GROUPS = [
     ['cigarra','campainha','sineta'],
+    ['cega','cego','cegas','cegos'],
   ];
   function expandSynonyms(text){
     let out = text;
@@ -7363,13 +7368,13 @@ function resolveDirectRef(item, series, pc, mc){
     return{ref:'',desc:item.desc,cat:item.item_type==='blind'?'Tampa Cega':'Módulo'};
   }
   if(item.item_type==='support'){
-    const s=SM[series];const is4x4=/4x4|4 x 4/.test(d);const fmt=is4x4?'4x4':'4x2';
+    const s=SM[series];const is4x4=/4x4|4 x 4/i.test(d);const fmt=is4x4?'4x4':'4x2';
     const sup=s?.supports?.[fmt];
     if(sup){const supRef=sup[pc]?.ref||sup['any']?.ref||Object.values(sup)[0]?.ref||'';const supDesc=sup[pc]?.desc||sup['any']?.desc||Object.values(sup)[0]?.desc||('Suporte '+fmt);return{ref:supRef,desc:supDesc,cat:'Suporte'};}
     return{ref:'',desc:'Suporte '+fmt,cat:'Suporte'};
   }
   if(item.item_type==='plate'){
-    const is4x4=/4x4|4 x 4/.test(d);
+    const is4x4=/4x4|4 x 4/i.test(d);
     const posMatch=d.match(/(\d+)\s*POSI[ÇC]/);const modMatch=d.match(/(\d+)\s*M[ÓO]DULO/);
     const rawPos=posMatch?parseInt(posMatch[1]):modMatch?parseInt(modMatch[1]):(is4x4?6:3);
     const nPos=is4x4?Math.max(2,rawPos):Math.min(3,Math.max(1,rawPos));
@@ -7395,13 +7400,15 @@ function finalizeDirectList(){
       const d=(item.desc||'').toUpperCase();
       const isCega=item.item_type==='blank_plate'||((item.item_type==='plate')&&(/CEGA/.test(d))&&!(/\d+\s*POSI[ÇC]|\d+\s*M[ÓO]DULO/.test(d)));
       if(isCega){
-        const is4x4=/4x4|4 x 4/.test(d);
+        const is4x4=/4x4|4 x 4/i.test(d);
         resolveBlankPlate(is4x4,qty,series,pc,mc,sc).forEach(r=>{
           env._directItems.push({ref:r.ref,desc:r.desc,originalDesc:item.desc,cat:r.cat,qty:r.qty,item_type:r.cat==='Suporte'?'support':r.cat==='Placa'?'plate':'blind'});
         });
       } else {
         const resolved=resolveDirectRef(item,series,pc,mc);
-        env._directItems.push({ref:resolved.ref,desc:resolved.desc||item.desc,originalDesc:item.desc,cat:resolved.cat||item.item_type,qty,item_type:item.item_type});
+        const di = {ref:resolved.ref,desc:resolved.desc||item.desc,originalDesc:item.desc,cat:resolved.cat||item.item_type,qty,item_type:item.item_type};
+        if(item._is220V) di._is220V = true; // V90: forward 220V tag
+        env._directItems.push(di);
       }
     });
   });
@@ -7416,6 +7423,14 @@ function prepareFinalize(){
   console.log('[IMPORT] prepareFinalize called. items=', IMP.extractedItems?.length, 'series=', IMP.importSeries);
   const items = IMP.extractedItems || [];
   if(!items.length){alert('Nenhum item para importar.');return;}
+
+  // ────────────────────────────────────────────────────────────────────
+  // V91: Run USB / 220V detection FIRST, BEFORE the BOM branch.
+  // (Old V90 only detected these on the non-BOM path, so BOM imports
+  //  with bifásica/220V items never reached the preferences screen.)
+  // The detection tags individual items with _is220V; both finalizeImport
+  // and finalizeDirectList forward that tag downstream.
+  // ────────────────────────────────────────────────────────────────────
   const series = IMP.importSeries;
   const seriesMods = getMods(series);
 
@@ -7428,23 +7443,49 @@ function prepareFinalize(){
   IMP.askUSB = (usbItemCount > 0 && usbMods.length > 0);
   if(typeof IMP.usbPreferenceRef === 'undefined') IMP.usbPreferenceRef = '';
 
-  // -- Red 20A outlet preference detection --
-  const tomada20AItems = items.filter(it => /tomada/i.test(it.desc||'') && /\b20\s*a\b/i.test(it.desc||''));
+  // -- Red 20A outlet preference detection (voltage-aware, ABNT NBR 14136) --
+  // The red 20A outlet identifies 220V circuits — not "no-break" generically. So we
+  // only ask the preference when 220V signal is present (via rawText, individual desc,
+  // or "vermelha" keyword). Items are tagged so the post-wizard apply step only
+  // swaps the 220V outlets, never random 20A 127V ones.
+  const rawText220V = /\b220\s*V\b|bif[aá]sica|vermelh[oa]/i.test(IMP.rawText || '');
+  let tomada220VCount = 0;
+  items.forEach(it => {
+    const d = it.desc||'';
+    if(/tomada/i.test(d) && /\b20\s*a\b/i.test(d)){
+      const itemSignal = /\b220\s*V\b|bif[aá]sica|vermelh[oa]/i.test(d);
+      it._is220V = itemSignal || rawText220V;
+      if(it._is220V) tomada220VCount += Math.max(1, parseInt(it.qty)||1);
+    }
+  });
   const red20A = seriesMods.find(m => m.cat === 'Tomada' && /\b20a\b/i.test(m.desc||'') && /vermelh/i.test(m.desc||''));
   IMP.red20ARef = red20A ? red20A.ref : '';
-  IMP.tomada20ACount = tomada20AItems.length;
-  IMP.askRed20A = (tomada20AItems.length > 0 && !!red20A);
+  IMP.tomada20ACount = tomada220VCount;
+  IMP.askRed20A = (tomada220VCount > 0 && !!red20A);
   if(typeof IMP.red20APreference === 'undefined') IMP.red20APreference = 'standard';
 
-  // If nothing to ask, skip straight to finalize
-  if(!IMP.askUSB && !IMP.askRed20A){
-    console.log('[IMPORT] No USB/20A items, going straight to finalizeImport');
-    finalizeImport(); return;
+  // V89: prefs are asked AFTER the Color Wizard so they use the FINAL series.
+  // Set the flags here so finishCwiz() knows whether to open the preferences modal.
+  IMP._pendingUSBPref = (usbItemCount > 0);
+  IMP._pendingRed20APref = (tomada220VCount > 0);
+  console.log('[IMPORT] Deferring USB/220V prefs to after Color Wizard. pendingUSB=', IMP._pendingUSBPref, 'pending220V=', IMP._pendingRed20APref, '(220V count='+tomada220VCount+')');
+
+  // ────────────────────────────────────────────────────────────────────
+  // V88: Detect "complete BOM" input — placas+suportes+módulos+cegos
+  // explicitly listed. In that mode, finalizeDirectList stores items
+  // verbatim (no point distribution, no auto-fill).
+  // V91: this branch now happens AFTER the USB/220V tagging above so the
+  // post-wizard preferences screen also fires for BOM imports.
+  // ────────────────────────────────────────────────────────────────────
+  const hasStructural = items.some(i => i._structural && i.item_type !== 'blind' && i.item_type !== 'blank_plate');
+  const hasBlindCount = items.some(i => i.item_type === 'blind');
+  if(hasStructural && hasBlindCount){
+    console.log('[IMPORT] Complete BOM detected → finalizeDirectList');
+    finalizeDirectList();
+    return;
   }
 
-  console.log('[IMPORT] USB or 20A items found, showing preferences step. askUSB=', IMP.askUSB, 'askRed20A=', IMP.askRed20A);
-  IMP.step = 'preferences';
-  renderImport();
+  finalizeImport();
 }
 
 function renderImportPreferences(){
@@ -7492,24 +7533,25 @@ function renderImportPreferences(){
     const dotStd = `<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#cccccc;border:1px solid rgba(0,0,0,0.2);vertical-align:middle;margin-right:6px"></span>`;
     const dotRed = `<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:#C8312D;border:1px solid #7A1916;vertical-align:middle;margin-right:6px"></span>`;
     blocks += `<div>
-      <div style="font-size:14px;font-weight:600;margin-bottom:6px">🔴 Tomadas 20A — circuito padrão ou no-break?</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px">🔴 Tomadas 20A de 220V — identificar com cor vermelha?</div>
       <div style="font-size:12px;color:#666;margin-bottom:14px;line-height:1.5">
-        Identificamos <strong>${IMP.tomada20ACount}</strong> ${IMP.tomada20ACount===1?'tomada 20A':'tomadas 20A'} no projeto.
-        A série <strong>${IMP.importSeries}</strong> oferece a versão <strong>vermelha</strong>, normalmente usada para sinalizar circuitos de no-break/emergência.
+        Identificamos <strong>${IMP.tomada20ACount}</strong> ${IMP.tomada20ACount===1?'tomada':'tomadas'} de <strong>220V</strong> no projeto.
+        A norma ABNT (NBR 14136) recomenda usar a tomada vermelha de 20A para identificar circuitos de <strong>220V</strong>,
+        evitando que aparelhos de 127V sejam conectados por engano. A série <strong>${IMP.importSeries}</strong> oferece esta versão.
       </div>
       <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid ${isStd?'#0061A5':'rgba(0,0,0,0.1)'};background:${isStd?'rgba(0,97,165,0.06)':'#fff'};border-radius:6px;cursor:pointer;margin-bottom:6px;transition:all 0.15s">
         <input type="radio" name="red20a-pref" value="standard" ${isStd?'checked':''} onchange="IMP.red20APreference='standard';renderImport()" style="margin-top:3px">
         <div style="flex:1">
           <div style="font-size:13px;font-weight:500">${dotStd}Mesma cor dos demais módulos <span style="color:#888;font-weight:400">(padrão)</span></div>
-          <div style="font-size:11px;color:#666;margin-top:3px">Todas as tomadas 20A usam a cor selecionada para o projeto</div>
+          <div style="font-size:11px;color:#666;margin-top:3px">As tomadas de 220V ficam na cor selecionada para o projeto — sem destaque visual</div>
         </div>
       </label>
       <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid ${isRed?'#C8312D':'rgba(0,0,0,0.1)'};background:${isRed?'rgba(200,49,45,0.06)':'#fff'};border-radius:6px;cursor:pointer;transition:all 0.15s">
         <input type="radio" name="red20a-pref" value="red" ${isRed?'checked':''} onchange="IMP.red20APreference='red';renderImport()" style="margin-top:3px">
         <div style="flex:1">
-          <div style="font-size:13px;font-weight:500">${dotRed}Vermelho — destacar como circuito no-break</div>
+          <div style="font-size:13px;font-weight:500">${dotRed}Vermelho — sinalizar circuito de 220V (ABNT)</div>
           <div style="font-family:IBM Plex Mono,monospace;font-size:11px;color:#7A1916;margin-top:3px">${IMP.red20ARef}</div>
-          <div style="font-size:11px;color:#666;margin-top:2px">Todas as tomadas 20A são substituídas pela ref vermelha e aparecem em vermelho na prévia das placas</div>
+          <div style="font-size:11px;color:#666;margin-top:2px">Apenas as tomadas marcadas como 220V no projeto são substituídas pela ref vermelha. Tomadas 20A de 127V ficam com a cor padrão.</div>
         </div>
       </label>
     </div>`;
@@ -7698,26 +7740,28 @@ function finalizeImport(){
       }
       const plateList=Object.values(registry).sort((a,b)=>b.qty-a.qty);
 
-      // Assign each module type to the plate group with the best ratio match
-      // Best = modQty / plateQty closest to a positive integer, within capacity
+      // Assign each module type to the plate group with the best ratio match.
+      // V87: now also picks a plate even when qty < plate.qty (e.g. campainha qty=1, plate qty=58).
+      // Without this, single-unit modules created an extra standalone plate/support pair.
       const unassigned=[];
       for(const item of modules){
         const qty=Math.max(1,parseInt(item.qty)||1);
         let best=null, bestPer=1, bestErr=999;
         for(const plate of plateList){
           const ratio=qty/plate.qty;
-          const perPt=Math.round(ratio);
-          if(perPt<1) continue;
+          // V87: use ceil so qty=1 / plate=58 → perPt=1 (instead of round → 0 → unassigned).
+          const perPt=Math.max(1, Math.ceil(ratio));
           const err=Math.abs(ratio-perPt);
           // Prefer: exact ratio, within capacity, larger plate batch (tiebreak)
           const adjustedErr = err + (perPt>plate.cap?1:0) + (1/plate.qty)/100;
           if(adjustedErr<bestErr){bestErr=adjustedErr;best=plate;bestPer=perPt;}
         }
         if(best && bestPer<=best.cap){
-          best.mods.push({item,perPt:bestPer});
+          // V87: also carry totalQty so the point loop knows when to STOP placing.
+          best.mods.push({item,perPt:bestPer,totalQty:qty});
         } else if(best){
           // Overflow: clamp to capacity
-          best.mods.push({item,perPt:best.cap});
+          best.mods.push({item,perPt:best.cap,totalQty:qty});
         } else {
           unassigned.push(item);
         }
@@ -7752,11 +7796,33 @@ function finalizeImport(){
           }
           continue;
         }
+        // V87: track remaining quantity per module so we NEVER place more than the
+        // client asked for. Distributes evenly across points; leftover slots become cego
+        // via computeAssembly's auto-fill. Also enforces plate capacity per point so
+        // multiple modules don't overflow a single plate.
+        plate.mods.forEach(m => { m._remaining = (m.totalQty!=null) ? m.totalQty : (m.perPt * nPts); });
         for(let i=0;i<nPts;i++){
           const selMods=[];
-          for(const {item,perPt} of plate.mods){
-            const mod=resolveMod(item);
-            if(mod) selMods.push({mod,qty:perPt});
+          const ptsLeft = nPts - i;
+          let slotsUsed = 0;
+          for(const m of plate.mods){
+            const mod=resolveMod(m.item);
+            if(!mod) continue;
+            const modPos = mod.pos || 1;
+            const slotsLeft = plate.cap - slotsUsed;
+            const maxByCap = Math.floor(slotsLeft / modPos);
+            // How many to place on THIS point: bounded by perPt (per-point cap), by
+            // remaining/ptsLeft (so we spread the leftover evenly, not front-loaded),
+            // and by plate capacity remaining on this point.
+            const take = Math.min(m.perPt, Math.ceil(m._remaining / ptsLeft), maxByCap);
+            if(take > 0){
+              // V90: forward the _is220V flag so post-wizard prefs can swap only 220V items
+              const sm = {mod, qty:take};
+              if(m.item && m.item._is220V) sm._is220V = true;
+              selMods.push(sm);
+              m._remaining -= take;
+              slotsUsed += take * modPos;
+            }
           }
           env.points.push({id:uid(),name:makePointName(plate.mods,i,nPts),location:envName,
             selectedModules:selMods,_minFormat:minFmt});
@@ -8261,7 +8327,130 @@ function applyColorWizard(){
   finishCwiz();
 }
 
+// V89: Open the USB/20A preferences modal AFTER the Color Wizard, using the series
+//      chosen in the wizard (not the review screen default). Re-discovers the USB
+//      variants and red-20A ref for the final series, then re-opens the import modal
+//      in 'preferences' step.
+function showPostWizardPreferences(series, mc){
+  console.log('[IMPORT] showPostWizardPreferences for series=', series, 'mc=', mc);
+  const seriesMods = getMods(series);
+  IMP.importSeries = series;
+  IMP.importMc = mc;
+
+  // USB
+  const usbItemsInPoints = countUsbItemsInPoints();
+  const usbMods = seriesMods.filter(m => m.cat === 'USB');
+  const colorFilteredUSB = mc ? usbMods.filter(m => m.ref.endsWith('-' + mc)) : usbMods;
+  IMP.usbModsToShow = colorFilteredUSB.length > 0 ? colorFilteredUSB : usbMods;
+  IMP.usbItemCount = usbItemsInPoints;
+  IMP.askUSB = (usbItemsInPoints > 0 && usbMods.length > 0);
+  if(typeof IMP.usbPreferenceRef === 'undefined' || !IMP.usbPreferenceRef) IMP.usbPreferenceRef = '';
+
+  // Red 20A
+  const tom20InPoints = countTomada20AItemsInPoints();
+  const red20A = seriesMods.find(m => m.cat === 'Tomada' && /\b20a\b/i.test(m.desc||'') && /vermelh/i.test(m.desc||''));
+  IMP.red20ARef = red20A ? red20A.ref : '';
+  IMP.tomada20ACount = tom20InPoints;
+  IMP.askRed20A = (tom20InPoints > 0 && !!red20A);
+  if(typeof IMP.red20APreference === 'undefined') IMP.red20APreference = 'standard';
+
+  // Nothing to ask after all? Just save+render
+  if(!IMP.askUSB && !IMP.askRed20A){
+    save(); render();
+    return;
+  }
+
+  // Open the import modal in preferences step (re-opens import-root with the new step)
+  IMP.step = 'preferences';
+  renderImport();
+}
+
+// V89: Counts existing USB items in created points/directItems (matches the modules
+//      that the prepareFinalize-time count would have caught from the AI output).
+function countUsbItemsInPoints(){
+  let n = 0;
+  ST.environments.forEach(env=>{
+    env.points?.forEach(pt => {
+      pt.selectedModules?.forEach(sm => {
+        if(/usb|carregador/i.test(sm.mod?.desc||'')) n += (sm.qty||1);
+      });
+    });
+    env._directItems?.forEach(di => {
+      if(/usb|carregador/i.test(di.desc||'')) n += (di.qty||1);
+    });
+  });
+  return n;
+}
+
+function countTomada20AItemsInPoints(){
+  let n = 0;
+  ST.environments.forEach(env=>{
+    env.points?.forEach(pt => {
+      pt.selectedModules?.forEach(sm => {
+        const d = sm.mod?.desc||'';
+        if(/tomada/i.test(d) && /\b20\s*a\b/i.test(d)) n += (sm.qty||1);
+      });
+    });
+    env._directItems?.forEach(di => {
+      const d = di.desc||'';
+      if(/tomada/i.test(d) && /\b20\s*a\b/i.test(d)) n += (di.qty||1);
+    });
+  });
+  return n;
+}
+
+// V89: Walk through every imported point/directItem and rewrite USB and 20A module
+//      references based on the user's preferences. Then close the import modal and
+//      render the configurator. Called by the "Aplicar preferências" / "Pular" buttons.
+function applyPostWizardPreferencesAndFinish(){
+  console.log('[IMPORT] applyPostWizardPreferencesAndFinish. usbRef=', IMP.usbPreferenceRef, 'red20A=', IMP.red20APreference);
+  const series = IMP.importSeries;
+  const allMods = getMods(series);
+  const usbMod = IMP.usbPreferenceRef ? allMods.find(m => m.ref === IMP.usbPreferenceRef) : null;
+  const red20A = (IMP.red20APreference === 'red' && IMP.red20ARef) ? allMods.find(m => m.ref === IMP.red20ARef) : null;
+
+  // V90: red 20A is applied ONLY to items that came from a 220V source (we tagged them
+  // with _is220V upstream). Items without that tag stay with the standard color even if
+  // the user picked "Vermelho", because they're not actually 220V circuits.
+  ST.environments.forEach(env => {
+    env.points?.forEach(pt => {
+      pt.selectedModules?.forEach(sm => {
+        const desc = sm.mod?.desc || '';
+        if(usbMod && /usb|carregador/i.test(desc)) sm.mod = usbMod;
+        // Mark red only on 20A items whose ORIGINAL source was 220V (via sm._is220V flag)
+        if(red20A && /tomada/i.test(desc) && /\b20\s*a\b/i.test(desc) && sm._is220V){
+          sm.mod = red20A;
+        }
+      });
+    });
+    env._directItems?.forEach(di => {
+      const desc = di.desc || '';
+      if(usbMod && /usb|carregador/i.test(desc)){ di.ref = usbMod.ref; di.desc = usbMod.desc; }
+      if(red20A && /tomada/i.test(desc) && /\b20\s*a\b/i.test(desc) && di._is220V){
+        di.ref = red20A.ref; di.desc = red20A.desc;
+      }
+    });
+  });
+
+  closeImport();
+  save();
+  if(ST.environments.length>0&&ST.environments[0].points.length>0){
+    ST.activeEnvId = ST.environments[0].id;
+    ST.activePointId = ST.environments[0].points[0].id;
+    ST.view='config';
+  }
+  render();
+}
+
 function finishCwiz(){
+  // V89: if the import had USB or red-20A items, ask preferences NOW (after series is chosen).
+  // Only triggers in single-series mode; multiple-series mode leaves per-point editing to the user.
+  const needsPrefs = (IMP._pendingUSBPref || IMP._pendingRed20APref) && CW.mode === 'single' && CW.globalSeries;
+  if(needsPrefs){
+    closeColorWizard();
+    showPostWizardPreferences(CW.globalSeries, CW.globalMc || CW.globalPc);
+    return;
+  }
   closeColorWizard();
   save();
   if(ST.environments.length>0&&ST.environments[0].points.length>0){
