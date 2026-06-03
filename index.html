@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0089)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_V96_1.html -->
+<!-- saved from url=(0087)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_V97.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link href="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20V91_files/css2" rel="stylesheet">
 <!-- XLSX com suporte a estilos (xlsx-js-style) — bundle.js inclui jszip embutido -->
-<script src="./Simon Brasil — Configurador + Proposta v96_files/xlsx.bundle.js"></script>
+<script src="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20v96_files/xlsx.bundle.js"></script>
 <script src="file:///Users/joaogomes-simon/Downloads/Simon%20Brasil%20%E2%80%94%20Configurador%20+%20Proposta%20V91_files/mammoth.browser.min.js.baixados"></script>
 
 <style>
@@ -2363,6 +2363,24 @@ function computeAssembly(selMods, series, plateColor, modColor, minFormat, suppo
   const maxPos = format==='4x2'?3:6;
   const blindCount = maxPos-totalPos;
   if(blindCount<0) return {error:true,warnings:['⚠ Total de posições ('+totalPos+') excede '+format+' ('+maxPos+'). Divida em dois pontos.'],totalPos};
+
+  // ── Distinção placa "POSTOS JUNTOS" × "POSTOS SEPARADOS" (prática de mercado) ──
+  // JUNTOS  : existe um módulo ÚNICO que ocupa 2+ posições físicas como peça única
+  //           (ex: Interruptor Bipolar Duplo, Dimmer/Variador Rotativo de 2 módulos)
+  //           → placa com janela contínua (refs ...622 em 4x2 / ...622 em 4x4).
+  // SEPARADOS: o ponto é composto por módulos que ocupam 1 posição CADA
+  //           (ex: 2 tomadas, interruptor + tomada, 2 interruptores simples)
+  //           → placa com janelas independentes (refs ...612).
+  // OBS: "Conjunto 2 X" (cat "Conjunto") representa módulos independentes pré-montados,
+  //      portanto NÃO conta como módulo duplo → também usa placa SEPARADOS.
+  const hasWideModule = selMods.some(m => ((m.mod.pos==null?1:m.mod.pos) >= 2) && m.mod.cat !== 'Conjunto');
+  const useSeparated = !hasWideModule;
+  // Troca a placa "juntos" pela "separados" quando aplicável E existir na cor/formato.
+  // Retorna {ref, sep} para que o desc possa indicar "separados".
+  function resolvePlatePair(joinedRef, sepMap, sz){
+    if(useSeparated && sepMap && sepMap[sz]) return {ref:sepMap[sz], sep:true};
+    return {ref:joinedRef, sep:false};
+  }
   let support=null, plate=null;
   const s = SM[series];
   if(!s){ console.warn('computeAssembly: unknown series', series); return {error:true,warnings:['⚠ Série desconhecida: '+series],totalPos,format:'4x2',maxPos:3}; }
@@ -2407,23 +2425,31 @@ function computeAssembly(selMods, series, plateColor, modColor, minFormat, suppo
 
   if(series==='S19'){
     const m={'4x2':{1:'19911-30',2:'19922-30',3:'19913-30'},'4x4':{2:'19911-50',4:'19922-50',6:'19913-50'}};
+    const SEP={'4x2':{2:'19912-30'}}; // 2 postos separados (só 4x2, Branco)
     const avail=m[format];
     const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
-    plate={ref:avail[sz],desc:`Placa ${sz}p + suporte ${format} Branco`};
+    const r=resolvePlatePair(avail[sz],SEP[format],sz);
+    plate={ref:r.ref,desc:`Placa ${sz}p${r.sep?' separados':''} + suporte ${format} Branco`};
   }
   else if(series==='S20'){
     const P={'4x2':{'30':{1:'20911-30',2:'20922-30',3:'20913-30'},'37':{1:'20911-37',2:'20922-37',3:'20913-37'}},'4x4':{'30':{2:'20911-50',4:'20922-50',6:'20913-50'},'37':{2:'20911-57',4:'20922-57',6:'20913-57'}}};
+    const SEP={'4x2':{'30':{2:'20912-30'},'37':{2:'20912-37'}}}; // 2 postos separados (só 4x2)
     const avail=P[format][pc]||P[format]['30'];
+    const sepMap=(SEP[format]||{})[pc];
     const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
-    plate={ref:avail[sz]||Object.values(avail)[0],desc:`Placa ${sz}p + suporte ${format} ${pcName}`};
+    const r=resolvePlatePair(avail[sz]||Object.values(avail)[0],sepMap,sz);
+    plate={ref:r.ref,desc:`Placa ${sz}p${r.sep?' separados':''} + suporte ${format} ${pcName}`};
   }
   else if(series==='S30'){
     // S30 LINE plates (300xxx) - integrated support: Branco(30), Grafite Fosco(38), Alumínio(34)
     const P={'4x2':{'30':{1:'300911-30',2:'300922-30',3:'300913-30'},'38':{1:'300911-38',2:'300922-38',3:'300913-38'},'34':{1:'300911-34',2:'300922-34',3:'300913-34'}},'4x4':{'30':{4:'300922-50',6:'300913-50'},'38':{4:'300922-58',6:'300913-58'},'34':{4:'300922-54',6:'300913-54'}}};
+    // Placas separadas: 2 postos (4x2) e 4 postos (4x4)
+    const SEP={'4x2':{'30':{2:'300912-30'},'38':{2:'300912-38'},'34':{2:'300912-34'}},'4x4':{'30':{4:'300912-50'},'38':{4:'300912-58'},'34':{4:'300912-54'}}};
     const avail=P[format][pc]||P[format]['30'];
+    const sepMap=(SEP[format]||{})[pc];
     const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
-    const ref=avail[sz]||Object.values(avail)[0];
-    plate={ref,desc:`Placa ${sz}p + suporte ${format} ${pcName}`};
+    const r=resolvePlatePair(avail[sz]||Object.values(avail)[0],sepMap,sz);
+    plate={ref:r.ref,desc:`Placa ${sz}p${r.sep?' separados':''} + suporte ${format} ${pcName}`};
   }
   else if(series==='S35'){
     // S35 plates: Branco(30), Branco Fosco(31), Champagne(33), Alumínio(34), Preto(39), Carvalho(41), Tabaco(42), Rosê Gold(43), Preto Fosco(44), Aço Corten(45)
@@ -2451,18 +2477,27 @@ function computeAssembly(selMods, series, plateColor, modColor, minFormat, suppo
       '45':{6:'35613-65'}
     }};
     const avail=P[format][pc]||P[format]['30'];
+    // Placas separadas só existem em Branco(30) e Branco Fosco(31): 2 postos (4x2) e 4 postos (4x4)
+    const SEP={'4x2':{'30':{2:'35612-30'},'31':{2:'35612-31'}},'4x4':{'30':{4:'35612-50'},'31':{4:'35612-51'}}};
+    const sepMap=(SEP[format]||{})[pc];
     const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
-    const ref=avail[sz]||Object.values(avail)[0];
+    const r=resolvePlatePair(avail[sz]||Object.values(avail)[0],sepMap,sz);
     if(format==='4x2'&&!avail[2]&&totalPos===2&&sz===3)warnings.push(`ℹ Placa de 2 postos não disponível em ${pcName}. Usando placa de 3 postos.`);
-    plate={ref,desc:`Placa ${sz}p ${format} ${pcName}`};
+    plate={ref:r.ref,desc:`Placa ${sz}p${r.sep?' separados':''} ${format} ${pcName}`};
   }
   else if(series==='S26'||series==='S26IO'){
     const isBranco=pc==='030';const sfx=isBranco?'030':'038';const sfx4=isBranco?'050':'058';
     const avail = format==='4x2'
       ? {1:`2611611-${sfx}`,2:`2611612-${sfx}`,3:`2611613-${sfx}`}
       : {2:`2610611-${sfx4}`,4:`2610622-${sfx4}`,6:`2610613-${sfx4}`};
+    // 4x2: a placa de 2 módulos da S26 é SEPARADOS (2611612) — janelas independentes,
+    // própria para 2 módulos de 1 posição cada. Um módulo DUPLO (iO Duplo, USB 2 módulos,
+    // pos≥2) não cabe nela; nesse caso sobe-se para a placa de 3 módulos (2611613), onde o
+    // módulo de 2 posições assenta e a posição livre é preenchida com 1/2 tampa cega.
+    if(format==='4x2' && hasWideModule) delete avail[2];
     const sz=pickBestPlateSize(avail,totalPos,format,preferPlateSize);
-    plate={ref:avail[sz],desc:`Placa ${format} ${sz} módulo(s) ${pcName}`};
+    const isSep = (format==='4x2' && sz===2); // 2611612 = 2 módulos separados
+    plate={ref:avail[sz],desc:`Placa ${format} ${sz} módulo(s)${isSep?' separados':''} ${pcName}`};
   }
   else if(series==='S82'){const ac=s.acab[pc];if(!ac){plate={ref:`8200613-${pc}`,desc:`Placa 3M ${pc}`};}else if(format==='4x4'){if(!ac.p6)warnings.push(`⚠ Acabamento "${ac.name}" não disponível em 4x4.`);plate={ref:ac.p6||'8200614-030',desc:`Placa 6M ${ac.name} (${ac.gama})`};}else{plate={ref:ac.p3,desc:`Placa 3M ${ac.name} (${ac.gama})`};}if(format==='4x2'&&totalPos<3)warnings.push(`ℹ S82: placa mínima é 3 postos. ${blindCount} tecla(s) cega(s) incluída(s).`);}
 
