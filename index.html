@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0087)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_V98.html -->
+<!-- saved from url=(0089)file:///Users/joaogomes-simon/Downloads/Simon_Brasil___Configurador___Proposta_V98_1.html -->
 <html lang="pt-BR"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src &#39;self&#39; &#39;unsafe-inline&#39; &#39;unsafe-eval&#39; https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://api.anthropic.com https://fonts.googleapis.com https://fonts.gstatic.com; img-src &#39;self&#39; data: blob:; connect-src &#39;self&#39; https://api.anthropic.com;">
 
@@ -5354,6 +5354,15 @@ ESPELHO = PLACA DE ACABAMENTO (sinônimo de mercado). Classifique SEMPRE como it
 
 MÓDULO DE REDE / PONTO DE REDE / TOMADA DE REDE / RJ45 → desc:"Tomada RJ45 CAT.6", item_type:"module".
 
+PRODUTOS "CONJUNTO" (kit pronto = módulo + placa + suporte numa única referência).
+Linhas que começam com "CONJ." ou "CONJUNTO" (ex: "CONJ.4X2 - 1 INT.SIMPLES HORIZ.",
+"CONJ.4X2 - 1 TOM.10A", "CONJ.4X2 - 1 INT.SIMPLES + 1 TOM.10A") são CONJUNTOS.
+NÃO decomponha em placa + módulo separados e NÃO crie linhas avulsas para elas.
+Emita como item ÚNICO: item_type:"conjunto", ref:null, qty = a quantidade da linha,
+desc = descrição legível do conjunto preservando componentes, amperagem (10A/20A) e o "+"
+entre componentes (ex: "Conjunto 1 Interruptor Simples", "Conjunto 1 Tomada 10A",
+"Conjunto 1 Interruptor Simples + 1 Tomada 10A"). Ignore "HORIZ./VERT." (orientação).
+
 ITENS FORA DO PORTFÓLIO SIMON (a linha modular NÃO possui): "TOMADA INDUSTRIAL" (32A/36A/63A,
 trifásica), "TOMADA DE PISO" / "CAIXA DE PISO" / "TOMADAS DE PISO 4X4". NÃO substitua por uma
 tomada comum. Retorne item_type:"module", ref:null, e PRESERVE a descrição original
@@ -6950,6 +6959,12 @@ function normalizeImportItems(items){
     // V98: "Espelho" = placa de acabamento — reclassifica antes de qualquer outra regra.
     const esp = normalizeEspelho(item);
     if(esp) return esp;
+    // V98: CONJUNTO explícito ("CONJ." / "CONJUNTO") — mantém como item único (kit), não decompõe.
+    if(item.item_type==='conjunto' || item._isConjunto || /^\s*conj(unto|\.|\b)/i.test(item.desc||'')){
+      return {...item, item_type:'conjunto', _isConjunto:true, ref:item.ref||'',
+        desc:item.desc, qty:Math.max(1,parseInt(item.qty)||1), _per_plate:1,
+        _structural:false, ponto_id:item.ponto_id||null};
+    }
     // V98: item fora do portfólio Simon — sinaliza em vez de casar com produto errado.
     const gap = portfolioGap(item.desc);
     if(gap){
@@ -7070,6 +7085,7 @@ async function runAnalysis(){
       _unavailable:it._unavailable||false,
       _gapReason:it._gapReason||null,
       _gapAlternatives:it._gapAlternatives||null,
+      _isConjunto:it._isConjunto||false,
       confidence:it._unavailable?'unavailable':(it.ref?'high':(it.serie_hint?'med':'low'))
     }));
     console.log('[IMPORT] AI analysis done. Items:', IMP.extractedItems.length, 'Setting step=review');
@@ -7426,6 +7442,45 @@ function startImport(){
   runAnalysis();
 }
 
+// ── V98: Conjunto matching — casa "CONJ.4X2 - 1 INT.SIMPLES + 1 TOM.10A" etc. ───
+// com a referência de conjunto correta (componentes + amperagem + contagem + "+").
+function conjNorm(s){
+  return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z0-9+ ]/g,' ')
+    .replace(/\binterr\w*/g,'interruptor').replace(/\bint\b/g,'interruptor')
+    .replace(/\btomi?adas?\b|\btom\b|\btomi?\w*/g,'tomada')
+    .replace(/\bparal\w*/g,'paralelo').replace(/\bsimpl\w*/g,'simples')
+    .replace(/\bpuls\w*/g,'pulsador').replace(/\bcamp\w*/g,'campainha')
+    .replace(/\bcoax\w*/g,'coaxial').replace(/\bbipol\w*/g,'bipolar')
+    .replace(/\bantena\b/g,'antena').replace(/rj\s*45/g,'rj45').replace(/rj\s*11/g,'rj11')
+    .replace(/\bcarregador\b|\busb\b/g,'usb')
+    .replace(/\s+/g,' ').trim();
+}
+function bestConjuntoMatch(desc, pool){
+  if(!desc || !pool || !pool.length) return null;
+  const FEAT=['interruptor','paralelo','simples','tomada','pulsador','campainha','cigarra','coaxial','rj11','rj45','usb','bipolar','antena','tv'];
+  const q=conjNorm(desc);
+  const qPlus=(q.match(/\+/g)||[]).length;
+  const qAmp10=/\b10a?\b/.test(q), qAmp20=/\b20a?\b/.test(q), qAmp25=/\b25a?\b/.test(q);
+  const qCount=((q.match(/\b([123])\b/)||[])[1])||'1';
+  function score(m){
+    const d=conjNorm(m.desc); let s=0;
+    FEAT.forEach(f=>{ const inQ=q.includes(f), inD=d.includes(f); if(inQ&&inD)s+=10; else if(inQ!==inD)s-=8; });
+    if(qAmp10){ if(/\b10a?\b/.test(d))s+=6; else if(/\b20a?\b/.test(d))s-=6; }
+    if(qAmp20){ if(/\b20a?\b/.test(d))s+=6; else if(/\b10a?\b/.test(d))s-=6; }
+    if(qAmp25 && /\b25a?\b/.test(d)) s+=6;
+    const dPlus=(d.match(/\+/g)||[]).length;
+    s -= 5*Math.abs(qPlus-dPlus);
+    const dCount=((d.match(/\b([123])\b/)||[])[1])||'1';
+    s += (qCount===dCount)?3:-4;
+    // Não usar variantes de sobrepor/para móveis a menos que pedidas explicitamente
+    if(/sobrepor|moveis|para moveis/.test(d) && !/sobrepor|moveis/.test(q)) s-=15;
+    return s;
+  }
+  const scored=pool.map(m=>({m,s:score(m)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  return scored.length?scored[0].m:null;
+}
+
 // ── Module matching — keyword scoring ──────────────────────────────────────
 // Scores candidate modules against a description string.
 // Higher-weight keywords must match for the product type to be correct.
@@ -7604,6 +7659,25 @@ function resolveDirectRef(item, series, pc, mc, sc){
   // V98: item fora do portfólio Simon — NÃO substituir por produto errado; manter sem ref.
   if(item._unavailable || portfolioGap(item.desc)){
     return {ref:'', desc:item.desc, cat:'Indisponível'};
+  }
+  // V98: CONJUNTO (kit pronto: módulo + placa + suporte numa só referência).
+  // Quando a linha pede explicitamente um conjunto ("CONJ." / "CONJUNTO"), casamos com a
+  // referência de conjunto da série em vez de decompor em itens avulsos.
+  if(item.item_type==='conjunto' || item._isConjunto || /^\s*conj(unto|\.|\b)/i.test(item.desc||'')){
+    let conjPool=allMods.filter(m=>m.cat==='Conjunto');
+    // Preferir referências da própria série (S20 → 20xxx, S19 → 19xxx)
+    const prefix = series==='S19'?'19':(series==='S20'?'20':null);
+    if(prefix){const pref=conjPool.filter(m=>m.ref.startsWith(prefix));if(pref.length)conjPool=pref;}
+    // Match exato por ref de conjunto, se vier
+    if(item.ref){const exact=conjPool.find(m=>m.ref===item.ref)||allMods.find(m=>m.ref===item.ref&&m.cat==='Conjunto');if(exact)return{ref:exact.ref,desc:exact.desc,cat:'Conjunto'};}
+    const match=bestConjuntoMatch(item.desc, conjPool);
+    if(match){
+      let ref=match.ref;
+      if(pc){const base=ref.replace(/-[^-]+$/,'');const v=allMods.find(m=>m.ref===base+'-'+pc);if(v)ref=v.ref;}
+      const fin=allMods.find(m=>m.ref===ref)||match;
+      return{ref:fin.ref,desc:fin.desc,cat:'Conjunto'};
+    }
+    return{ref:'',desc:item.desc,cat:'Conjunto'};
   }
   // Match exato por ref — mas NUNCA aceitar SKUs da categoria 'Conjunto' em importação automática
   if(item.ref){const m=allMods.find(m=>m.ref===item.ref&&m.cat!=='Conjunto');if(m)return{ref:m.ref,desc:m.desc,cat:m.cat};}
